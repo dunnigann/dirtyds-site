@@ -2,6 +2,6 @@
   "name": "dirtyds-site",
   "compatibility_date": "2026-09-28",
   "assets": {
-    "directory": "./dirtyds-github"
+    "directory": "./dirtyds-github/public"
   }
 }

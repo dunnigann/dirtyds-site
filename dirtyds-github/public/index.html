@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#081426">
+  <meta name="description" content="Dirty D's fantasy football league archive: eight seasons of matchups, players, auction prices, records, teams, and championships.">
+  <meta property="og:title" content="Dirty D's — League Archive">
+  <meta property="og:description" content="The Dirty D's league history, now with eight seasons of matchups and auction receipts.">
+  <meta property="og:type" content="website">
+  <title>Dirty D's — League Archive</title>
+  <link rel="icon" href="assets/images/logo/dirtyds-logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/mobile.css">
+  <link rel="stylesheet" href="assets/css/dirtyds.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#home" aria-label="Dirty D's home"><span class="brand-mark"><img src="assets/images/logo/dirtyds-logo.svg" alt="Dirty D's logo"></span><span class="brand-copy"><strong>DIRTY D'S</strong><small>LEAGUE ARCHIVE</small></span></a>
+    <nav id="mainNav" class="main-nav" aria-label="Primary navigation">
+      <button class="nav-link active" data-page="home">Home</button>
+      <button class="nav-link" data-page="season2025">2025 Season</button>
+      <button class="nav-link" data-page="matchups">Matchups</button>
+      <button class="nav-link" data-page="seasons">All Seasons</button>
+      <button class="nav-link" data-page="history">League History</button>
+      <button class="nav-link" data-page="players">Players</button>
+      <button class="nav-link" data-page="teams">Teams</button>
+      <button class="nav-link" data-page="draft">Draft Central</button>
+    </nav>
+    <button id="mobileMenu" class="mobile-menu" aria-label="Open navigation" aria-expanded="false" aria-controls="mainNav">☰</button>
+  </header>
+  <main id="app"></main>
+  <footer class="site-footer"><div><strong>DIRTY D'S</strong> · Fantasy football history, now with auction receipts.</div><div id="footerMeta">2018–2025 archive</div></footer>
+  <div id="modalBackdrop" class="modal-backdrop" hidden><div id="modal" class="modal" role="dialog" aria-modal="true" aria-label="Detail view"><button id="modalClose" class="modal-close" aria-label="Close">×</button><div id="modalContent"></div></div></div>
+  <script src="data/site-data.js"></script>
+  <script src="data/history-data.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/responsive.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Dirty D's">
+ <defs><linearGradient id="g" x2=".9" y2="1"><stop stop-color="#f2d37b"/><stop offset="1" stop-color="#b98429"/></linearGradient></defs>
+ <circle cx="64" cy="64" r="62" fill="#061321" stroke="url(#g)" stroke-width="4"/>
+ <circle cx="64" cy="64" r="51" fill="#122f4b" stroke="#294765" stroke-width="2"/>
+ <path d="M19 23h90v82H19z" fill="none" stroke="#d7a842" stroke-width="2" opacity=".42"/>
+ <text x="64" y="77" text-anchor="middle" fill="#f3d37c" font-family="Arial,sans-serif" font-size="48" font-weight="900" letter-spacing="-7">DD</text>
+ <path d="M37 91h54" stroke="#e5ba5e" stroke-width="3" stroke-linecap="round"/>
+</svg>

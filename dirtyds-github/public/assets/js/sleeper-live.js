@@ -7,7 +7,7 @@
   const CACHE_MS = 24 * 60 * 60 * 1000;
   const data = {
     league: null, users: [], rosters: [], players: {}, state: null,
-    drafts: [], picks: [], weeks: {}, stats: {}, projections: {}, season: '2026'
+    drafts: [], picks: [], weeks: {}, transactions: {}, stats: {}, projections: {}, season: '2026'
   };
   let readyPromise = null;
 
@@ -67,6 +67,11 @@
     }
     return data.projections[week];
   }
+  async function getTransactions(week) {
+    week=Number(week);
+    if(!data.transactions[week]) data.transactions[week]=await json(`${API}/league/${LEAGUE_ID}/transactions/${week}`);
+    return data.transactions[week];
+  }
   async function init() {
     if (readyPromise) return readyPromise;
     readyPromise = (async () => {
@@ -94,7 +99,10 @@
 
       const current = currentWeek();
       const calls = [];
-      for (let w=1; w<=current; w++) calls.push(getWeek(w).catch(() => []));
+      for (let w=1; w<=current; w++) {
+        calls.push(getWeek(w).catch(() => []));
+        calls.push(getTransactions(w).catch(() => []));
+      }
       calls.push(getProjections(current));
       calls.push(
         json(`${API}/stats/nfl/regular/${data.season}`)
@@ -153,7 +161,7 @@
   function pickPlayerId(pick) { return String(pick?.player_id || pick?.metadata?.player_id || ''); }
 
   window.DIRTY_DS_LIVE = {
-    LEAGUE_ID, data, init, ready:null, getWeek, getProjections, currentWeek,
+    LEAGUE_ID, data, init, ready:null, getWeek, getTransactions, getProjections, currentWeek,
     user, roster, rosterUser, teamName, managerName, player, fullName, headshot,
     leaguePoints, statPoints, projectionPoints, pickCost, pickPlayerId
   };

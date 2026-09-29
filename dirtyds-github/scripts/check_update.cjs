@@ -1,0 +1,31 @@
+// Reproducible checks for the archive and live identity / week logic.
+const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..');
+const els=new Map();function el(id){if(!els.has(id))els.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},style:{},hidden:false,classList:{toggle(){},add(){},remove(){}},setAttribute(){},addEventListener(){},scrollIntoView(){},querySelectorAll(){return[]}});return els.get(id);}
+const nav=['home','history','teams','season2026','matchups','players','draft'].map(page=>({...el(page),dataset:{page}}));
+const context={window:{scrollTo(){}},document:{getElementById:el,querySelectorAll(sel){return sel==='.nav-link'?nav:[]},addEventListener(){},body:{style:{}}},history:{replaceState(){}},location:{hash:'#home'},console,URL};
+vm.createContext(context);
+for(const file of ['public/data/site-data.js','public/data/history-data.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),context);
+const users=[{user_id:'a',display_name:'jdunnigan',metadata:{team_name:"Annie's Boobs"}},{user_id:'b',display_name:'Zwack',metadata:{team_name:'Cheese Curds'}}];
+const rosters=[{roster_id:1,owner_id:'a',settings:{wins:1,losses:0},players:['9509']},{roster_id:2,owner_id:'b',settings:{wins:0,losses:1},players:['4984']}];
+const league={settings:{last_scored_leg:1},roster_positions:['QB','RB']};
+const players={'9509':{full_name:'Bijan Robinson',position:'RB',team:'ATL',fantasy_positions:['RB']},'4984':{full_name:'Josh Allen',position:'QB',team:'BUF',fantasy_positions:['QB']}};
+const picks=[{player_id:'9509',roster_id:1,metadata:{amount:'75'},is_keeper:false}];
+const weeks={1:[{roster_id:1,matchup_id:1,points:30,players:['9509'],starters:['9509'],players_points:{'9509':30}},{roster_id:2,matchup_id:1,points:20,players:['4984'],starters:['4984'],players_points:{'4984':20}}],2:[{roster_id:1,matchup_id:1,points:0,players:[],starters:[]},{roster_id:2,matchup_id:1,points:0,players:[],starters:[]}]};
+const SL={data:{users,rosters,league,picks,state:{week:2},players,weeks,transactions:{},projections:{},stats:{}},currentWeek(){return 2},roster(id){return rosters.find(x=>x.roster_id==id)},rosterUser(r){return users.find(x=>x.user_id==r?.owner_id)},managerName(r){return this.rosterUser(r)?.display_name||''},teamName(r){let u=this.rosterUser(r);return u?.metadata?.team_name||u?.display_name||''},player(id){return players[id]||{full_name:`Player ${id}`,position:''}},fullName(id){return this.player(id).full_name},headshot(){return ''},pickPlayerId(p){return String(p.player_id)},pickCost(p){return p.metadata?.amount==null?null:Number(p.metadata.amount)},projectionPoints(){return 0},statPoints(){return 0},ready:Promise.resolve()};
+context.window.DIRTY_DS_LIVE=SL;
+vm.runInContext(fs.readFileSync(path.join(root,'public/assets/js/app.js'),'utf8'),context);
+const run=code=>vm.runInContext(code,context);
+assert.equal(run('canonicalManager(SL.roster(1))'),'Jack');
+assert.equal(run('canonicalManager(SL.roster(2))'),'Ben');
+assert.equal(run('completedWeeks().join(",")'),'1');
+assert.equal(run('weekRecord(recordAt(1,1))'),'1–0');
+assert.equal(run('weekRecord(recordAt(2,1))'),'0–1');
+assert.equal(run("recordsFor('all').find(x=>x.title==='Largest Auction Purchase').value"),'$75');
+assert.equal(run("recordsFor('all').find(x=>x.title==='Largest Auction Purchase').team"),'Bijan Robinson');
+assert.equal(run("recordsFor('all').find(x=>x.title==='Goat').year"),2018);
+run("currentPage='history';renderHistory()");assert.match(el('recordWall').innerHTML,/Bijan Robinson/);
+run("currentPage='teams';drawTeamsPage(true)");assert.equal((el('app').innerHTML.match(/data-manager=/g)||[]).length,13);assert.equal((el('app').innerHTML.match(/Historical manager/g)||[]).length,11);
+run("currentPage='season2026';liveWeek=1;drawSeason2026()");assert.match(el('livePowerContent').innerHTML,/1–0|0–1/);
+run("currentPage='players';drawPlayersPage(true)");run("playerProfile('Bijan Robinson','9509')");assert.match(el('modalContent').innerHTML,/Career starts/);assert.match(el('modalContent').innerHTML,/\$75/);
+console.log('PASS: archive, identity, weekly records, $75 auction, history, teams, rankings and profiles');

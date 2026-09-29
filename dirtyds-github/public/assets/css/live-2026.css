@@ -39,3 +39,12 @@
 .live-archive-link{margin-top:32px;border-top:1px solid #dbe4eb;padding-top:26px}.gallery-placeholder{padding:80px 0;text-align:center}.gallery-placeholder h2{font-size:42px;margin:8px 0}.gallery-placeholder p{color:#6a7b88}
 @media(max-width:900px){.z-match-layout{grid-template-columns:1fr}.z-sidebar{position:static;max-height:none}.z-match-list{grid-template-columns:repeat(2,1fr)}.z-recap-grid{grid-template-columns:1fr}.player-top-grid{grid-template-columns:repeat(2,1fr)}.z-week-highlights{grid-template-columns:1fr}.z-week-highlights>div{border-right:0;border-bottom:1px solid #dbe4eb}.z-week-highlights>div:last-child{border-bottom:0}.z-page-heading,.player-top-heading{align-items:flex-start;flex-direction:column}}
 @media(max-width:600px){.z-season-hero{padding:48px 0}.z-season-hero h1{letter-spacing:-2px}.z-hero-actions{align-items:flex-start;flex-direction:column}.z-match-list{display:none}.z-sidebar{padding:10px}.player-top-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.player-top-card{min-height:190px}.z-detail-stats{grid-template-columns:1fr}.z-recap{padding:16px}.z-field{min-width:650px}.z-team-header h2{font-size:17px}}
+/* Specialists sit just behind the line, with clear labels and team logos. */
+.z-field-specialists{min-height:96px;align-items:center}
+.z-field-specialists .z-player,.z-field-specialists .z-player strong,.z-field-specialists .z-player small{color:#fff;text-shadow:0 1px 3px #000}
+.z-field-specialists .z-player-photo img{object-fit:contain;background:#f4f7f8}
+.z-backs:has(.z-player:only-child){justify-content:space-around}
+.z-backs{justify-content:space-between;padding-inline:10%}
+.z-backs:has(.z-player:only-child){justify-content:flex-start;padding-left:18%}
+.z-qb{gap:125px}
+@media(max-width:600px){.z-backs{padding-inline:8%}.z-qb{gap:55px}}

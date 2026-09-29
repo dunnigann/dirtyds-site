@@ -39,3 +39,13 @@ To refresh with a new workbook, update `source/DirtyDs_Master_History_2018_2025_
 ## Local preview
 
 From the extracted folder, run `python -m http.server 8000 --directory public`, then open `http://localhost:8000`. On Windows, `py -m http.server 8000 --directory public` also works.
+
+## 2026 identity and record calculations
+
+The live Sleeper display names map to the same manager identities used in the 2018–2025 Yahoo archive. The Teams page has twelve active franchises and one historical manager, Hunter. The mapping lives in `public/assets/js/app.js` as `managerHandles`.
+
+The 2026 pages fetch Sleeper league, roster, matchup, draft, scoring and transaction data when opened. Weekly standings, recaps, power rankings and H2H results use completed weeks only. The current week becomes final when the league's `last_scored_leg` reaches that week. The All Time record selector compares individual seasons; unfinished 2026 season totals are withheld from season-long comparisons, while completed weekly scores and auction bids can qualify immediately.
+
+Yahoo workbook data includes team-week scores, player-season starter totals and auction history, but it does not contain player-week lineups, optimal benches or a season-by-season waiver ledger. League History marks superlatives requiring those missing inputs as unavailable for 2018–2025. Current-season values use Sleeper where its roster, matchup and transaction data support them. The `Storage Wars` and `Turtling` figures sum each player's starter points divided by that year's recorded draft cost, using $1 for undrafted players.
+
+Run `node scripts/check_update.cjs` from this directory to check the manager bridge, week records, 2026 auction inclusion and major page renders.

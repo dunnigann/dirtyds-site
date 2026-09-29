@@ -19,3 +19,22 @@
 @media(max-width:1250px){.brand{min-width:0}.nav-link{padding:10px}.main-nav.open{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:850px){.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-grid,.dd-player-list{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-two{grid-template-columns:1fr}}
 @media(max-width:700px){.dd-grid,.dd-player-list{grid-template-columns:1fr}.main-nav.open{grid-template-columns:repeat(2,minmax(0,1fr))}.dd-match{grid-template-columns:1fr;gap:7px}.dd-versus{order:2}.dd-match-side.right{order:3}.dd-match-side{justify-content:space-between}.dd-match-side.right{flex-direction:row;text-align:left}.dd-match-side.right .dd-initial{order:0}.dd-score{font-size:25px}.dd-table{min-width:0}.dd-controls>*{width:100%}.dd-controls select,.dd-controls input{width:100%;min-width:0}.dd-history-row{grid-template-columns:50px 1fr}.dd-history-row b:last-child{grid-column:2}.dd-profile-grid{grid-template-columns:repeat(2,1fr)}}
+/* Historical scores meet at the center; manager badges anchor the outside edges. */
+.dd-match{grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr);gap:8px}
+.dd-match-side{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px}
+.dd-match-side.right{display:grid;grid-template-columns:auto minmax(0,1fr) 42px;direction:ltr;text-align:right}
+.dd-match-side.right .dd-initial{grid-column:3;grid-row:1}
+.dd-match-side.right .dd-side-name{grid-column:2;grid-row:1}
+.dd-match-side.right .dd-score{grid-column:1;grid-row:1}
+.history-banner{background:linear-gradient(115deg,#081b2e,#194c43);color:white;padding:65px 0}
+.history-banner h2{color:white;font-size:clamp(36px,5vw,72px);margin:9px 0}
+.history-banner p{color:#cfe1d7;font-size:18px}
+.record-year-bar{overflow-x:auto;white-space:nowrap;margin-bottom:25px}
+@media(max-width:700px){.dd-match{grid-template-columns:minmax(0,1fr) 22px minmax(0,1fr);padding:10px;gap:3px}.dd-match-side{grid-template-columns:30px minmax(0,1fr);gap:5px}.dd-match-side.right{grid-template-columns:minmax(0,1fr) 30px}.dd-match-side .dd-initial{width:30px;height:30px;font-size:10px}.dd-side-name{font-size:10px}.dd-match-side .dd-score,.dd-match-side.right .dd-score{grid-column:1/-1;grid-row:2;font-size:18px;text-align:center}.dd-match-side.right .dd-initial{grid-column:2;grid-row:1}.dd-match-side.right .dd-side-name{grid-column:1;grid-row:1}.dd-versus{order:unset;font-size:9px}.dd-match-side.right{order:unset}}
+.player-career-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:20px}
+.player-career-grid>div{background:white;border:1px solid #dce4e9;border-radius:11px;padding:14px}
+.player-career-grid strong{display:block;font-size:23px;color:#17344c}
+.player-career-grid small{display:block;font-size:10px;text-transform:uppercase;color:#647686;letter-spacing:.06em;margin-top:5px}
+.player-profile-columns{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.player-profile-columns .dd-modal-block{margin-top:0}
+@media(max-width:700px){.player-career-grid{grid-template-columns:repeat(2,1fr)}.player-profile-columns{grid-template-columns:1fr}}

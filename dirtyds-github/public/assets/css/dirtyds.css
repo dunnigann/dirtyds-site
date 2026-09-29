@@ -38,3 +38,41 @@
 .player-profile-columns{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .player-profile-columns .dd-modal-block{margin-top:0}
 @media(max-width:700px){.player-career-grid{grid-template-columns:repeat(2,1fr)}.player-profile-columns{grid-template-columns:1fr}}
+/* The Sleeper chicken marks the site in navigation and the hero. */
+.brand-mark,.brand-mark.has-image{clip-path:none;border-radius:50%;overflow:hidden;background:#162b50}
+.brand-mark img,.hero-logo-lockup img{object-fit:cover}
+.history-banner{padding-bottom:48px}
+.history-banner-grid{margin-top:32px;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;padding-bottom:0}
+.history-banner-grid .banner{min-height:174px;padding:18px 8px 27px;border-color:#b79a54;box-shadow:0 8px 24px #0004}
+.history-banner-grid .banner-team{font-size:12px;overflow-wrap:anywhere}
+.history-banner-grid .banner-owner{color:#d4dfe9}
+.record-coverage{font-size:12px;line-height:1.6;color:#5b6d78;background:#fff;border:1px solid #d8e0e5;border-radius:10px;padding:12px 15px;margin:0 0 22px}
+.dd-player-portrait{display:block;flex:0 0 42px;width:42px;height:42px}
+.dd-player-portrait .z-photo{width:42px;height:42px;background:#d9e6de;color:#214b39;border:1px solid #b6c9be;font-size:12px}
+.player-top-section>.wrap{max-width:1900px}
+.player-top-section{overflow:hidden}
+.player-top-grid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:8px;align-items:end}
+.player-top-card{position:relative;min-width:0;min-height:0;border:0;background:transparent;color:#183129;padding:4px 2px 0;cursor:pointer;text-align:center;border-radius:9px}
+.player-top-card:hover,.player-top-card:focus-visible{background:#ffffffb8;outline:none;box-shadow:0 0 0 1px #d3e0d8 inset}
+.player-top-rank{position:absolute;top:0;left:6px;font-size:10px;font-weight:900;color:#7b8d83;z-index:4}
+.football-figure{height:158px;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;margin-bottom:6px}
+.football-head{width:var(--head);height:var(--head);min-width:var(--head);min-height:var(--head);display:grid;place-items:center;border-radius:50%;overflow:hidden;z-index:3;margin-bottom:-9px;background:#d9e4de;border:2px solid #fff;box-shadow:0 3px 10px #0b2b1b24;transition:transform .15s ease}
+.player-top-card:hover .football-head{transform:translateY(-2px)}
+.football-head .z-photo{width:100%;height:100%;border:0;border-radius:50%;background:#d9e4de;color:#385446;font-weight:900}
+.football-head .z-photo img{object-position:50% 18%}
+.football-body{position:relative;width:62px;height:48px;border-radius:10px 10px 6px 6px;background:linear-gradient(180deg,#214c3a,#17372d);box-shadow:inset 0 -8px 0 #102c24;z-index:2;display:grid;place-items:center;margin-top:0}
+.football-shoulders{position:absolute;width:78px;height:24px;top:2px;left:50%;transform:translateX(-50%);border-radius:12px 12px 7px 7px;background:#2c6049;clip-path:polygon(8% 18%,25% 0,75% 0,92% 18%,100% 74%,82% 100%,18% 100%,0 74%)}
+.football-jersey{position:relative;z-index:2;color:#dff6c2;font-size:11px;font-weight:900;letter-spacing:.7px;margin-top:6px}
+.football-waist{position:absolute;left:8px;right:8px;bottom:5px;height:4px;border-radius:5px;background:#dff6c2aa}
+.football-legs{display:flex;gap:12px;height:33px;margin-top:-2px;z-index:1}
+.football-legs i{display:block;width:10px;height:30px;background:#17372d;border-radius:0 0 7px 7px;position:relative}
+.football-legs i:after{content:'';position:absolute;width:19px;height:7px;bottom:-2px;background:#0c241d;border-radius:6px}
+.football-legs i:first-child:after{right:0}.football-legs i:last-child:after{left:0}
+.player-top-card>strong{display:block;margin-top:0;font-size:11px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.player-top-card>small{display:block;font-size:9px;color:#738279;margin-top:3px}
+.player-top-owner{display:block;min-height:22px;margin-top:4px;font-size:9px;font-weight:850;line-height:1.18;color:#355f50;overflow:hidden;text-overflow:ellipsis}
+.player-top-owner.free-agent{color:#8a6f67;font-style:italic}
+.player-top-points{font-variant-numeric:tabular-nums;font-weight:800}
+@media(max-width:1350px){.history-banner-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:1050px){#playerTopTen{overflow-x:auto;padding-bottom:10px}.player-top-grid{min-width:1180px;grid-template-columns:repeat(10,minmax(0,1fr))}}
+@media(max-width:700px){.history-banner-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.history-banner-grid .banner{min-height:160px}.player-top-card{min-height:0}.player-top-grid{gap:8px}.football-figure{height:150px}}

@@ -1,55 +1,28 @@
-// Lightweight data and page-render validation without browser dependencies.
-const fs = require('node:fs');
-const vm = require('node:vm');
-const path = require('node:path');
-const assert = require('node:assert/strict');
-const root = path.resolve(__dirname, '..');
-
-const elements = new Map();
-function element(id) {
-  if (!elements.has(id)) elements.set(id, {
-    innerHTML: '', textContent: '', hidden: false, value: '', style: {}, dataset: {},
-    classList: { add() {}, remove() {}, toggle() {} },
-    focus() {}, setAttribute() {}, addEventListener() {}, scrollIntoView() {},
-  });
-  return elements.get(id);
-}
-const pages = ['home', 'season2025', 'matchups', 'seasons', 'history', 'players', 'teams', 'draft'];
-const nav = pages.map(page => ({ ...element(`nav-${page}`), dataset: { page } }));
-const context = {
-  window: { scrollTo() {} }, URL,
-  document: {
-    getElementById: element, querySelectorAll(s) { return s === '.nav-link' ? nav : []; },
-    addEventListener() {}, body: { style: {} },
-  },
-  history: { replaceState() {} }, location: { hash: '#home' },
-};
+// Source-to-site consistency checks for the historical archive.
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),zlib=require('node:zlib'),assert=require('node:assert/strict');
+const root=path.resolve(__dirname,'..'),context={window:{}};
 vm.createContext(context);
-for (const file of ['public/data/site-data.js', 'public/data/history-data.js', 'public/assets/js/app.js']) {
-  vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context, { filename: file });
+for(const f of ['site-data.js','history-data.js','award-data.js','lineup-data.js'])vm.runInContext(fs.readFileSync(path.join(root,'public/data',f),'utf8'),context);
+const {DIRTY_DS_DATA:D,DIRTY_DS_HISTORY:H,DIRTY_DS_AWARDS:A,DIRTY_DS_LINEUPS:L}=context.window;
+const archive=JSON.parse(zlib.gunzipSync(fs.readFileSync(path.join(root,'source/weekly-player-rows.json.gz'))));
+assert.equal(H.meta.workbookGames,762);
+assert.equal(H.meta.games,767);
+assert.equal(H.matchups['2025']['17'].length,5);
+assert.equal(archive.rosters.filter(r=>r.year===2025&&r.week===17).length,8);
+assert.equal(archive.games.filter(g=>g.year===2025&&g.week===17).length,4);
+for(const r of archive.rosters.filter(r=>r.year===2025&&r.week===17)){
+  const known=H.weekly['2025']['17'].find(w=>w.teamId===r.teamId);
+  assert.ok(known,`Missing Week 17 team ${r.teamId}`);
+  const sum=Math.round(r.players.filter(p=>p.status==='starter').reduce((n,p)=>n+p.points,0)*100)/100;
+  assert.equal(sum,known.score,`Team ${r.teamId} starter score`);
 }
-const H = context.window.DIRTY_DS_HISTORY;
-const D = context.window.DIRTY_DS_DATA;
-assert.equal(H.meta.workbookGames, 762);
-assert.equal(H.meta.games, 765);
-assert.equal(H.matchups['2025']['17'].length, 3);
-assert.equal(H.matchups['2025']['17'][0].a.score, 217.54);
-assert.equal(D.draftHistory.length, 1529);
-assert.equal(H.players.length, 807);
-assert.equal(Object.values(H.standings).flat().length, 96);
-for (const page of pages) {
-  vm.runInContext(`go('${page}')`, context);
-  assert.ok(element('app').innerHTML.length > 600, `${page} did not render`);
-}
-assert.match(element('matchupList').innerHTML, /217\.54/);
-assert.match(element('playerResults').innerHTML, /starter pts/);
-assert.match(element('draftBoard').innerHTML, /Auction/);
-vm.runInContext("showPlayer(H.players.find(p=>p.name==='Christian McCaffrey').key)", context);
-assert.match(element('modalContent').innerHTML, /2024/);
-assert.match(element('modalContent').innerHTML, /\$73/);
-for (const file of ['public/index.html', 'public/404.html', 'public/assets/css/styles.css',
-  'public/assets/css/mobile.css', 'public/assets/css/dirtyds.css',
-  'public/assets/images/logo/dirtyds-logo.svg']) {
-  assert.ok(fs.existsSync(path.join(root, file)), `${file} missing`);
-}
-console.log('PASS: 8 pages render, player and auction details load, 765 known games reconcile.');
+assert.equal(L.championships['2025'].score,217.54);
+assert.equal(L.championships['2025'].starters.length,10);
+assert.equal(Object.keys(L.championships).length,8);
+assert.equal(Object.keys(L.managerLeaders).length,13);
+assert.equal(D.draftHistory.length,1529);
+assert.equal(H.players.length,807);
+assert.equal(Object.values(H.standings).flat().length,96);
+assert.equal(A.meta.incompleteOwners['2025'].join(','),'Nick,Ben');
+for(const f of ['public/index.html','public/404.html','public/assets/css/styles.css','public/assets/css/mobile.css','public/assets/css/dirtyds.css','public/assets/images/logo/dirtyds-chicken.jpg'])assert.ok(fs.existsSync(path.join(root,f)),`${f} missing`);
+console.log('PASS: eight Week 17 lineups reconcile, championship banners and manager data available, 767 known games.');

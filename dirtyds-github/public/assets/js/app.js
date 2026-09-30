@@ -1,6 +1,6 @@
 /* Dirty D's archive — ZYNFL-parity UI with live Sleeper 2026 data. */
 'use strict';
-const D=window.DIRTY_DS_DATA, H=window.DIRTY_DS_HISTORY, A=window.DIRTY_DS_AWARDS, P=window.DIRTY_DS_PHOTOS, SL=window.DIRTY_DS_LIVE;
+const D=window.DIRTY_DS_DATA, H=window.DIRTY_DS_HISTORY, A=window.DIRTY_DS_AWARDS, P=window.DIRTY_DS_PHOTOS, L=window.DIRTY_DS_LINEUPS, SL=window.DIRTY_DS_LIVE;
 const app=document.getElementById('app'), nav=[...document.querySelectorAll('.nav-link')];
 const backdrop=document.getElementById('modalBackdrop'), modalContent=document.getElementById('modalContent');
 const years=(H?.league||[]).map(x=>Number(x.year)).sort((a,b)=>b-a);
@@ -48,6 +48,13 @@ const pageHero=(k,t,desc='')=>`<section class="page-hero"><div class="wrap"><div
 const stat=(label,value)=>`<div class="stat"><div class="stat-value">${e(value)}</div><div class="stat-label">${e(label)}</div></div>`;
 const note=html=>`<div class="dd-note">${html}</div>`;
 const recordCard=r=>`<article class="record-card"><div class="record-title">${e(r.title)}</div><div class="record-value">${e(r.value)}</div><div class="record-detail">${e(r.owner||'')}${r.team?` · ${e(r.team)}`:''}${r.year?` · ${e(r.year)}`:''}</div>${r.detail?`<div class="record-subdetail">${e(r.detail)}</div>`:''}</article>`;
+const bannerCard=c=>`<button class="banner" type="button" data-champion-year="${Number(c.year)}" aria-label="Show ${e(c.year)} champion starting lineup"><span class="banner-year">${e(c.year)} CHAMPION</span><span class="banner-team">${e(c.team)}</span><span class="banner-owner">${e(c.owner)}</span><span class="banner-record">${e(c.record)}</span><span class="banner-cta">View championship lineup ↗</span></button>`;
+function wireBanners(){document.querySelectorAll('[data-champion-year]').forEach(b=>b.onclick=()=>showChampionship(Number(b.dataset.championYear)));}
+function showChampionship(year){
+  const x=L?.championships?.[year];
+  if(!x)return openModal(`<div class="modal-body"><h2>${e(year)} championship</h2><p>The archived player rows do not include this lineup.</p></div>`);
+  openModal(`<div class="modal-hero"><div class="eyebrow">${year} CHAMPIONSHIP · WEEK ${x.week}</div><h2>${e(x.team)}</h2><p>${e(x.owner)} · ${fmt(x.score)} starter points</p></div><div class="modal-body"><h3>Championship starting lineup</h3><div class="champ-lineup">${x.starters.map(p=>`<div><span class="champ-slot">${e(p.slot)}</span><strong>${e(p.name)}</strong><b>${fmt(p.points)} pts</b></div>`).join('')}</div></div>`);
+}
 function openModal(html){modalContent.innerHTML=html;backdrop.hidden=false;document.body.style.overflow='hidden';}
 function closeModal(){backdrop.hidden=true;document.body.style.overflow='';}
 document.getElementById('modalClose').onclick=closeModal;
@@ -168,9 +175,10 @@ function renderHome(){
   const champ=D.champions.find(c=>Number(c.year)===2025)||D.champions.at(-1);
   app.innerHTML=`<div class="page"><section class="hero"><div class="wrap hero-grid"><div><div class="eyebrow">EST. 2018 · AUCTION · HALF-PPR · SUPERFLEX</div><h1>DIRTY <span class="accent">D'S</span></h1><p class="hero-deck">Eight completed seasons of auction receipts and matchup history, plus a live 2026 season feed from Sleeper.</p></div><div class="hero-side"><div class="hero-logo-lockup"><img src="assets/images/logo/dirtyds-chicken.jpg" alt="Dirty D's"><div style="font-size:26px;font-weight:900;line-height:1.1">DIRTY D'S</div></div><div class="hero-side-label">Defending Champion</div><div class="hero-side-value">${e(champ?.team||'2025 Champion')}</div><div class="hero-side-sub">${e(champ?.owner||'')} · 2025 Champion · ${e(champ?.record||'')}</div></div></div></section>
   <div class="stats-strip"><div class="wrap stat-grid">${stat('Completed Seasons',8)}${stat('Archived Matchups',H.meta?.games||H.meta?.workbookGames||'—')}${stat('Historical Players',H.players?.length||'—')}${stat('Auction / Keeper Entries',D.draftHistory?.length||'—')}</div></div>
-  <section class="section dark"><div class="wrap">${heading('THE CHAMPIONSHIP HALL','Every banner so far.','The 2026 season remains in progress.')}<div class="banners">${D.champions.map(c=>`<div class="banner"><div class="banner-year">${c.year}</div><div class="banner-team">${e(c.team)}</div><div class="banner-owner">${e(c.owner)}</div><div class="banner-record">${e(c.record)}</div></div>`).join('')}</div></div></section>
+  <section class="section dark"><div class="wrap">${heading('THE CHAMPIONSHIP HALL','Every banner so far.','Select a banner to see the championship starting lineup.')}<div class="banners">${D.champions.map(bannerCard).join('')}</div></div></section>
   <section class="section"><div class="wrap">${heading('2026 LIVE','The league moved to Sleeper.','')}<div id="homeLive">${note('Loading the live league pulse…')}</div></div></section>
   <section class="section alt"><div class="wrap">${heading('FROM THE RECORD BOOK','The archive underneath the jokes.','')}<div class="record-grid" id="homeRecords">${recordsFor('all').filter(x=>x.value!=='Data unavailable').slice(0,4).map(recordCard).join('')}</div></div></section></div>`;
+  wireBanners();
   ensureLive().then(()=>{if(currentPage!=='home')return;const st=liveStandings(),lead=st[0],wk=SL.currentWeek();document.getElementById('homeRecords').innerHTML=recordsFor('all').filter(x=>x.value!=='Data unavailable').slice(0,4).map(recordCard).join('');document.getElementById('homeLive').innerHTML=`<div class="dd-grid"><article class="dd-card"><div class="dd-year-label">Current leader</div><h3>${e(lead?.team||'—')}</h3><p>${e(lead?.manager||'')} · ${rosterRecord(lead?.r)} · ${fmt(rosterPF(lead?.r))} PF</p></article><article class="dd-card"><div class="dd-year-label">Current week</div><div class="dd-price">${wk}</div><h3>2026 Season</h3><p>${weekComplete(wk)?`Week ${wk} final`:`Week ${wk} in progress`}</p></article><article class="dd-card"><div class="dd-year-label">Live rosters</div><div class="dd-price">${SL.data.rosters.length}</div><h3>Franchises synced</h3></article></div>`;}).catch(err=>{const target=document.getElementById('homeLive');if(target)target.innerHTML=`<div class="live-error">${e(err.message)}</div>`;});
 }
 
@@ -421,13 +429,10 @@ function recordDefinitions(){
     ['Our Guys','Most starter points from players drafted by that manager in a season',x=>x.byOwner.map(r=>({value:r.ownDraft,owner:r.owner,year:x.year}))],
     ['Moneyball','Most starter points from players not drafted by that manager',x=>x.byOwner.map(r=>({value:r.otherDraft,owner:r.owner,year:x.year}))],
     ['True Gambler','Most Starter Points from Kickers and Defense',x=>x.byOwner.map(r=>({value:r.kd,owner:r.owner,year:x.year}))],
-    ['Daddy Warbucks','Most FAAB plus Auction Spent',x=>x.byOwner.map(r=>({value:r.spend,owner:r.owner,year:x.year,format:'money'}))],
     ["God's Favorite",'Most Opponent Missed Lineup Points',x=>x.byOwner.map(r=>({value:r.opponentUnused??r.opponentMissed,owner:r.owner,year:x.year}))],
-    ['Cheapskate','Starter Points from FAAB-winning Players per FAAB Dollar',x=>x.byOwner.map(r=>({value:r.cheapRatio,owner:r.owner,year:x.year}))],
+    ['Cheapskate','Most Starter Points from FAAB-winning Players per FAAB Dollar',x=>x.byOwner.map(r=>({value:r.cheapRatio,owner:r.owner,year:x.year}))],
     ['Revolutionary','Most Points per Dollar Spent (FAAB + Auction)',x=>x.byOwner.map(r=>({value:r.pointsPerDollar,owner:r.owner,year:x.year}))],
-    ['Storage Wars','Most Starter Points per Auction Dollar',x=>x.byOwner.map(r=>({value:r.storage,owner:r.owner,year:x.year}))],
     ['Troubled Times','Least Points per Dollar Spent',x=>x.byOwner.map(r=>({value:r.pointsPerDollar,owner:r.owner,year:x.year})),true],
-    ['Turtling','Least Starter Points per Auction Dollar',x=>x.byOwner.map(r=>({value:r.storage,owner:r.owner,year:x.year})),true],
     ['Highest Weekly Score','Single team score',x=>x.weeks.map(r=>({value:r.score,owner:r.owner,year:x.year,detail:`Week ${r.week}`}))],
     ['Largest Auction Purchase','Single auction bid',x=>x.purchases.map(r=>({value:r.cost,owner:r.owner,team:r.player,year:x.year,format:'money'}))]
   ];
@@ -439,7 +444,7 @@ function recordDefinitions(){
 }
 function unavailableReason(title,selection){
   const year=Number(selection);
-  if([2018,2019].includes(year)&&['Daddy Warbucks','Cheapskate','Revolutionary','Troubled Times'].includes(title))return 'The 2018–2019 Yahoo transaction export has no winning FAAB dollar amounts, so this dollar-based award cannot be verified.';
+  if([2018,2019].includes(year)&&['Cheapskate','Revolutionary','Troubled Times'].includes(title))return 'The 2018–2019 Yahoo transaction export has no winning FAAB dollar amounts, so this dollar-based award cannot be verified.';
   if(title==='Cheapskate')return 'No positive-dollar winning FAAB claim with a recorded starter game is available for this selection.';
   if(year===2026)return 'Sleeper has no completed matchup or transaction data for this award yet.';
   return 'The captured source rows contain no qualifying value for this award.';
@@ -447,22 +452,23 @@ function unavailableReason(title,selection){
 function recordsFor(selection){
   const selected=selection==='all'?[...years,2026]:[Number(selection)];
   const sources=selected.map(recordCandidates);
-  const partial2025=new Set(['COTY','Spectator Sport',"God's Favorite",'Cheapskate','Our Guys','Moneyball','True Gambler','Revolutionary','Storage Wars','Troubled Times','Turtling',...['QB','RB','WR','TE','K','DEF'].flatMap(p=>[`Most ${p} Points · Season`,`Least ${p} Points · Season`])]);
+  const lineupAwards=new Set(['COTY','Spectator Sport',"God's Favorite",'Cheapskate','Our Guys','Moneyball','True Gambler','Revolutionary','Troubled Times',...['QB','RB','WR','TE','K','DEF'].flatMap(p=>[`Most ${p} Points · Season`,`Least ${p} Points · Season`])]);
   return recordDefinitions().map(([title,detail,fn,ascending])=>{
     const seasonFinished=completedWeeks().length>=num(SL?.data?.league?.settings?.playoff_week_start||15)-1;
-    const eligible=selection==='all'?sources.filter(x=>(x.year!==2026||seasonFinished||['Highest Weekly Score','Largest Auction Purchase'].includes(title))&&(x.year!==2025||!partial2025.has(title))):sources;
+    const eligible=(selection==='all'?sources.filter(x=>x.year!==2026||seasonFinished||['Highest Weekly Score','Largest Auction Purchase'].includes(title)):sources).map(x=>x.year===2025&&lineupAwards.has(title)?{...x,byOwner:x.byOwner.filter(r=>!A?.meta?.incompleteOwners?.['2025']?.includes(r.owner))}:x);
     const candidates=eligible.flatMap(fn).filter(r=>typeof r.value==='number'&&Number.isFinite(r.value));
     candidates.sort((a,b)=>ascending?a.value-b.value:b.value-a.value);
     const result=candidates[0];
     if(!result)return {title,value:'Unavailable',detail:unavailableReason(title,selection)};
-    const coverage=result.year===2025&&partial2025.has(title)?' · 2025 through Week 16; Week 17 lineups missing':'';
+    const coverage=result.year===2025&&lineupAwards.has(title)?' · 2025 Week 17 captured for eight teams; Nick and Ben excluded from lineup awards':'';
     const value=result.format==='money'?dollar(result.value):result.format==='percent'?`${fmt(result.value,1)}%`:fmt(result.value);
     return {title,value,owner:result.owner,team:result.team,year:result.year,detail:`${result.detail||detail}${coverage}`};
   });
 }
 function drawRecords(){
   const root=document.getElementById('recordWall');if(!root)return;
-  root.innerHTML=`<div class="record-grid">${recordsFor(recordYear).map(recordCard).join('')}</div>`;
+  const records=recordsFor(recordYear),positional=records.filter(r=>/^(Most|Least) (QB|RB|WR|TE|K|DEF) Points · Season$/.test(r.title));
+  root.innerHTML=`<div class="record-grid">${records.filter(r=>!positional.includes(r)).map(recordCard).join('')}</div><div class="record-divider"><span>POSITION PRODUCTION</span><h3>Most and least starter points by position</h3></div><div class="record-grid">${positional.map(recordCard).join('')}</div>`;
   document.querySelectorAll('[data-record-year]').forEach(b=>{b.classList.toggle('active',b.dataset.recordYear===recordYear);b.setAttribute('aria-pressed',String(b.dataset.recordYear===recordYear));});
 }
 function h2hWithCurrent(scope){
@@ -497,7 +503,8 @@ function auctionRecordCards(){
   ].filter(Boolean);
 }
 function renderHistory(){
-  app.innerHTML=`<div class="page">${pageHero('THE ARCHIVE','League History')}<section class="section history-banner"><div class="wrap"><div class="eyebrow">EST. 2018 · DIRTY D'S</div><h2>One league. Nine seasons.</h2><p>Every banner, every bid, every head-to-head result.</p><div class="history-banner-grid banners">${D.champions.map(c=>`<div class="banner"><div class="banner-year">${c.year} CHAMPION</div><div class="banner-team">${e(c.team)}</div><div class="banner-owner">${e(c.owner)}</div><div class="banner-record">${e(c.record)}</div></div>`).join('')}</div></div></section><section class="section"><div class="wrap">${heading('THE PODIUM','Champions, runners-up & third.')}<div class="dd-table-wrap"><table class="dd-table"><thead><tr><th>Season</th><th>Champion</th><th>Runner-up</th><th>Third</th></tr></thead><tbody>${(D.podium||[]).map(x=>`<tr><td><strong>${x.year}</strong></td><td><strong>🥇 ${e(x.gold)}</strong><small>${e(x.goldTeam)}</small></td><td>🥈 ${e(x.silver)}<small>${e(x.silverTeam)}</small></td><td>🥉 ${e(x.bronze)}<small>${e(x.bronzeTeam)}</small></td></tr>`).join('')}</tbody></table></div></div></section><section class="section alt"><div class="wrap">${heading('SUPERLATIVES','The awards wall.')}<div class="dd-season-bar record-year-bar">${[['all','All Time'],[2026,'2026'],...years.map(y=>[y,String(y)])].map(([k,label])=>`<button data-record-year="${k}">${label}</button>`).join('')}</div><p class="record-coverage">Yahoo starter and bench scores cover 2018–2025, except 2025 Week 17 player lineups. Its season-long lineup awards are marked through Week 16 and excluded from All Time. Winning FAAB dollar amounts for 2018–2019 are absent from the Yahoo export; dollar-based awards for those years explain that gap.</p><div id="recordWall"></div></div></section><section class="section alt"><div class="wrap">${heading('HEAD TO HEAD','Who owns whom?')}<p class="dd-muted">2018–2025 archive plus completed 2026 games through <span id="h2hThrough">Week ${Math.max(...completedWeeks(),0)}</span>.</p><div class="dd-season-bar">${[['all','All Games'],['regular','Regular'],['playoffs','Playoffs']].map(([k,v])=>`<button data-h2h="${k}" class="${h2hScope===k?'active':''}">${v}</button>`).join('')}</div><div id="h2h"></div></div></section></div>`;
+  app.innerHTML=`<div class="page">${pageHero('THE ARCHIVE','League History')}<section class="section history-banner"><div class="wrap"><div class="eyebrow">EST. 2018 · DIRTY D'S</div><h2>One league. Nine seasons.</h2><p>Select a banner to see the championship week starting lineup.</p><div class="history-banner-grid banners">${D.champions.map(bannerCard).join('')}</div></div></section><section class="section"><div class="wrap">${heading('THE PODIUM','Champions, runners-up & third.')}<div class="dd-table-wrap"><table class="dd-table"><thead><tr><th>Season</th><th>Champion</th><th>Runner-up</th><th>Third</th></tr></thead><tbody>${(D.podium||[]).map(x=>`<tr><td><strong>${x.year}</strong></td><td><strong>🥇 ${e(x.gold)}</strong><small>${e(x.goldTeam)}</small></td><td>🥈 ${e(x.silver)}<small>${e(x.silverTeam)}</small></td><td>🥉 ${e(x.bronze)}<small>${e(x.bronzeTeam)}</small></td></tr>`).join('')}</tbody></table></div></div></section><section class="section alt"><div class="wrap">${heading('SUPERLATIVES','The awards wall.')}<div class="dd-season-bar record-year-bar">${[['all','All Time'],[2026,'2026'],...years.map(y=>[y,String(y)])].map(([k,label])=>`<button data-record-year="${k}">${label}</button>`).join('')}</div><p class="record-coverage">Yahoo starter and bench scores include the eight 2025 Week 17 teams shown in the supplied screenshots. Nick and Ben’s 5th-place player lineups were not provided, so they are excluded from 2025 lineup awards. Winning FAAB amounts for 2018–2019 were not recorded; dollar-based awards for those years explain that gap.</p><div id="recordWall"></div></div></section><section class="section alt"><div class="wrap">${heading('HEAD TO HEAD','Who owns whom?')}<p class="dd-muted">2018–2025 archive plus completed 2026 games through <span id="h2hThrough">Week ${Math.max(...completedWeeks(),0)}</span>.</p><div class="dd-season-bar">${[['all','All Games'],['regular','Regular'],['playoffs','Playoffs']].map(([k,v])=>`<button data-h2h="${k}" class="${h2hScope===k?'active':''}">${v}</button>`).join('')}</div><div id="h2h"></div></div></section></div>`;
+  wireBanners();
   document.querySelectorAll('[data-record-year]').forEach(b=>b.onclick=()=>{recordYear=b.dataset.recordYear;drawRecords();});drawRecords();
   document.querySelectorAll('[data-h2h]').forEach(b=>b.onclick=()=>{h2hScope=b.dataset.h2h;document.querySelectorAll('[data-h2h]').forEach(x=>x.classList.toggle('active',x===b));drawH2H();});drawH2H();
   ensureLive().then(()=>{if(currentPage==='history'){document.getElementById('h2hThrough').textContent=`Week ${Math.max(...completedWeeks(),0)}`;drawRecords();drawH2H();}}).catch(()=>{});
@@ -603,16 +610,48 @@ function drawTeamsPage(hasLive=true){
     const x=byOwner[owner],profile=D.owners[owner],history=years.flatMap(y=>(H.standings?.[String(y)]||[]).filter(r=>r.owner===owner));
     const oldW=history.reduce((n,r)=>n+num(r.w),0),oldL=history.reduce((n,r)=>n+num(r.l),0);
     const currentRecord=x?recordAt(x.r.roster_id,Math.max(...completedWeeks(),0)):{w:0,l:0};
-    return `<button class="team-card ${owner==='Hunter'?'alumni':''}" data-manager="${e(owner)}"><div class="team-photo ${x&&userAvatar(x.user)?'has-photo':''}">${x&&userAvatar(x.user)?`<img src="${e(userAvatar(x.user))}" alt="">`:`<div class="team-initials">${e(initials(owner))}</div>`}</div><div class="team-body"><div class="team-name">${e(owner)}</div><div class="team-franchise">${e(x?.team||profile.currentTeam)}</div><div class="team-record"><strong>${oldW+currentRecord.w}–${oldL+currentRecord.l}</strong><span>League regular-season record</span></div></div></button>`;
+    return `<button class="team-card ${owner==='Hunter'?'alumni':''}" data-manager="${e(owner)}"><div class="team-photo"><div class="team-initials">${e(initials(owner))}</div></div><div class="team-body"><div class="team-name">${e(owner)}</div><div class="team-franchise">${e(x?.team||profile.currentTeam)}</div><div class="team-record"><strong>${oldW+currentRecord.w}–${oldL+currentRecord.l}</strong><span>League regular-season record</span></div></div></button>`;
   };
   app.innerHTML=`<div class="page">${pageHero('THE FRANCHISES','Teams')}<section class="section"><div class="wrap">${heading('CURRENT MANAGERS','The franchises.')}<div class="team-grid">${(D.ownerOrder||[]).filter(owner=>owner!=='Hunter').map(card).join('')}</div></div></section><section class="section alt"><div class="wrap">${heading('HISTORICAL MANAGERS','Past members of the league.')}<div class="team-grid">${card('Hunter')}</div></div></section></div>`;
   document.querySelectorAll('[data-manager]').forEach(b=>b.onclick=()=>showManager(b.dataset.manager));wireImageFallback(app);
 }
+function managerFinalPlace(owner,year){
+  if(year===2026)return 'In progress';
+  if(year===2025){const places={Tyler:1,Vinny:2,Bobby:3,Brent:4,Nick:5,Ben:6,Dan:7,Jake:8,James:9,Fritz:10,Jack:11,Jeff:12};return places[owner]?`${places[owner]}${['st','nd','rd'][places[owner]-1]||'th'}`:'Unrecorded';}
+  const podium=(D.podium||[]).find(x=>x.year===year);
+  if(podium?.gold===owner)return '1st';if(podium?.silver===owner)return '2nd';if(podium?.bronze===owner)return '3rd';
+  if((D.wallOfShame||[]).some(x=>x.year===year&&x.owner===owner))return 'Last';
+  return 'Unrecorded';
+}
+function managerMostStarted(owner){
+  const entries=new Map();
+  for(const p of L?.managerLeaders?.[owner]||[])entries.set(norm(p.name),{...p});
+  const r=liveTeams().find(x=>x.manager===owner)?.r;
+  if(r)for(const week of completedWeeks()){
+    const row=matchupRowForRoster(r.roster_id,week);if(!row)continue;
+    for(const {id} of lineupSlots(row)){
+      const player=SL.player(id);if(['K','DEF'].includes(player.position))continue;
+      const name=SL.fullName(id),key=norm(name),value=entries.get(key)||{name,starts:0,points:0};
+      value.starts++;value.points+=num(scoreFor(row,id));entries.set(key,value);
+    }
+  }
+  return [...entries.values()].sort((a,b)=>b.starts-a.starts||b.points-a.points||a.name.localeCompare(b.name)).slice(0,10);
+}
+function managerSeasonTotals(owner,year,fallback){
+  const games=Object.values(H.matchups?.[String(year)]||{}).flat(),totals={pf:0,pa:0,games:0};
+  for(const g of games){
+    const a=g.a?.owner===owner,b=g.b?.owner===owner;
+    if(!a&&!b)continue;
+    totals.pf+=num(a?g.a.score:g.b.score);totals.pa+=num(a?g.b.score:g.a.score);totals.games++;
+  }
+  return totals.games?{pf:totals.pf,pa:totals.pa}:fallback;
+}
 function showManager(owner){
   const p=D.owners[owner],r=liveTeams().find(x=>x.manager===owner),history=years.flatMap(y=>(H.standings?.[String(y)]||[]).filter(x=>x.owner===owner));
   const current=r?recordAt(r.r.roster_id,Math.max(...completedWeeks(),0)):null;
-  const rows=[...(current?[{year:2026,team:r.team,...current}]:[]),...history];
-  openModal(`<div class="modal-hero"><div class="modal-hero-grid">${r?photo(userAvatar(r.user),owner):`<div class="modal-avatar">${e(initials(owner))}</div>`}<div><div class="eyebrow">DIRTY D'S FRANCHISE FILE</div><h2>${e(owner)}</h2><p>${e(r?.team||p.currentTeam)}</p></div></div></div><div class="modal-body"><div class="dd-profile-grid"><div><strong>${p.trophies?.gold||0}</strong><small>Titles</small></div><div><strong>${rows.reduce((n,x)=>n+num(x.w),0)}–${rows.reduce((n,x)=>n+num(x.l),0)}</strong><small>Regular-season record</small></div><div><strong>${rows.length}</strong><small>Seasons</small></div></div><div class="dd-modal-block"><h3>Season history</h3>${rows.map(x=>`<div class="dd-history-row"><strong>${x.year}</strong><span>${e(x.team)} · ${x.w}–${x.l}</span><b>${fmt(x.pf)} PF</b></div>`).join('')}</div></div>`);wireImageFallback(modalContent);
+  const rows=[...(current?[{year:2026,team:r.team,...current}]:[]),...history.map(x=>({...x,...managerSeasonTotals(owner,x.year,x)}))];
+  const leaders=managerMostStarted(owner);
+  openModal(`<div class="modal-hero"><div class="modal-hero-grid">${r?photo(userAvatar(r.user),owner):`<div class="modal-avatar">${e(initials(owner))}</div>`}<div><div class="eyebrow">DIRTY D'S FRANCHISE FILE</div><h2>${e(owner)}</h2><p>${e(r?.team||p.currentTeam)}</p></div></div></div><div class="modal-body"><div class="dd-profile-grid"><div><strong>${p.trophies?.gold||0}</strong><small>Titles</small></div><div><strong>${rows.reduce((n,x)=>n+num(x.w),0)}–${rows.reduce((n,x)=>n+num(x.l),0)}</strong><small>Regular-season record</small></div><div><strong>${rows.length}</strong><small>Seasons</small></div></div><div class="dd-modal-block"><h3>Top 10 Most Started Players (Points Scored)</h3><ol class="manager-leaders">${leaders.map(x=>`<li><strong>${e(x.name)}</strong> — ${x.starts} Games Started (${fmt(x.points,1)} Points Scored as a starter for this team)</li>`).join('')}</ol></div><div class="dd-modal-block"><h3>Season history</h3><p class="dd-modal-caption">PF and PA include every recorded matchup that season. The W–L column is the regular-season record.</p>${rows.map(x=>`<div class="manager-season-row"><strong>${x.year} · ${e(x.team)}</strong><span>${x.w}–${x.l}${x.t?`–${x.t}`:''} · ${fmt(x.pf)} total PF · ${fmt(x.pa)} total PA</span><b>Final place: ${e(managerFinalPlace(owner,x.year))}</b>${managerFinalPlace(owner,x.year)==='Unrecorded'?`<small>Regular-season place: #${x.rank}; final placement was not captured.</small>`:''}</div>`).join('')}</div></div>`);wireImageFallback(modalContent);
 }
 function showLiveTeam(rosterId){
   const r=SL.roster(rosterId),u=SL.rosterUser(r),row=matchupRowForRoster(rosterId,liveWeek),players=(r.players||[]).map(id=>SL.player(id)).filter(Boolean);

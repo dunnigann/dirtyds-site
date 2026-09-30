@@ -76,3 +76,55 @@
 @media(max-width:1350px){.history-banner-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:1050px){#playerTopTen{overflow-x:auto;padding-bottom:10px}.player-top-grid{min-width:1180px;grid-template-columns:repeat(10,minmax(0,1fr))}}
 @media(max-width:700px){.history-banner-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.history-banner-grid .banner{min-height:160px}.player-top-card{min-height:0}.player-top-grid{gap:8px}.football-figure{height:150px}}
+
+/* September 2026 palette and layout pass. */
+:root{--ink:#37202b;--ink-2:#522331;--navy:#a9293b;--navy-2:#881d30;--navy-3:#c54555;--red:#b3273c;--gold:#f2c74d;--gold-2:#ffe38a;--cream:#fff7e7;--paper:#fffdfa;--line:#eadde1;--muted:#685c65}
+.site-header{background:#a9293bf5;border-bottom:2px solid #f2c74d}
+.brand-copy small,.nav-link{color:#fff0f2}.nav-link.active:after{background:#ffe38a}
+.hero{background:radial-gradient(circle at 80% 18%,#ffe38a2b,transparent 32%),linear-gradient(125deg,#7c1b30,#b93446 66%,#cf5963);border-bottom-color:#f2c74d}
+.hero-deck,.hero-side-sub,.hero-side-label{color:#fff0ed}
+.page-hero{background:linear-gradient(140deg,#eaf6fb,#fffdfa 76%)}
+.page-hero .eyebrow{color:#a9293b}.section.alt,.player-top-section{background:#eaf6fb;border-color:#cce5f0}
+.section.dark,.site-footer{background:#891d2f}.site-footer{color:#ffe7e9}.site-footer strong{color:#fff}
+.z-season-hero{background:linear-gradient(125deg,#801d30,#b83145)}
+.z-season-hero .eyebrow,.z-season-hero h1 span{color:#ffe38a}
+.z-weekbar button.active,.z-toggle button.active,.dd-season-bar button.active,.z-match-choice.selected{background:#a9293b;border-color:#a9293b;color:#fff}
+.z-match-choice.selected>small,.z-match-choice.selected>span>strong{color:#ffe38a}
+.dd-action,.dd-initial,.dd-preview{background:#a9293b;color:#fff}
+.dd-action:hover{background:#811b2d}.dd-player-value,.dd-stat-row strong,.dd-profile-grid strong,.player-career-grid strong,.dd-score{color:#96273a}
+.dd-table th,.matrix th,.matrix th:first-child{background:#a9293b;color:#fff}
+.record-card{border-top:4px solid #b3273c}.record-card .record-value{color:#a9293b}
+.record-divider{margin:48px 0 23px;padding:24px 0 0;border-top:3px solid #b3273c;position:relative}
+.record-divider:before{content:'';position:absolute;width:72px;height:5px;background:#f2c74d;top:-4px;left:0}
+.record-divider span{display:block;color:#a9293b;font-size:11px;font-weight:900;letter-spacing:.17em}
+.record-divider h3{font-size:clamp(23px,3vw,34px);margin:7px 0 0;color:#37202b}
+.history-banner{background:linear-gradient(130deg,#8b1d31,#b92e45);padding:64px 0 84px;overflow:visible}
+.history-banner p{color:#fff4f0}
+.history-banner-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:28px;padding:12px 4px 38px;overflow:visible}
+.history-banner-grid .banner,.banners .banner{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-width:0;width:100%;min-height:220px;padding:23px 15px 42px;background:linear-gradient(175deg,#fff9f8,#ffe8e8);color:#7f1930;border:2px solid #f2c74d;clip-path:polygon(0 0,100% 0,100% 86%,50% 100%,0 86%);font:inherit;box-shadow:none;text-align:center;transition:transform .18s ease}
+.history-banner-grid .banner:hover,.banners .banner:hover{transform:translateY(-3px)}
+.banner:focus-visible{outline:3px solid #77c6e5;outline-offset:3px}
+.history-banner-grid .banner:before,.banners .banner:before{background:#e0af2e;flex:none}
+.history-banner-grid .banner-year,.banners .banner-year{color:#9c2638;display:block}
+.history-banner-grid .banner-team,.banners .banner-team{color:#641728;min-height:42px;font-size:15px;overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center}
+.history-banner-grid .banner-owner,.banners .banner-owner{color:#784657;display:block}
+.history-banner-grid .banner-record,.banners .banner-record{color:#8f1f34;display:block}
+.history-banner-grid .banner-cta,.banners .banner-cta{display:block;margin-top:9px;color:#7d3143;font-weight:800;font-size:10px;line-height:1.2}
+.champ-lineup{display:grid;gap:8px}.champ-lineup>div{display:grid;grid-template-columns:90px minmax(0,1fr) auto;gap:12px;align-items:center;background:#fff;border:1px solid #eadde1;border-radius:9px;padding:10px 12px}
+.champ-slot{font-size:11px;font-weight:900;color:#a9293b}.champ-lineup b{white-space:nowrap;font-variant-numeric:tabular-nums}
+.manager-leaders{padding-left:24px;margin:0}.manager-leaders li{padding:7px 4px;border-bottom:1px solid #efe6e8;font-size:13px;line-height:1.5}.manager-leaders li:last-child{border-bottom:0}
+.manager-season-row{display:grid;grid-template-columns:1fr auto;gap:5px 12px;border-top:1px solid #e9dfe2;padding:12px 0;font-size:13px}.manager-season-row:first-of-type{border-top:0}.manager-season-row>span{grid-column:1}.manager-season-row>b{grid-column:2;grid-row:1/3;color:#9b2539;align-self:center}.manager-season-row>small{grid-column:1/-1;color:#6b6470}
+.team-card .team-photo{background:linear-gradient(150deg,#9d253a,#d65364);color:#fff;border-color:#f2c74d}
+.record-year-bar,#playerTopTen{overflow:visible;white-space:normal}.player-top-section{overflow:visible}
+.football-body,.football-legs i{background:#b52c41}.football-shoulders{background:#d24658}.football-jersey{color:#ffe38a}.football-waist{background:#ffe38aaa}
+@media(max-width:1050px){#playerTopTen{overflow:visible}.player-top-grid{min-width:0;grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-width:850px){.history-banner-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.record-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+ .history-banner{padding:38px 0 58px}.history-banner-grid{gap:12px;padding-bottom:28px}.history-banner-grid .banner{min-height:190px;padding:16px 8px 35px}.history-banner-grid .banner-team{font-size:12px}
+ .player-top-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.player-top-card{min-width:0}.record-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.record-card{min-width:0;padding:12px}.record-card .record-value{font-size:22px;overflow-wrap:anywhere}
+ .dd-table-wrap{overflow:visible}.dd-table{min-width:0}.dd-controls>*{min-width:0}
+ .champ-lineup>div{grid-template-columns:55px minmax(0,1fr) auto;gap:6px;padding:8px;font-size:12px}.champ-slot{font-size:9px}
+ .manager-season-row{grid-template-columns:1fr}.manager-season-row>b{grid-column:1;grid-row:auto}.modal-body{padding:18px 16px 26px}.modal-hero{padding:24px 16px}
+ .z-field-scroll{overflow:visible}.z-field{min-width:0}.z-player-photo{max-width:100%}.z-backs,.z-qb,.z-receivers{gap:3px}.z-player{max-width:100%}
+}
+@media(max-width:420px){.history-banner-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.record-grid{grid-template-columns:1fr}.record-card{min-height:0}.champ-lineup b{font-size:11px}}

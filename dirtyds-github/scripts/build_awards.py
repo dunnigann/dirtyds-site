@@ -26,16 +26,29 @@ team_owner = {(int(year),int(row['teamId'])):row['owner'] for year,rows in H['st
 rows_by_key=collections.defaultdict(list)
 games={}
 files={}
-for path in map(Path,sys.argv[1:]):
-    data=json.loads(path.read_text())
-    year=int(data.get('season') or next(iter(data['seasons'])))
-    files.setdefault(year,[]).append(path.name)
-    for r in data['weekly_rosters']:
-        key=(year,int(r['week']),int(r['team_id']))
-        rows_by_key[key].append(dict(player=r['player'],slot=r['roster_slot'],status=r['roster_status'],points=float(r['fantasy_points'] or 0),projection=r.get('projection')))
-    for m in data['weekly_matchups']:
-        key=(year,int(m['week']),min(m['team1_id'],m['team2_id']),max(m['team1_id'],m['team2_id']))
-        games[key]=dict(year=year,week=m['week'],a=m['team1_id'],b=m['team2_id'],scoreA=m['team1_score'],scoreB=m['team2_score'],playoff=bool(m.get('playoff_week')))
+if not sys.argv[1:]:
+    with gzip.open(ROOT/'source/weekly-player-rows.json.gz','rt',encoding='utf-8') as f:
+        archived=json.load(f)
+    for r in archived['rosters']:
+        key=(int(r['year']),int(r['week']),int(r['teamId']))
+        rows_by_key[key]=r['players']
+    for g in archived['games']:
+        key=(int(g['year']),int(g['week']),min(g['a'],g['b']),max(g['a'],g['b']))
+        games[key]=g
+    files={int(y):list(names) for y,names in json.loads((ROOT/'public/data/award-data.js').read_text().split('=',1)[1].rstrip(' ;\n'))['meta']['files'].items()}
+    files.setdefault(2025,[])
+    if 'week17-2025.txt' not in files[2025]:files[2025].append('week17-2025.txt')
+else:
+    for path in map(Path,sys.argv[1:]):
+        data=json.loads(path.read_text())
+        year=int(data.get('season') or next(iter(data['seasons'])))
+        files.setdefault(year,[]).append(path.name)
+        for r in data['weekly_rosters']:
+            key=(year,int(r['week']),int(r['team_id']))
+            rows_by_key[key].append(dict(player=r['player'],slot=r['roster_slot'],status=r['roster_status'],points=float(r['fantasy_points'] or 0),projection=r.get('projection')))
+        for m in data['weekly_matchups']:
+            key=(year,int(m['week']),min(m['team1_id'],m['team2_id']),max(m['team1_id'],m['team2_id']))
+            games[key]=dict(year=year,week=m['week'],a=m['team1_id'],b=m['team2_id'],scoreA=m['team1_score'],scoreB=m['team2_score'],playoff=bool(m.get('playoff_week')))
 
 slots2018=['QB','QB','RB','RB','WR','WR','TE','FLEX','K','DEF']
 slotsLater=['QB','SF','RB','RB','WR','WR','TE','FLEX','K','DEF']
@@ -144,7 +157,7 @@ for year,owners in summary.items():
         s['positions']={k:round(v,2) for k,v in s['positions'].items()}
         del s['effSum'];del s['effWeeks']
 
-out=dict(seasons={str(y):list(owners.values()) for y,owners in sorted(summary.items())},meta=dict(files=files,teamWeeks=len(rows_by_key),matchups=len(games),playerWeeks=sum(len(v) for v in rows_by_key.values()),coverage={'2025':'Through Week 16; Week 17 player lineups were not captured','2018-2019':'FAAB bid amounts were not recorded'},method='Weekly legal lineup optimization over active starters and bench; 2018 uses two QB slots, 2019 onward QB plus superflex.'))
+out=dict(seasons={str(y):list(owners.values()) for y,owners in sorted(summary.items())},meta=dict(files=files,teamWeeks=len(rows_by_key),matchups=len(games),playerWeeks=sum(len(v) for v in rows_by_key.values()),coverage={'2025':'Eight Week 17 lineups verified from Yahoo screenshots; Nick and Ben 5th-place lineups were not supplied','2018-2019':'FAAB bid amounts were not recorded'},incompleteOwners={'2025':['Nick','Ben']},method='Weekly legal lineup optimization over active starters and bench; 2018 uses two QB slots, 2019 onward QB plus superflex.'))
 source=ROOT/'source/weekly-player-rows.json.gz'
 with gzip.open(source,'wt',encoding='utf-8') as f:json.dump(dict(rosters=[dict(year=y,week=w,teamId=t,players=rs) for (y,w,t),rs in sorted(rows_by_key.items())],games=list(games.values())),f,separators=(',',':'))
 output=ROOT/'public/data/award-data.js'

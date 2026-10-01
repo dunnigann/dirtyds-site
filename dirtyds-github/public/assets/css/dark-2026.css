@@ -98,3 +98,11 @@ html,body{background:#10151f;color:#f5f7fb}
 .tx-move-tag{width:59px;flex:none;color:#77edc8;font-size:9px;font-weight:900;letter-spacing:.04em}.tx-move-tag.dropped{color:#ffa6b2}
 @media(max-width:800px){.tx-moves{grid-template-columns:1fr}}
 @media(max-width:600px){.tx-side+.tx-side{border-left:0;border-top:1px solid #405367}.tx-card-head,.tx-side{padding:14px}.tx-move{padding:12px}.tx-manager-avatar{width:37px;height:37px}.tx-move-meta small{font-size:9px}.tx-weekbar button{padding:7px 9px;font-size:11px}.tx-player strong{font-size:12px}}
+
+/* The responsive table script turns Podium rows into cards on phones. */
+@media(max-width:780px){
+ .dd-table.responsive-table tbody tr{background:#1b2633;color:#f5f7fb;border-color:#3d5061}
+ .dd-table.responsive-table tbody td{color:#f5f7fb}
+ .dd-table.responsive-table tbody td::before{color:#a9c6da}
+ .dd-table.responsive-table tbody td small{color:#b5c4d3}
+}

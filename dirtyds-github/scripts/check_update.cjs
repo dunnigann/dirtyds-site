@@ -1,18 +1,18 @@
 // Reproducible checks for the archive and live identity / week logic.
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
-const els=new Map();function el(id){if(!els.has(id))els.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},style:{},hidden:false,classList:{toggle(){},add(){},remove(){}},setAttribute(){},addEventListener(){},scrollIntoView(){},querySelectorAll(){return[]}});return els.get(id);}
+const els=new Map();function el(id){if(!els.has(id)){const classList={toggle(){},add(){},remove(){}};els.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},style:{},hidden:false,classList,parentElement:{classList},setAttribute(){},getAttribute(){return'false'},addEventListener(){},scrollIntoView(){},querySelectorAll(){return[]}});}return els.get(id);}
 const nav=['home','history','teams','season2026','matchups','players','draft'].map(page=>({...el(page),dataset:{page}}));
 const context={window:{scrollTo(){}},document:{getElementById:el,querySelectorAll(sel){return sel==='.nav-link'?nav:[]},addEventListener(){},body:{style:{}}},history:{replaceState(){}},location:{hash:'#home'},console,URL};
 vm.createContext(context);
-for(const file of ['public/data/site-data.js','public/data/history-data.js','public/data/award-data.js','public/data/lineup-data.js','public/data/photo-data.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),context);
+for(const file of ['public/data/site-data.js','public/data/history-data.js','public/data/award-data.js','public/data/lineup-data.js','public/data/photo-data.js','public/data/keepers-2026.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),context);
 const users=[{user_id:'a',display_name:'jdunnigan',metadata:{team_name:"Annie's Boobs"}},{user_id:'b',display_name:'Zwack',metadata:{team_name:'Cheese Curds'}}];
 const rosters=[{roster_id:1,owner_id:'a',settings:{wins:1,losses:0},players:['9509']},{roster_id:2,owner_id:'b',settings:{wins:0,losses:1},players:['4984']}];
 const league={settings:{last_scored_leg:1},roster_positions:['QB','RB']};
 const players={'9509':{full_name:'Bijan Robinson',position:'RB',team:'ATL',fantasy_positions:['RB']},'4984':{full_name:'Josh Allen',position:'QB',team:'BUF',fantasy_positions:['QB']}};
 const picks=[{player_id:'9509',roster_id:1,metadata:{amount:'75'},is_keeper:false}];
 const weeks={1:[{roster_id:1,matchup_id:1,points:30,players:['9509'],starters:['9509'],players_points:{'9509':30}},{roster_id:2,matchup_id:1,points:20,players:['4984'],starters:['4984'],players_points:{'4984':20}}],2:[{roster_id:1,matchup_id:1,points:0,players:[],starters:[]},{roster_id:2,matchup_id:1,points:0,players:[],starters:[]}]};
-const SL={data:{users,rosters,league,picks,state:{week:2},players,weeks,transactions:{},projections:{},stats:{}},currentWeek(){return 2},roster(id){return rosters.find(x=>x.roster_id==id)},rosterUser(r){return users.find(x=>x.user_id==r?.owner_id)},managerName(r){return this.rosterUser(r)?.display_name||''},teamName(r){let u=this.rosterUser(r);return u?.metadata?.team_name||u?.display_name||''},player(id){return players[id]||{full_name:`Player ${id}`,position:''}},fullName(id){return this.player(id).full_name},headshot(){return ''},pickPlayerId(p){return String(p.player_id)},pickCost(p){return p.metadata?.amount==null?null:Number(p.metadata.amount)},projectionPoints(){return 0},statPoints(){return 0},ready:Promise.resolve()};
+const SL={data:{users,rosters,league,picks,state:{week:2},players,weeks,transactions:{},projections:{},rosProjections:{},stats:{}},currentWeek(){return 2},roster(id){return rosters.find(x=>x.roster_id==id)},rosterUser(r){return users.find(x=>x.user_id==r?.owner_id)},managerName(r){return this.rosterUser(r)?.display_name||''},teamName(r){let u=this.rosterUser(r);return u?.metadata?.team_name||u?.display_name||''},player(id){return players[id]||{full_name:`Player ${id}`,position:''}},fullName(id){return this.player(id).full_name},headshot(){return ''},pickPlayerId(p){return String(p.player_id)},pickCost(p){return p.metadata?.amount==null?null:Number(p.metadata.amount)},projectionPoints(){return 0},statPoints(){return 0},ready:Promise.resolve()};
 context.window.DIRTY_DS_LIVE=SL;
 vm.runInContext(fs.readFileSync(path.join(root,'public/assets/js/app.js'),'utf8'),context);
 const run=code=>vm.runInContext(code,context);
@@ -31,6 +31,13 @@ run('showChampionship(2025)');assert.match(el('modalContent').innerHTML,/Derrick
 run("currentPage='teams';drawTeamsPage(true)");assert.equal((el('app').innerHTML.match(/data-manager=/g)||[]).length,13);assert.match(el('app').innerHTML,/HISTORICAL MANAGERS/);assert.match(el('app').innerHTML,/data-manager="Hunter"/);assert.doesNotMatch(el('app').innerHTML,/team-photo has-photo/);
 run("showManager('Tyler')");assert.match(el('modalContent').innerHTML,/Top 10 Most Started Players \(Points Scored\)/);assert.match(el('modalContent').innerHTML,/Final place: 1st/);assert.match(el('modalContent').innerHTML,/ PA/);
 assert.notEqual(run("recordsFor('all').find(x=>x.title==='COTY').value"),'Unavailable');assert.equal(run("recordsFor('2018').find(x=>x.title==='Cheapskate').value"),'Unavailable');assert.notEqual(run("recordsFor('2024').find(x=>x.title==='Least RB Points · Season').value"),'Unavailable');assert.equal(run("recordDefinitions().some(x=>['Daddy Warbucks','Storage Wars','Turtling'].includes(x[0]))"),false);
-run("currentPage='season2026';liveWeek=1;drawSeason2026()");assert.match(el('livePowerContent').innerHTML,/1–0|0–1/);
+run("currentPage='season2026';liveWeek=1;drawSeason2026()");assert.doesNotMatch(el('app').innerHTML,/id="livePowerRankings"/);
+run("currentPage='power';powerView='jack';drawPowerRankings()");assert.match(el('livePowerContent').innerHTML,/Drake London/);
+run("powerView='analyst';drawPowerRankings()");assert.match(el('livePowerContent').innerHTML,/1,000 remaining-season simulations/);
+assert.equal(run('liveDraftRows().filter(x=>x.keeper).length'),33);
+for(const [position,count] of [['QB',1],['RB',2],['WR',3],['TE',2],['K',1]])for(let i=1;i<=count;i++){const id=`ATL-${position}${i}`;players[id]={player_id:id,full_name:`Test ${position} ${i}`,position,team:'ATL',status:'Active',depth_chart_order:i};}
+assert.equal(run("nflLineup('ATL').length"),10);
+assert.equal(run("nflLineup('ATL').filter(x=>x.owner==='Free Agent').length"),10);
+assert.match(run("formation(nflLineup('ATL'),true,true)"),/z-backs[\s\S]*Test K 1[\s\S]*ATL D\/ST/);
 run("currentPage='players';drawPlayersPage(true)");run("playerProfile('Bijan Robinson','9509')");assert.match(el('modalContent').innerHTML,/Career starts/);assert.match(el('modalContent').innerHTML,/\$75/);assert.match(el('modalContent').innerHTML,/Trophy case/);assert.match(el('playerResults').innerHTML,/sleepercdn.com/);
 console.log('PASS: archive, identity, weekly records, $75 auction, history, teams, rankings and profiles');

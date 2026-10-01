@@ -157,7 +157,7 @@ for year,owners in summary.items():
         s['positions']={k:round(v,2) for k,v in s['positions'].items()}
         del s['effSum'];del s['effWeeks']
 
-out=dict(seasons={str(y):list(owners.values()) for y,owners in sorted(summary.items())},meta=dict(files=files,teamWeeks=len(rows_by_key),matchups=len(games),playerWeeks=sum(len(v) for v in rows_by_key.values()),coverage={'2025':'Eight Week 17 lineups verified from Yahoo screenshots; Nick and Ben 5th-place lineups were not supplied','2018-2019':'FAAB bid amounts were not recorded'},incompleteOwners={'2025':['Nick','Ben']},method='Weekly legal lineup optimization over active starters and bench; 2018 uses two QB slots, 2019 onward QB plus superflex.'))
+out=dict(seasons={str(y):list(owners.values()) for y,owners in sorted(summary.items())},meta=dict(files=files,teamWeeks=len(rows_by_key),matchups=len(games),playerWeeks=sum(len(v) for v in rows_by_key.values()),coverage={'2025':'Eight Week 17 lineups; Nick and Ben completed fifth place in Week 16','2018-2019':'FAAB bid amounts were not recorded'},incompleteOwners={'2025':[]},method='Weekly legal lineup optimization over active starters and bench; 2018 uses two QB slots, 2019 onward QB plus superflex.'))
 source=ROOT/'source/weekly-player-rows.json.gz'
 with gzip.open(source,'wt',encoding='utf-8') as f:json.dump(dict(rosters=[dict(year=y,week=w,teamId=t,players=rs) for (y,w,t),rs in sorted(rows_by_key.items())],games=list(games.values())),f,separators=(',',':'))
 output=ROOT/'public/data/award-data.js'

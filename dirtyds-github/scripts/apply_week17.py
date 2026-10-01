@@ -1,7 +1,7 @@
 """Merge the eight pictured 2025 Week 17 Yahoo rosters into the archive.
 
 Run once after refreshing history-data.js from the workbook. Reruns are safe.
-The screenshots do not include Nick and Ben's 5th-place player lineups.
+Nick and Ben completed fifth place in Week 16.
 """
 import collections
 import gzip
@@ -114,12 +114,30 @@ if not history['meta'].get('week17ScreenshotsApplied'):
         existing['a'] = {'teamId': a, 'team': left['team'], 'owner': left['owner'], 'score': left['expected']}
         existing['b'] = {'teamId': b, 'team': right['team'], 'owner': right['owner'], 'score': right['expected']}
     history['meta']['week17ScreenshotsApplied'] = True
-    history['meta']['through'] = '2025 Week 17; eight photographed lineups (Nick and Ben placement lineups absent)'
+    history['meta']['through'] = '2025 Week 17; fifth place concluded in Week 16'
     history['meta']['games'] += 2
     history['meta']['playerWeeks'] += sum(len(r['players']) for r in rosters)
     history['meta']['weeklyRows'] += 4  # Jake, Dan, James and Fritz were not in the old Week 17 score list.
     history['meta']['playerWeekLineupsAvailable'] = True
-    HISTORY.write_text('window.DIRTY_DS_HISTORY=' + json.dumps(history, separators=(',', ':')) + ';\n')
+
+# The old site repeated Nick and Ben's Week 16 score as a Week 17 fifth-place game.
+duplicate = next((g for g in history['matchups']['2025']['17'] if
+                  g.get('round') == '5th Place' and {g['a']['owner'], g['b']['owner']} == {'Nick', 'Ben'}), None)
+if duplicate:
+    history['matchups']['2025']['17'].remove(duplicate)
+    history['weekly']['2025']['17'][:] = [r for r in history['weekly']['2025']['17'] if r['owner'] not in ('Nick', 'Ben')]
+    for scope in ('all', 'playoffs'):
+        for owner, opponent, points, against, won in [('Nick', 'Ben', 112.14, 101.08, True),
+                                                        ('Ben', 'Nick', 101.08, 112.14, False)]:
+            cell = history['h2h'][scope][owner][opponent]
+            cell['gp'] -= 1
+            cell['pf'] = round(cell['pf'] - points, 2)
+            cell['pa'] = round(cell['pa'] - against, 2)
+            cell['w' if won else 'l'] -= 1
+    history['meta']['games'] -= 1
+    history['meta']['weeklyRows'] -= 2
+history['meta']['through'] = '2025 Week 17; fifth place concluded in Week 16'
+HISTORY.write_text('window.DIRTY_DS_HISTORY=' + json.dumps(history, separators=(',', ':')) + ';\n')
 
 champions = json.loads((ROOT/'source/original-site-data.json').read_text())['champions']
 owner_by_team = {(int(year), row['teamId']): row['owner'] for year, rows in history['standings'].items() for row in rows}
@@ -148,6 +166,6 @@ leaders = {owner: [{'name': name, **values} for name, values in sorted(players.i
            key=lambda item: (-item[1]['starts'], -item[1]['points'], item[0]))]
            for owner, players in by_owner.items()}
 out = {'championships': lineups, 'managerLeaders': leaders,
-       'coverage': {'2025': 'Eight Week 17 team lineups pictured; Nick and Ben placement lineups absent.'}}
+       'coverage': {'2025': 'Eight Week 17 lineups; Nick and Ben completed fifth place in Week 16.'}}
 (ROOT/'public/data/lineup-data.js').write_text('window.DIRTY_DS_LINEUPS=' + json.dumps(out, separators=(',', ':')) + ';\n')
 print(f"Merged {len(rosters)} team lineups; {len(lineups)} championship lineups; {len(leaders)} manager leaderboards")

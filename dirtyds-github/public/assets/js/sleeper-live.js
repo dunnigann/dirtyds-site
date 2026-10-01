@@ -3,11 +3,11 @@
   'use strict';
   const LEAGUE_ID = '1388389962587590656';
   const API = 'https://api.sleeper.app/v1';
-  const PLAYER_CACHE = 'dirtyds-sleeper-player-cache-v3';
+  const PLAYER_CACHE = 'dirtyds-sleeper-player-cache-v4';
   const CACHE_MS = 24 * 60 * 60 * 1000;
   const data = {
     league: null, users: [], rosters: [], players: {}, state: null,
-    drafts: [], picks: [], weeks: {}, transactions: {}, stats: {}, projections: {}, season: '2026'
+    drafts: [], picks: [], weeks: {}, transactions: {}, stats: {}, projections: {}, rosProjections: {}, season: '2026'
   };
   let readyPromise = null;
 
@@ -30,6 +30,8 @@
         team: p.team || '',
         espn_id: p.espn_id || '',
         injury_status: p.injury_status || null,
+        depth_chart_order: p.depth_chart_order || null,
+        depth_chart_position: p.depth_chart_position || '',
         status: p.status || ''
       };
     }
@@ -66,6 +68,12 @@
       catch { data.projections[week] = {}; }
     }
     return data.projections[week];
+  }
+  async function getROSProjections() {
+    if (Object.keys(data.rosProjections).length) return data.rosProjections;
+    try { data.rosProjections=normalizeMap(await json(`${API}/projections/nfl/regular/${data.season}`)); }
+    catch { data.rosProjections={}; }
+    return data.rosProjections;
   }
   async function getTransactions(week) {
     week=Number(week);
@@ -161,7 +169,7 @@
   function pickPlayerId(pick) { return String(pick?.player_id || pick?.metadata?.player_id || ''); }
 
   window.DIRTY_DS_LIVE = {
-    LEAGUE_ID, data, init, ready:null, getWeek, getTransactions, getProjections, currentWeek,
+    LEAGUE_ID, data, init, ready:null, getWeek, getTransactions, getProjections, getROSProjections, currentWeek,
     user, roster, rosterUser, teamName, managerName, player, fullName, headshot,
     leaguePoints, statPoints, projectionPoints, pickCost, pickPlayerId
   };

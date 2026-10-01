@@ -5,7 +5,7 @@ const K26=window.DIRTY_DS_KEEPERS_2026||[];
 const app=document.getElementById('app'), nav=[...document.querySelectorAll('.nav-link')];
 const backdrop=document.getElementById('modalBackdrop'), modalContent=document.getElementById('modalContent');
 const years=(H?.league||[]).map(x=>Number(x.year)).sort((a,b)=>b-a);
-let currentPage='home', liveWeek=1, matchMode='dirtyds', matchIndex=0, powerView='analyst';
+let currentPage='home', liveWeek=1, matchMode='dirtyds', matchIndex=0, powerView='analyst', transactionWeek=0, transactionFetchErrors=0;
 let archiveMatchYear=2025, archiveMatchWeek=17;
 let seasonYear=2026, playerSearch='', playerPos='ALL', playerOwner='ALL', playerSort='points', playerLimit=40, playerTopPos='QB';
 let draftYear=2026, draftPos='ALL', draftOwner='ALL', draftKind='ALL', h2hScope='all', recordYear='all';
@@ -167,11 +167,11 @@ function bindLiveWeekButtons(callback){
 function wireLivePlayerButtons(root=document){root.querySelectorAll('[data-live-player]').forEach(b=>b.onclick=()=>showLivePlayer(b.dataset.livePlayer));wireImageFallback(root);}
 
 async function go(page){
-  const routes={home:renderHome,season2026:renderSeason2026,power:renderPowerPage,matchups:renderMatchups,seasons:renderSeasons,history:renderHistory,players:renderPlayers,teams:renderTeams,draft:renderDraft};
+  const routes={home:renderHome,season2026:renderSeason2026,power:renderPowerPage,transactions:renderTransactions,matchups:renderMatchups,seasons:renderSeasons,history:renderHistory,players:renderPlayers,teams:renderTeams,draft:renderDraft};
   if(!routes[page]) page='home';
   currentPage=page;
   nav.forEach(b=>b.classList.toggle('active',b.dataset.page===page));
-  seasonMenu.classList.toggle('active',['season2026','power'].includes(page));
+  seasonMenu.classList.toggle('active',['season2026','power','transactions'].includes(page));
   seasonMenu.setAttribute('aria-expanded','false');seasonMenu.parentElement.classList.remove('expanded');
   document.getElementById('mainNav').classList.remove('open');
   document.getElementById('mobileMenu').setAttribute('aria-expanded','false');
@@ -327,6 +327,76 @@ function drawPowerRankings(){
 }
 
 /* MATCHUPS */
+/* TRANSACTIONS */
+function completedTransactions(){
+  const seen=new Set();
+  return Object.values(SL.data.transactions||{}).flat().filter(t=>{
+    if(t.status!=='complete'||seen.has(String(t.transaction_id)))return false;
+    seen.add(String(t.transaction_id));return true;
+  }).sort((a,b)=>num(b.status_updated||b.created)-num(a.status_updated||a.created));
+}
+const transactionWeekLabel=w=>Number(w)===0?'Preseason':`Week ${w}`;
+function transactionDate(t){
+  const timestamp=num(t.status_updated||t.created);
+  return timestamp?new Date(timestamp).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',timeZone:'America/Chicago'}):transactionWeekLabel(t.leg);
+}
+function transactionPlayer(id){
+  const p=SL.player(id),isDefense=p.position==='DEF',portrait=isDefense?nflLogo(p.team||id):SL.headshot(id);
+  return `<span class="tx-player">${photo(portrait,SL.fullName(id),'tx-portrait')}<span><strong>${e(SL.fullName(id))}</strong><small>${posBadge(p.position||'—')}${p.team?` · ${e(p.team)}`:''}</small></span></span>`;
+}
+function transactionRosterLabel(id){
+  const r=SL.roster(id);
+  return r?{name:managerFor(r),team:SL.teamName(r),avatar:userAvatar(SL.rosterUser(r))}:{name:`Roster ${id}`,team:'',avatar:''};
+}
+function tradeAssets(t,id){
+  const players=Object.entries(t.adds||{}).filter(([,receiver])=>String(receiver)===String(id)).map(([player])=>`<div class="tx-asset">${transactionPlayer(player)}</div>`);
+  const picks=(t.draft_picks||[]).filter(p=>String(p.owner_id)===String(id)).map(p=>`<div class="tx-asset tx-extra"><span class="tx-pick-icon">↗</span><span><strong>${e(p.season)} round ${e(p.round)} pick</strong><small>From ${e(transactionRosterLabel(p.previous_owner_id).name)}</small></span></div>`);
+  const budget=(t.waiver_budget||[]).filter(b=>String(b.receiver)===String(id)).map(b=>`<div class="tx-asset tx-extra"><span class="tx-pick-icon">$</span><span><strong>${dollar(b.amount)} FAAB</strong><small>From ${e(transactionRosterLabel(b.sender).name)}</small></span></div>`);
+  return [...players,...picks,...budget].join('')||'<p class="tx-empty">No incoming assets recorded.</p>';
+}
+function tradeCard(t){
+  const ids=new Set((t.roster_ids||[]).map(String));
+  for(const id of Object.values(t.adds||{}))ids.add(String(id));
+  for(const p of t.draft_picks||[])ids.add(String(p.owner_id));
+  for(const b of t.waiver_budget||[])ids.add(String(b.receiver));
+  return `<article class="tx-trade"><div class="tx-card-head"><span>TRADE · ${e(transactionWeekLabel(t.leg))}</span><time>${e(transactionDate(t))}</time></div><div class="tx-trade-sides">${[...ids].map(id=>{const manager=transactionRosterLabel(id);return `<section class="tx-side"><div class="tx-side-heading">${photo(manager.avatar,manager.name,'tx-manager-avatar')}<span><strong>${e(manager.name)}</strong><small>${e(manager.team)} · Received</small></span></div><div class="tx-assets">${tradeAssets(t,id)}</div></section>`;}).join('')}</div></article>`;
+}
+function moveCard(t){
+  const ids=new Set((t.roster_ids||[]).map(String));
+  for(const id of [...Object.values(t.adds||{}),...Object.values(t.drops||{})])ids.add(String(id));
+  const bid=t.type==='waiver'?num(t.settings?.waiver_bid):0;
+  return [...ids].map(id=>{
+    const manager=transactionRosterLabel(id);
+    const added=Object.entries(t.adds||{}).filter(([,roster])=>String(roster)===id).map(([player])=>`<div class="tx-move-row"><span class="tx-move-tag added">ADDED</span>${transactionPlayer(player)}</div>`).join('');
+    const dropped=Object.entries(t.drops||{}).filter(([,roster])=>String(roster)===id).map(([player])=>`<div class="tx-move-row"><span class="tx-move-tag dropped">DROPPED</span>${transactionPlayer(player)}</div>`).join('');
+    return `<article class="tx-move"><div class="tx-move-head">${photo(manager.avatar,manager.name,'tx-manager-avatar')}<span><strong>${e(manager.name)}</strong><small>${e(manager.team)}</small></span><div class="tx-move-meta"><b>${t.type==='waiver'?'Waiver claim':'Free agent'}</b><small>${e(transactionDate(t))}${bid?` · ${dollar(bid)} FAAB`:''}</small></div></div><div class="tx-move-assets">${added}${dropped||(!added?'<p class="tx-empty">No player details recorded.</p>':'')}</div></article>`;
+  }).join('');
+}
+function renderTransactions(){
+  app.innerHTML=liveLoading('Transactions');
+  ensureLive().then(async()=>{
+    transactionFetchErrors=0;
+    await Promise.all(Array.from({length:19},(_,i)=>SL.getTransactions(i,true).catch(()=>{transactionFetchErrors++;return[];})));
+    if(currentPage!=='transactions')return;
+    if(!transactionWeek)transactionWeek=SL.currentWeek();
+    drawTransactionsPage();
+  }).catch(err=>{if(currentPage==='transactions')app.innerHTML=liveError(err);});
+}
+function drawTransactionsPage(){
+  const all=completedTransactions(),trades=all.filter(t=>t.type==='trade'),moves=all.filter(t=>t.type==='waiver'||t.type==='free_agent');
+  const weekNumbers=[...(moves.some(t=>num(t.leg)===0)?[0]:[]),...Array.from({length:SL.currentWeek()},(_,i)=>i+1),...new Set(moves.map(t=>num(t.leg)).filter(w=>w>SL.currentWeek()&&w<=18))].sort((a,b)=>a-b);
+  const count=Object.fromEntries(weekNumbers.map(w=>[w,moves.filter(t=>num(t.leg)===w).length]));
+  app.innerHTML=`<div class="page tx-page">${pageHero('THE 2026 MOVEMENT','Transactions','Every completed trade, waiver claim and free-agent move, straight from Sleeper.')}<section class="section"><div class="wrap">${heading('DEAL DESK','Every trade.','Each side shows what that manager received.') }<div class="tx-summary"><span><strong>${trades.length}</strong> trades</span><span><strong>${moves.length}</strong> roster moves</span><span>Updated from Sleeper when you open the page</span></div>${transactionFetchErrors?note(`${transactionFetchErrors} transaction weeks could not be refreshed. Reload to try again; available weeks are shown below.`):''}<div class="tx-trades">${trades.map(tradeCard).join('')||note('No completed trades have been recorded in the 2026 league yet.')}</div></div></section><section class="section alt"><div class="wrap">${heading('WAIVER WIRE','Adds & drops.','Choose a week to see completed waiver claims and free-agent moves.')}<div class="tx-weekbar" role="group" aria-label="Transaction week">${Object.entries(count).map(([week,n])=>`<button type="button" data-tx-week="${week}" class="${num(week)===transactionWeek?'active':''}" aria-pressed="${num(week)===transactionWeek}">${e(transactionWeekLabel(week))}<span>${n}</span></button>`).join('')}</div><div id="txMoveResults"></div></div></section></div>`;
+  document.querySelectorAll('[data-tx-week]').forEach(b=>b.onclick=()=>{transactionWeek=num(b.dataset.txWeek);drawTransactionMoves(moves);});
+  drawTransactionMoves(moves);wireImageFallback(app);
+}
+function drawTransactionMoves(moves){
+  document.querySelectorAll('[data-tx-week]').forEach(b=>{const active=num(b.dataset.txWeek)===transactionWeek;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
+  const selected=moves.filter(t=>num(t.leg)===transactionWeek),root=document.getElementById('txMoveResults');
+  root.innerHTML=`<div class="tx-week-label">${e(transactionWeekLabel(transactionWeek).toUpperCase())} · ${selected.length} COMPLETED MOVES</div><div class="tx-moves">${selected.map(moveCard).join('')||note(`No completed waiver or free-agent moves for ${e(transactionWeekLabel(transactionWeek))}.`)}</div>`;
+  wireImageFallback(root);
+}
+
 function renderMatchups(){
   app.innerHTML=liveLoading('Matchups');
   ensureLive().then(drawMatchupsPage).catch(err=>{if(currentPage==='matchups')app.innerHTML=liveError(err);});
@@ -522,7 +592,10 @@ function recordDefinitions(){
     ['Cheapskate','Most Starter Points from FAAB-winning Players per FAAB Dollar',x=>x.byOwner.map(r=>({value:r.cheapRatio,owner:r.owner,year:x.year}))],
     ['Revolutionary','Most Points per Dollar Spent (FAAB + Auction)',x=>x.byOwner.map(r=>({value:r.pointsPerDollar,owner:r.owner,year:x.year}))],
     ['Troubled Times','Least Points per Dollar Spent',x=>x.byOwner.map(r=>({value:r.pointsPerDollar,owner:r.owner,year:x.year})),true],
-    ['Highest Weekly Score','Single team score',x=>x.weeks.map(r=>({value:r.score,owner:r.owner,year:x.year,detail:`Week ${r.week}`}))],
+    ['Closest Game','Smallest final-score margin',x=>x.games.map(g=>({value:Math.abs(num(g.a.score)-num(g.b.score)),owner:`${g.a.owner} vs ${g.b.owner}`,year:x.year,detail:`Week ${g.week} · ${fmt(g.a.score)}–${fmt(g.b.score)} final`})),true],
+    ['Biggest Blowout','Largest final-score margin',x=>x.games.map(g=>({value:Math.abs(num(g.a.score)-num(g.b.score)),owner:`${g.a.owner} vs ${g.b.owner}`,year:x.year,detail:`Week ${g.week} · ${fmt(g.a.score)}–${fmt(g.b.score)} final`}))],
+    ['Highest Scoring Week','Highest single-team score',x=>x.weeks.map(r=>({value:r.score,owner:r.owner,year:x.year,detail:`Week ${r.week} · team score`}))],
+    ['Lowest Scoring Week','Lowest single-team score',x=>x.weeks.map(r=>({value:r.score,owner:r.owner,year:x.year,detail:`Week ${r.week} · team score`})),true],
     ['Largest Auction Purchase','Single auction bid',x=>x.purchases.map(r=>({value:r.cost,owner:r.owner,team:r.player,year:x.year,format:'money'}))]
   ];
   for(const pos of ['QB','RB','WR','TE','K','DEF']){
@@ -543,7 +616,7 @@ function recordsFor(selection){
   const sources=selected.map(recordCandidates);
   return recordDefinitions().map(([title,detail,fn,ascending])=>{
     const seasonFinished=completedWeeks().length>=num(SL?.data?.league?.settings?.playoff_week_start||15)-1;
-    const eligible=selection==='all'?sources.filter(x=>x.year!==2026||seasonFinished||['Highest Weekly Score','Largest Auction Purchase'].includes(title)):sources;
+    const eligible=selection==='all'?sources.filter(x=>x.year!==2026||seasonFinished||['Highest Scoring Week','Lowest Scoring Week','Largest Auction Purchase'].includes(title)):sources;
     const candidates=eligible.flatMap(fn).filter(r=>typeof r.value==='number'&&Number.isFinite(r.value));
     candidates.sort((a,b)=>ascending?a.value-b.value:b.value-a.value);
     const result=candidates[0];
@@ -605,16 +678,26 @@ function liveIdForName(name){
   const draft=currentAuctionByName(name);if(draft)return draft.id;
   return Object.keys(SL?.data?.players||{}).find(id=>norm(SL.fullName(id))===norm(name));
 }
+function uniquePlayerYears(entries){
+  const byYear=new Map();
+  for(const entry of entries){
+    const key=Number(entry.year),old=byYear.get(key);
+    if(!old||entry.type==='Keeper'&&old.type!=='Keeper')byYear.set(key,entry);
+  }
+  return [...byYear.values()].sort((a,b)=>b.year-a.year);
+}
 function playerProfile(name,id){
   const historical=(H.players||[]).find(p=>norm(p.name)===norm(name));
   id=id||liveIdForName(name);
   const current=id?SL.player(id):null;
   const playerName=current?.full_name||historical?.name||name;
   const history=(historical?.seasons||[]).slice().sort((a,b)=>b.year-a.year);
-  const auction=(historical?.events||[]).filter(x=>['Draft','Keeper'].includes(x.type)).map(x=>({year:x.year,owner:x.owner,cost:x.cost,type:x.type}));
+  const auctionEntries=(historical?.events||[]).filter(x=>['Draft','Keeper'].includes(x.type)).map(x=>({year:x.year,owner:x.owner,cost:x.cost,type:x.type}));
   const pick=id?SL.data.picks.find(x=>SL.pickPlayerId(x)===String(id)):null;
-  if(pick)auction.push({year:2026,owner:managerFor(SL.roster(pick.roster_id)),cost:SL.pickCost(pick),type:pick.is_keeper?'Keeper':'Draft'});
-  auction.sort((a,b)=>b.year-a.year);
+  if(pick)auctionEntries.push({year:2026,owner:managerFor(SL.roster(pick.roster_id)),cost:SL.pickCost(pick),type:pick.is_keeper?'Keeper':'Draft'});
+  const confirmed=K26.find(k=>norm(k.player)===norm(playerName));
+  if(confirmed)auctionEntries.push({year:2026,owner:confirmed.owner,cost:confirmed.cost,type:'Keeper'});
+  const auction=uniquePlayerYears(auctionEntries);
   const priced=auction.filter(x=>x.cost!=null);
   const logs=[];let liveStarts=0,livePoints=0;
   if(id)for(const w of completedWeeks())for(const row of SL.data.weeks[w]||[]){
@@ -676,7 +759,7 @@ function drawArchivePlayers(){
   let rows=(H.players||[]).filter(p=>(playerPos==='ALL'||p.position===playerPos)&&(playerOwner==='ALL'||(p.owners||[]).includes(playerOwner)||(p.seasons||[]).some(r=>r.owner===playerOwner))&&p.name.toLowerCase().includes(playerSearch.trim().toLowerCase()));
   rows.sort((a,b)=>playerSort==='name'?a.name.localeCompare(b.name):playerSort==='starts'?num(b.starts)-num(a.starts)||num(b.points)-num(a.points):playerSort==='price'?num(b.maxPrice??-1)-num(a.maxPrice??-1)||num(b.points)-num(a.points):num(b.points)-num(a.points)||a.name.localeCompare(b.name));
   document.getElementById('playerCount').textContent=`Showing ${Math.min(playerLimit,rows.length)} of ${rows.length} matching historical players`;
-  document.getElementById('playerResults').innerHTML=rows.slice(0,playerLimit).map(p=>{const live=currentAuctionByName(p.name);return `<button class="dd-player" data-archive-player="${e(p.key)}"><span class="dd-player-portrait">${photo(archivePortrait(p),p.name)}</span><span class="dd-player-info"><strong>${e(p.name)}</strong><small>${posBadge(p.position)} · ${p.starts} starts · ${p.drafted} auction / keeper entries${live?.cost!=null?` · 2026 ${dollar(live.cost)}`:''}</small></span><span class="dd-player-value">${playerSort==='price'?(p.maxPrice==null?'—':dollar(p.maxPrice)):fmt(p.points,1)}<small>${playerSort==='price'?'top price':'starter pts'}</small></span></button>`;}).join('');
+  document.getElementById('playerResults').innerHTML=rows.slice(0,playerLimit).map(p=>`<button class="dd-player" data-archive-player="${e(p.key)}"><span class="dd-player-portrait">${photo(archivePortrait(p),p.name)}</span><span class="dd-player-info"><strong>${e(p.name)}</strong><small>${posBadge(p.position)} <span>${p.starts} starts · ${fmt(p.points,1)} career points</span></small></span></button>`).join('');
   document.getElementById('morePlayers').hidden=playerLimit>=rows.length;wireImageFallback(document.getElementById('playerResults'));
   document.querySelectorAll('[data-archive-player]').forEach(b=>b.onclick=()=>showArchivePlayer(b.dataset.archivePlayer));
 }
@@ -762,7 +845,12 @@ function liveDraftRows(){
     const match=Object.values(SL.data.players).find(p=>norm(p.full_name)===key);
     rows.push({year:2026,player:k.player,id:match?.player_id||'',position:k.position,nflTeam:match?.team||'',owner:k.owner,teamName:teamName(k.owner),cost:k.cost,keeper:true,order:0});
   }
-  return rows;
+  const unique=new Map();
+  for(const row of rows){
+    const key=norm(row.player),old=unique.get(key);
+    if(!old||row.keeper&&!old.keeper)unique.set(key,row);
+  }
+  return [...unique.values()];
 }
 function drawDraftPage(hasLive=true){
   if(currentPage!=='draft')return;

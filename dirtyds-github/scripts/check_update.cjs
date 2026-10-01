@@ -2,7 +2,7 @@
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
 const els=new Map();function el(id){if(!els.has(id)){const classList={toggle(){},add(){},remove(){}};els.set(id,{innerHTML:'',textContent:'',value:'',dataset:{},style:{},hidden:false,classList,parentElement:{classList},setAttribute(){},getAttribute(){return'false'},addEventListener(){},scrollIntoView(){},querySelectorAll(){return[]}});}return els.get(id);}
-const nav=['home','history','teams','season2026','matchups','players','draft'].map(page=>({...el(page),dataset:{page}}));
+const nav=['home','history','teams','season2026','transactions','matchups','players','draft'].map(page=>({...el(page),dataset:{page}}));
 const context={window:{scrollTo(){}},document:{getElementById:el,querySelectorAll(sel){return sel==='.nav-link'?nav:[]},addEventListener(){},body:{style:{}}},history:{replaceState(){}},location:{hash:'#home'},console,URL};
 vm.createContext(context);
 for(const file of ['public/data/site-data.js','public/data/history-data.js','public/data/award-data.js','public/data/lineup-data.js','public/data/photo-data.js','public/data/keepers-2026.js'])vm.runInContext(fs.readFileSync(path.join(root,file),'utf8'),context);
@@ -31,6 +31,7 @@ run('showChampionship(2025)');assert.match(el('modalContent').innerHTML,/Derrick
 run("currentPage='teams';drawTeamsPage(true)");assert.equal((el('app').innerHTML.match(/data-manager=/g)||[]).length,13);assert.match(el('app').innerHTML,/HISTORICAL MANAGERS/);assert.match(el('app').innerHTML,/data-manager="Hunter"/);assert.doesNotMatch(el('app').innerHTML,/team-photo has-photo/);
 run("showManager('Tyler')");assert.match(el('modalContent').innerHTML,/Top 10 Most Started Players \(Points Scored\)/);assert.match(el('modalContent').innerHTML,/Final place: 1st/);assert.match(el('modalContent').innerHTML,/ PA/);
 assert.notEqual(run("recordsFor('all').find(x=>x.title==='COTY').value"),'Unavailable');assert.equal(run("recordsFor('2018').find(x=>x.title==='Cheapskate').value"),'Unavailable');assert.notEqual(run("recordsFor('2024').find(x=>x.title==='Least RB Points · Season').value"),'Unavailable');assert.equal(run("recordDefinitions().some(x=>['Daddy Warbucks','Storage Wars','Turtling'].includes(x[0]))"),false);
+for(const year of [2018,2019,2020,2021,2022,2023,2024,2025,2026])for(const title of ['Closest Game','Biggest Blowout','Highest Scoring Week','Lowest Scoring Week'])assert.notEqual(run(`recordsFor('${year}').find(x=>x.title==='${title}').value`),'Unavailable',`${year}: ${title}`);
 run("currentPage='season2026';liveWeek=1;drawSeason2026()");assert.doesNotMatch(el('app').innerHTML,/id="livePowerRankings"/);
 run("currentPage='power';powerView='jack';drawPowerRankings()");assert.match(el('livePowerContent').innerHTML,/Drake London/);
 run("powerView='analyst';drawPowerRankings()");assert.match(el('livePowerContent').innerHTML,/1,000 remaining-season simulations/);
@@ -40,4 +41,15 @@ assert.equal(run("nflLineup('ATL').length"),10);
 assert.equal(run("nflLineup('ATL').filter(x=>x.owner==='Free Agent').length"),10);
 assert.match(run("formation(nflLineup('ATL'),true,true)"),/z-backs[\s\S]*Test K 1[\s\S]*ATL D\/ST/);
 run("currentPage='players';drawPlayersPage(true)");run("playerProfile('Bijan Robinson','9509')");assert.match(el('modalContent').innerHTML,/Career starts/);assert.match(el('modalContent').innerHTML,/\$75/);assert.match(el('modalContent').innerHTML,/Trophy case/);assert.match(el('playerResults').innerHTML,/sleepercdn.com/);
-console.log('PASS: archive, identity, weekly records, $75 auction, history, teams, rankings and profiles');
+assert.match(el('playerResults').innerHTML,/career points/);assert.doesNotMatch(el('playerResults').innerHTML,/auction \/ keeper entries/);
+players.lamar={player_id:'lamar',full_name:'Lamar Jackson',position:'QB',team:'BAL'};picks.push({player_id:'lamar',roster_id:1,metadata:{amount:'41'},is_keeper:false});
+run("playerProfile('Lamar Jackson','lamar')");
+const lamarHistory=el('modalContent').innerHTML.split('<h3>Draft history</h3>')[1].split('</div></div><div class="dd-modal-block">')[0];
+assert.equal((lamarHistory.match(/<strong>2026<\/strong>/g)||[]).length,1);assert.match(lamarHistory,/2026<\/strong><span>James · Keeper/);assert.doesNotMatch(lamarHistory,/2026<\/strong><span>Jack · Draft/);
+const trade={transaction_id:'trade-1',status:'complete',type:'trade',leg:1,created:1,roster_ids:[1,2],adds:{'9509':2,'4984':1},draft_picks:[{season:'2027',round:2,owner_id:1,previous_owner_id:2}],waiver_budget:[{receiver:2,sender:1,amount:7}]};
+const waiver={transaction_id:'waiver-1',status:'complete',type:'waiver',leg:1,created:2,roster_ids:[1],adds:{'9509':1},drops:{'4984':1},settings:{waiver_bid:12}};
+SL.data.transactions={1:[trade,waiver],2:[{transaction_id:'move-2',status:'complete',type:'free_agent',leg:2,created:3,roster_ids:[2],adds:{'4984':2},drops:{}}]};
+assert.equal(run('completedTransactions().length'),3);
+run("currentPage='transactions';transactionWeek=1;drawTransactionsPage()");assert.match(el('app').innerHTML,/James|Jack/);assert.match(el('app').innerHTML,/2027 round 2 pick/);assert.match(el('app').innerHTML,/\$7 FAAB/);assert.match(el('txMoveResults').innerHTML,/\$12 FAAB/);assert.match(el('txMoveResults').innerHTML,/DROPPED/);
+run('transactionWeek=2;drawTransactionMoves(completedTransactions().filter(t=>t.type!==\'trade\'))');assert.match(el('txMoveResults').innerHTML,/Free agent/);
+console.log('PASS: archive, season records, keeper precedence, transactions, teams and profiles');

@@ -45,3 +45,56 @@ html,body{background:#10151f;color:#f5f7fb}
  .dd-controls>*{width:100%}.dd-player{padding:10px}.dd-player-info strong{white-space:normal}.record-card .record-value{color:#fff}.record-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.z-sidebar{display:block}.z-sidebar label{margin:5px 0}.z-sidebar select{margin-bottom:8px}.z-match-list{display:none}
 }
 @media(max-width:420px){.home-hero>img{width:57px;height:57px}.home-hero h1{font-size:40px}.record-grid{grid-template-columns:1fr}.z-player-photo{--bubble:31px!important}.z-player strong{font-size:7px}.z-page .z-player .pos-badge{font-size:7px}}
+
+/* Archive contrast, franchise records and footer. */
+.site-footer{background:#090c12;color:#bbc9d7;border-top:1px solid #394b5d}.site-footer strong{color:#fff}
+.live-archive-link .dd-match{background:#1b2633;border-color:#405367;color:#f5f7fb;box-shadow:0 8px 22px #0003}
+.live-archive-link .dd-match-side strong,.live-archive-link .dd-score{color:#f5f7fb}
+.live-archive-link .dd-match-side small{color:#bdcddd}
+.live-archive-link .dd-match-side.winner .dd-score{color:#f5cc66}
+.live-archive-link .dd-versus{color:#95aac0}
+.matrix-shell{background:#1b2633;border-color:#405367}
+.matrix th,.matrix td{border-color:#3b4e60}
+.matrix tbody td{background:#1b2633;color:#e4edf6}
+.matrix tbody td:first-child{background:#263648;color:#fff}
+.matrix tbody td.positive{background:#193f3d;color:#a5f0d0}
+.matrix tbody td.negative{background:#492e3b;color:#ffd1d6}
+.matrix tbody td.even{background:#304052;color:#edf2f8}
+.matrix tbody td.diagonal{background:#293543;color:#9eaebe}
+.team-record strong{color:#fff}.team-record span{color:#c2d1de}
+.dd-player-info small{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:5px;color:#bdcddd}
+.dd-player-info small .pos-badge{margin:0}
+@media(max-width:780px){.mobile-matrix{color:#f5f7fb}.mobile-matrix label{color:#dce7f2}.mobile-matrix select{background:#263648;color:#fff;border-color:#53697d}.mobile-matrix dl>div{border-color:#3d5061}.mobile-matrix .positive{background:#193f3d;color:#a5f0d0}.mobile-matrix .negative{background:#492e3b;color:#ffd1d6}}
+
+/* Transactions: one glance at who received what. */
+.tx-page .page-hero{background:radial-gradient(circle at 90% 15%,#eb52652b,transparent 30%),linear-gradient(120deg,#182533,#19202e)}
+.tx-summary{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 25px;color:#bed0de}
+.tx-summary span{display:inline-flex;align-items:center;gap:5px;padding:9px 13px;background:#243343;border:1px solid #3d5061;border-radius:999px;font-size:12px}
+.tx-summary strong{color:#f5cc66;font-size:16px}
+.tx-trades,.tx-moves{display:grid;gap:15px}
+.tx-trade,.tx-move{background:#1b2633;color:#fff;border:1px solid #405367;border-radius:16px;overflow:hidden;box-shadow:0 8px 25px #0003}
+.tx-card-head{display:flex;justify-content:space-between;gap:12px;padding:15px 20px;background:#253548;border-bottom:1px solid #405367;color:#f5cc66;font-size:11px;letter-spacing:.1em;font-weight:900}
+.tx-card-head time{color:#b9cbda;letter-spacing:0;font-weight:600}
+.tx-trade-sides{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr))}
+.tx-side{padding:19px 20px;min-width:0}.tx-side+.tx-side{border-left:1px solid #405367}
+.tx-side-heading,.tx-move-head{display:flex;align-items:center;gap:12px;min-width:0}
+.tx-manager-avatar{flex:none;width:44px;height:44px;border:2px solid #f5cc66;background:#b9364e;color:#fff}
+.tx-side-heading>span:last-child,.tx-move-head>span:nth-child(2){min-width:0}
+.tx-side-heading strong,.tx-move-head strong{display:block;font-size:17px;overflow-wrap:anywhere}
+.tx-side-heading small,.tx-move-head small{display:block;margin-top:2px;color:#b5c4d3;font-size:11px;line-height:1.4}
+.tx-assets{display:grid;gap:7px;margin-top:15px}
+.tx-asset,.tx-move-row{display:flex;align-items:center;gap:10px;min-width:0;border:1px solid #405367;background:#233244;border-radius:11px;padding:9px 11px}
+.tx-asset{border-left:3px solid #48d7ad}
+.tx-player{display:flex;align-items:center;gap:10px;min-width:0}.tx-player>span:last-child{min-width:0}.tx-player strong{display:block;font-size:13px;overflow-wrap:anywhere}.tx-player small{display:block;margin-top:3px;color:#bdcad8;font-size:10px}
+.tx-portrait{width:38px;height:38px;flex:none;background:#344c5c;border:1px solid #607487}.tx-portrait img{object-fit:cover}
+.tx-extra strong{display:block;font-size:13px}.tx-extra small{display:block;margin-top:3px;color:#bdcad8;font-size:10px}.tx-pick-icon{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:50%;background:#465674;color:#ffe49d;font-weight:900}
+.tx-empty{margin:5px 0;color:#b7c7d6;font-size:12px}
+.tx-weekbar{display:flex;flex-wrap:wrap;gap:7px;margin:17px 0 22px}.tx-weekbar button{display:inline-flex;align-items:center;gap:9px;padding:9px 12px;border:1px solid #4a5e70;border-radius:9px;background:#243343;color:#e0eaf3;font-weight:800;cursor:pointer}
+.tx-weekbar button span{display:grid;place-items:center;min-width:22px;height:22px;padding:0 4px;border-radius:99px;background:#3c5063;color:#dce6ef;font-size:10px}
+.tx-weekbar button.active{background:#b9364e;border-color:#eb5265;color:#fff}.tx-weekbar button.active span{background:#fff;color:#922639}
+.tx-week-label{color:#f5cc66;font-size:11px;letter-spacing:.15em;font-weight:900;margin:0 0 15px}
+.tx-moves{grid-template-columns:repeat(2,minmax(0,1fr))}.tx-move{padding:17px}
+.tx-move-head{padding-bottom:14px;border-bottom:1px solid #405367}.tx-move-head strong{font-size:14px}.tx-move-meta{margin-left:auto;text-align:right;flex:none}.tx-move-meta b{color:#f5cc66;font-size:11px;text-transform:uppercase;letter-spacing:.05em}.tx-move-assets{display:grid;gap:7px;margin-top:13px}.tx-move-row{padding:8px;gap:8px}
+.tx-move-tag{width:59px;flex:none;color:#77edc8;font-size:9px;font-weight:900;letter-spacing:.04em}.tx-move-tag.dropped{color:#ffa6b2}
+@media(max-width:800px){.tx-moves{grid-template-columns:1fr}}
+@media(max-width:600px){.tx-side+.tx-side{border-left:0;border-top:1px solid #405367}.tx-card-head,.tx-side{padding:14px}.tx-move{padding:12px}.tx-manager-avatar{width:37px;height:37px}.tx-move-meta small{font-size:9px}.tx-weekbar button{padding:7px 9px;font-size:11px}.tx-player strong{font-size:12px}}

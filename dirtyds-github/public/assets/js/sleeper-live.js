@@ -75,9 +75,9 @@
     catch { data.rosProjections={}; }
     return data.rosProjections;
   }
-  async function getTransactions(week) {
+  async function getTransactions(week, refresh=false) {
     week=Number(week);
-    if(!data.transactions[week]) data.transactions[week]=await json(`${API}/league/${LEAGUE_ID}/transactions/${week}`);
+    if(refresh||!data.transactions[week]) data.transactions[week]=await json(`${API}/league/${LEAGUE_ID}/transactions/${week}`);
     return data.transactions[week];
   }
   async function init() {

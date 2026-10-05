@@ -1,51 +1,50 @@
-# Dirty D's League Archive
+# Dirty D’s league website
 
-GitHub-ready static website for Dirty D's, styled to match the current ZYNFL archive.
+The 2018–2025 Yahoo archive and live 2026 Sleeper league, served by Cloudflare Workers with static assets. See the repository-root `UPLOAD_GUIDE.md` for this update.
 
-## Start here
+## Development
 
-Read **DEPLOY_TO_GITHUB_AND_CLOUDFLARE.md** for GitHub and Cloudflare Pages setup. Upload the **extracted folder contents**, preserving `public/index.html`. In Cloudflare Pages, use no framework preset, build command `exit 0`, and build output directory `public`.
+Run commands at the repository root, one directory above this file:
 
-The site does not need a database, API token, build system, or npm installation. All data loads from bundled files.
+```sh
+npm ci
+npm run build
+npm test
+npm run dev
+```
 
-## Pages
+Node 24 is used in CI. `npm run deploy` builds and deploys the Worker using the root `wrangler.jsonc`. The upload contains already-built assets, so the existing `npx wrangler deploy` deployment command also works. No Sleeper credentials or database IDs need to be entered.
 
-- Home, 2025 Season, Matchups, All Seasons, League History, Players, Teams, and Draft Central.
-- The rivalry page is intentionally absent.
-- Draft Central displays **auction prices and keeper costs**, never fictional rounds or snake draft positions.
-- Players show their real draft or keeper year and dollar price, transaction events from the previous site, plus actual Dirty D's starter production from the workbook.
-- The 2026 keeper board is an archived **pre-auction snapshot** from the previous site; it is not a current roster feed.
+## Code and data
 
-## Data sources and coverage
+- `public/assets/js/`: shared helpers, scoring adapter, live data bridge, archive loader, and separate page modules.
+- `public/assets/css/site.css`: the single active stylesheet; shared design tokens are declared once at its beginning.
+- `source/index.template.html`: edit this HTML, then build. `public/index.html` is generated with fingerprinted asset references.
+- `scripts/build_assets.cjs`: splits archives by use and season, builds the asset map, and fingerprints JavaScript/CSS for safe caching. Original data bundles remain available for rebuilding and validation, but are not loaded on the homepage.
+- `worker.js`: a restricted Sleeper proxy, shared SQLite cache, and Durable Object weekly snapshots. The five-minute cron captures metadata even when nobody visits the site.
+- `public/data/`: source bundles, generated archive chunks, and the dated 2026 keeper snapshot. Historical inputs live in `source/`.
+- `scripts/validate_site.cjs`: archive reconciliation checks.
+- `scripts/check_update.cjs`: existing archive, identity, keeper, transaction and profile checks.
+- `scripts/check_regressions.cjs` and `check_worker.cjs`: scoring, retries, stale fallback, legal lineups, navigation, lazy data loading, accessibility interactions and Cloudflare runtime/storage checks.
 
-1. `source/DirtyDs_Master_History_2018_2025_Website_Ready.xlsx`: 762 matchups, 96 team seasons, 3,757 player-season rows and 1,524 team-week rows. The 2025 workbook ends at Week 16.
-2. `source/original-site-data.json`: prior site manager mapping, 1,529 auction/keeper entries, champions, narratives, trades, transaction history, 2026 keeper snapshot, and three additional 2025 Week 17 placement games.
-3. `source/original-scoring-data.js`: preserved prior bundled general NFL season scoring feed. The replacement's player points instead use **actual Dirty D's starting-lineup points** from the workbook.
+Historical source reconciliation retains 766 known matchups, 96 team seasons, 807 historical player profiles and 33 confirmed 2026 keepers totaling $726. Rebuild workflows for workbook updates are retained in `scripts/`; run the relevant historical builder, then `npm run build` and `npm test` before uploading.
 
-The Matchups page contains 765 known games: 762 from the workbook plus three Week 17 placement games. Other possible Week 17 games and **individual player-week lineups** were not supplied. The H2H matrix includes all 765 known games. The workbook's `Playoff?` flag may include consolation games; the site labels that toggle “Playoff-labeled.” Historical team names are matched to owners using the prior site's alias mapping. `Watch List` in 2019–2020 was mapped to Brent.
+## Live data behavior
 
-The workbook has no waiver or transaction exports, so the original site's records for those categories are preserved. Team-season and game scoring records were recomputed from the expanded workbook. The 2025 Week 17 final of 217.54–118.00 comes from the original site.
+The Worker cache is shared by all visitors. Browsers also retain slim cached responses and deduplicate requests. If the Worker is unavailable, the bridge can read Sleeper directly. Requests time out, retry, and retain older data with a visible warning. Failed initialization can be retried without reloading the entire site.
 
-## Source layout
+Active matchups and rosters refresh while the page is visible, at 45-second intervals; projections are cached for 15 minutes, stats for five minutes, and the player catalog for one day. Historical and draft feeds use longer caches. Automatic rendering pauses while a modal is open or a form control is focused. The Refresh button requests current data, subject to the upstream cache.
 
-- `public/` — the complete deployable website; Cloudflare Pages serves this directory.
-- `public/data/site-data.js` — bundled original league data.
-- `public/data/history-data.js` — generated historical matchups, standings and players.
-- `source/` — the inputs used to produce the bundled data, kept outside Cloudflare's deployed directory.
-- `scripts/build_history.py` — rebuilds `public/data/history-data.js` from the included workbook and original site JSON. Requires Python and `openpyxl`.
+The current league ID is configured in `sleeper-live.js` and `worker.js`. Stable Sleeper user IDs are mapped in `core.js`; handle aliases remain fallbacks. Update these together if the league changes seasons or owners.
 
-To refresh with a new workbook, update `source/DirtyDs_Master_History_2018_2025_Website_Ready.xlsx`, adjust the script's input filename if needed, run `python scripts/build_history.py`, and commit the changed `public/data/history-data.js`. When changing the original site data, update **both** `source/original-site-data.json` and `public/data/site-data.js` consistently.
+Snapshots retain finalized player metadata while allowing corrected weekly scores. They cannot recreate names, NFL teams or reserve tags from before capture began. Earlier weeks disclose that limitation and do not treat current IR assignments as known historical assignments. The scheduled capture becomes active only after Worker deployment.
 
-## Local preview
+## Analyst rankings
 
-From the extracted folder, run `python -m http.server 8000 --directory public`, then open `http://localhost:8000`. On Windows, `py -m http.server 8000 --directory public` also works.
+The score is 55% normalized projected starter points per remaining regular-season week, 25% normalized value above available replacements, 15% usable QB/RB/WR/TE bench coverage, and 5% positional balance. Records and schedule luck do not enter the score. The score is a relative strength index, not a probability.
 
-## 2026 identity and record calculations
+Projected lineups maximize points under league slot eligibility, use each player once, and prefer filling legal slots even with negative projected points. Confirmed bye weeks and current unavailable players are excluded. Missing weekly projections can use recorded season points per game; fallback and unfilled-slot counts are displayed. Future projections do not constitute injury recovery predictions. Replacement value, positional comparisons and bench coverage describe the current week; the main points component covers the remaining regular season.
 
-The live Sleeper display names map to the same manager identities used in the 2018–2025 Yahoo archive. The Teams page has twelve active franchises and one historical manager, Hunter. The mapping lives in `public/assets/js/app.js` as `managerHandles`.
+The code reads future weekly projections rather than subtracting season-to-date points from preseason totals. Projection/stat endpoints are undocumented Sleeper feeds; changes or missing responses are handled explicitly. Coarse 50+ yard kicker projections are split using recorded distances when available and labeled estimates. Weekly rank movement appears only after a previous-week ranking has been saved in that browser.
 
-The 2026 pages fetch Sleeper league, roster, matchup, draft, scoring and transaction data when opened. Weekly standings, recaps, power rankings and H2H results use completed weeks only. The current week becomes final when the league's `last_scored_leg` reaches that week. The All Time record selector compares individual seasons; unfinished 2026 season totals are withheld from season-long comparisons, while completed weekly scores and auction bids can qualify immediately.
-
-Yahoo workbook data includes team-week scores, player-season starter totals and auction history, but it does not contain player-week lineups, optimal benches or a season-by-season waiver ledger. League History marks superlatives requiring those missing inputs as unavailable for 2018–2025. Current-season values use Sleeper where its roster, matchup and transaction data support them. The `Storage Wars` and `Turtling` figures sum each player's starter points divided by that year's recorded draft cost, using $1 for undrafted players.
-
-Run `node scripts/check_update.cjs` from this directory to check the manager bridge, week records, 2026 auction inclusion and major page renders.
+No playoff probability calculation, simulation, new playoff tab or deferred editorial/content features are included.

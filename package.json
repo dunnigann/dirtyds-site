@@ -1,0 +1,15 @@
+{
+  "name": "dirtyds-site",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node dirtyds-github/scripts/build_assets.cjs",
+    "test": "node dirtyds-github/scripts/validate_site.cjs && node dirtyds-github/scripts/check_update.cjs && node dirtyds-github/scripts/check_regressions.cjs",
+    "dev": "wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "devDependencies": {
+    "jsdom": "30.1.2",
+    "wrangler": "4.147.0"
+  }
+}

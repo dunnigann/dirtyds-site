@@ -1,7 +1,9 @@
 {
-  "name": "dirtyds-site",
-  "compatibility_date": "2026-09-28",
-  "assets": {
-    "directory": "./dirtyds-github/public"
-  }
+ "name":"dirtyds-site",
+ "main":"./dirtyds-github/worker.js",
+ "compatibility_date":"2026-10-05",
+ "assets":{"directory":"./dirtyds-github/public","binding":"ASSETS","run_worker_first":["/api/*"]},
+ "durable_objects":{"bindings":[{"name":"LEAGUE_STORE","class_name":"LeagueStore"}]},
+ "migrations":[{"tag":"v1-league-snapshots","new_sqlite_classes":["LeagueStore"]}],
+ "triggers":{"crons":["*/5 * * * *"]}
 }

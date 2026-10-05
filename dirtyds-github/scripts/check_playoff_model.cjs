@@ -1,0 +1,24 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
+const root=path.resolve(__dirname,'..'),ctx={};ctx.globalThis=ctx;vm.createContext(ctx);
+for(const name of ['scoring','football-model'])vm.runInContext(fs.readFileSync(path.join(root,'public/assets/js',name+'.js'),'utf8'),ctx);
+const M=ctx.DIRTY_DS_MODEL,clone=x=>JSON.parse(JSON.stringify(x));
+const players={q1:{full_name:'Alpha QB',position:'QB',fantasy_positions:['QB'],team:'BUF'},q2:{full_name:'Beta QB',position:'QB',fantasy_positions:['QB'],team:'ATL'},backup:{full_name:'Backup QB',position:'QB',fantasy_positions:['QB'],team:'ATL'}};
+const rosters=[{roster_id:1,players:['q1','backup'],reserve:[],settings:{}},{roster_id:2,players:['q2'],reserve:[],settings:{}}];
+const data={league:{settings:{playoff_week_start:5,playoff_teams:1,last_scored_leg:3},scoring_settings:{pass_yd:.04,pass_td:6,rec:.5},roster_positions:['QB','BN']},players,rosters,weeks:{},projections:{},nflGames:{}};
+for(let w=1;w<=4;w++){data.weeks[w]=rosters.map((r,i)=>({roster_id:r.roster_id,matchup_id:1,points:w<=3?(i?80:100):0,players:r.players,starters:[r.players[0]]}));data.projections[w]={q1:{pass_yd:400},q2:{pass_yd:300},backup:{pass_yd:200}};}
+for(let w=1;w<=18;w++)data.nflGames[w]=w===4?[{a:'ATL',b:'NYJ'}]:[{a:'ATL',b:'BUF'}];
+const experts=[{name:'Alpha QB',pos:'QB',team:'BUF',stats:{gp:13,pass_yd:3900,pass_td:26}},{name:'Beta QB',pos:'QB',team:'ATL',stats:{gp:14,pass_yd:3500,pass_td:28}},{name:'Backup QB',pos:'QB',team:'ATL',stats:{gp:14,pass_yd:2100,pass_td:14}}];
+let input=M.buildPlayoffInput(data,experts,3);assert.equal(input.teams[0].weekly[0].players[0].id,'backup','BUF bye forces a bench substitution');assert.equal(input.teams[0].w,3);assert.equal(input.teams[1].l,3);assert.equal(input.teams[0].pf,300);assert.equal(input.teams[0].weekly[0].mean,12,'league six-point passing TDs applied');
+const odds=M.simulate(input,20000,123);assert.equal(odds.find(x=>x.roster_id===1).odds,100,'clinched record beats projected remaining-week weakness');assert.equal(odds.find(x=>x.roster_id===2).odds,0);assert.equal(odds.reduce((n,x)=>n+x.odds,0),100);
+assert.equal(JSON.stringify(M.simulate(input,20000,123)),JSON.stringify(odds),'repeatable sampling for unchanged inputs');
+const broken=clone(data);broken.weeks[4][1].matchup_id=2;assert.throws(()=>M.buildPlayoffInput(broken,experts,3),/real league schedule/);
+const missing=clone(data);missing.rosters[0].players=['unknown'];assert.throws(()=>M.buildPlayoffInput(missing,experts,3),/no usable projection/);
+const noExperts=clone(data);assert.throws(()=>M.buildPlayoffInput(noExperts,[],3),/Expert ROS/);
+const tie=[{id:1,w:5,l:4,t:1,pf:1000,pa:900,coin:.5},{id:2,w:5,l:4,t:1,pf:1000,pa:950,coin:.2}];assert.equal(M.seedTeams(tie)[0].id,2,'higher PA breaks tied records and PF');tie[0].pf=1100;assert.equal(M.seedTeams(tie)[0].id,1,'PF takes precedence over PA');tie[1].w=6;assert.equal(M.seedTeams(tie)[0].id,2,'record takes precedence over PF');
+const divisions=[{id:1,division:1,w:10,l:0,t:0,pf:200,pa:0,coin:0},{id:2,division:1,w:9,l:1,t:0,pf:200,pa:0,coin:0},{id:3,division:2,w:5,l:5,t:0,pf:100,pa:0,coin:0}];assert.equal(M.seedTeams(divisions,2)[1].id,3,'division winner reserved');
+const median=clone(data);median.league.settings.league_average_match=1;assert.equal(M.recordThrough(median,3)[1].w,6);assert.equal(M.recordThrough(median,3)[2].l,6);
+const symmetry={spots:1,divisions:0,median:false,schedule:[{week:1,pairs:[[0,1]]}],teams:[1,2].map(id=>({id,w:0,l:0,t:0,pf:0,pa:0,weekly:[{mean:100,sd:20}]}))};const equal=M.simulate(symmetry,20000,456);assert.ok(equal.every(t=>Math.abs(t.odds-50)<1.5),'equal teams have equal chances');
+const before=M.historicalRanks(data,1),later=clone(data);later.rosters[0].players=['q2'];later.projections[4].q1={pass_yd:99999};later.weeks[4][0].points=99999;assert.equal(JSON.stringify(M.historicalRanks(later,1)),JSON.stringify(before),'later roster moves, projections and results do not change Week 1 reconstruction');
+const historical=clone(data);historical.weeks[1][0].players=['backup'];assert.notEqual(M.historicalRanks(historical,1).find(t=>t.roster_id===1).average,before.find(t=>t.roster_id===1).average,'historical roster lists actually drive each edition');
+const own=JSON.parse(fs.readFileSync(path.join(root,'public/data/history-data.js'),'utf8').replace(/^window.DIRTY_DS_HISTORY=/,'').replace(/;\s*$/,''));for(const [year,rows] of Object.entries(own.standings)){assert.deepEqual(rows.map(r=>r.finalPlace).sort((a,b)=>a-b),Array.from({length:12},(_,i)=>i+1),year+' has exactly one of each final place');}
+console.log('PASS: Monte Carlo symmetry/reproducibility, actual records, bye substitution, scoring, ties, divisions, median games, missing-data guards, historical rosters and all 96 final places');

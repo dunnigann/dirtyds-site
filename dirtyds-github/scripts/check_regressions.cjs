@@ -13,6 +13,8 @@ const response=(value,status=200,stale=false)=>({ok:status===200,status,headers:
 function fixtures(url){
  const u=new URL(url,'https://dirtyds.test'),p=u.pathname.replace(/^\/api\/sleeper\//,'').replace(/^\/v1\//,'')+u.search;
  if(u.pathname==='/api/snapshots')return {weeks:{}};
+ if(u.pathname==='/api/rankings')return {editions:Object.fromEntries([1,2,3].map(week=>[week,{week,teams:rosters.map((r,i)=>({roster_id:r.roster_id,manager:i?'Ben':'Jack',team:'Test Team '+(i+1),rank:i+1,record:{w:i?0:1,l:i?1:0,t:0},powerScore:50,ros:100,vor:5,depth:.3,strength:{pos:'QB'},weakness:{pos:'RB'}}))}]))};
+ if(u.pathname==='/api/playoffs')return {season:'2026',spots:1,through:1,end:3,iterations:20000,expertAsOf:Date.now(),generatedAt:Date.now(),teams:rosters.map((r,i)=>({roster_id:r.roster_id,team:'Test Team '+(i+1),manager:i?'Ben':'Jack',record:{w:i?0:1,l:i?1:0,t:0},odds:i?30:70}))};
  if(u.hostname==='site.api.espn.com')return u.pathname.endsWith('/news')?{articles:[]}:scoreboard;
  if(p==='league/'+LEAGUE)return league;
  if(p.endsWith('/users'))return users;if(p.endsWith('/rosters'))return rosters;if(p.endsWith('/drafts'))return [];
@@ -50,8 +52,8 @@ async function pageChecks(mobile=false){
  await until(()=>d.getElementById('homeRoster'),'home league panel');
  assert.equal(run('canonicalManager(SL.roster(1))'),'Jack','identity survives renamed handles');
  assert.ok(!w.DIRTY_DS_HISTORY,'home does not eagerly load archive payloads');
- await run("go('power')");await until(()=>d.querySelectorAll('.strength-card').length===2,'Analyst rankings');
- assert.doesNotMatch(d.getElementById('livePowerContent').textContent,/playoff odds|simulations/i);
+ await run("go('power')");await until(()=>d.querySelectorAll('.unified-rankings>li').length===2,'Analyst rankings');
+ assert.doesNotMatch(d.getElementById('livePowerContent').textContent,/playoff odds|simulations/i);await w.DIRTY_DS_LIVE.loadRankings();
  const lineup=run('selectProjectedLineup(SL.roster(1),2)');assert.equal(lineup.mean,53);assert.equal(new Set(lineup.lineup.map(p=>p.id)).size,4);assert.equal(lineup.lineup.find(p=>p.slot==='SUPER_FLEX').id,'q2');
  // Compare the efficient assignment to an independent exhaustive search.
  let seed=7;const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
@@ -66,9 +68,9 @@ async function pageChecks(mobile=false){
  w.DIRTY_DS_LIVE.data.nflGames[3]=[{a:'ATL',b:'NYJ'}];assert.equal(run("projectionEstimate('q1',3).source"),'Bye');
  delete w.DIRTY_DS_LIVE.data.projections[3].r1;w.DIRTY_DS_LIVE.data.nflGames[3]=[{a:'ATL',b:'BUF'}];assert.equal(run("projectionEstimate('r1',3).source"),'Fallback · season points/game');
  const slots=w.DIRTY_DS_LIVE.data.league.roster_positions;w.DIRTY_DS_LIVE.data.league.roster_positions=['K'];w.DIRTY_DS_LIVE.data.projections[2].k1={fgmiss:1};assert.equal(run('selectProjectedLineup(SL.roster(2),2).lineup[0].id'),'k1','negative projected points still fill a legal slot');w.DIRTY_DS_LIVE.data.league.roster_positions=slots;
- await run("go('matchups')");await until(()=>d.querySelector('.match-scoreboard'),'matchup scoreboard');
- assert.equal(run('matchPresentation'),mobile?'list':'field');
- assert.match(d.getElementById('liveField').textContent,/players remaining/);assert.equal(run('matchProgress(SL.data.weeks[1][0],1).label'),'Final');
+ await run("go('matchups')");await until(()=>d.querySelector('.z-field'),'matchup field');
+ assert.equal(d.querySelector('[data-match-view]'),null);assert.equal(d.querySelector('.match-scoreboard'),null);
+ assert.doesNotMatch(d.getElementById('liveField').textContent,/players remaining/);assert.equal(run('matchProgress(SL.data.weeks[1][0],1).label'),'Final');
  const archiveYear=d.getElementById('amYear');archiveYear.value='2018';archiveYear.dispatchEvent(new w.Event('change'));await until(()=>w.DIRTY_DS_HISTORY.matchups['2018']&&d.getElementById('amWeek').options.length>0&&Number(d.getElementById('amWeek').value)===Math.max(...Object.keys(w.DIRTY_DS_HISTORY.matchups['2018']).map(Number)),'lazy season selection');
  await run("go('history')");await until(()=>d.querySelectorAll('.record-category').length===3,'categorized records');
  await run("go('teams')");await until(()=>d.querySelectorAll('[data-manager]').length===13,'teams');
@@ -82,7 +84,9 @@ async function pageChecks(mobile=false){
  await run("showLivePlayer('q1')");assert.match(w.location.hash,/player=q1/);d.getElementById('modalClose').click();assert.doesNotMatch(w.location.hash,/player=/,'closing details removes the modal URL parameter');
  await run("go('seasons')");await until(()=>d.getElementById('seasonDetail'),'standings');
  await run("go('season2026')");await until(()=>d.querySelector('.z-recap'),'weekly review');
- d.querySelector('[data-standings-link]').click();await until(()=>d.getElementById('seasonDetail')&&run('seasonYear')===2026,'Standings navigation link');assert.equal(d.querySelector('[data-standings-link]').getAttribute('aria-current'),'page');
+ assert.equal(d.querySelector('[data-standings-link]'),null);
+ await run("go('playoffs')");await until(()=>d.querySelectorAll('.playoff-row').length===2,'playoff predictor');assert.match(d.getElementById('app').textContent,/70.0%/);
+ await run("go('power')");await until(()=>d.querySelectorAll('[data-power-week]').length===3,'ranking publication controls');assert.equal(d.querySelector('[data-power-week="4"]'),null);run("powerView='jack';powerWeek=1;drawPowerRankings()");assert.equal(d.querySelectorAll('.unified-rankings>li').length,0);assert.match(d.getElementById('livePowerContent').textContent,/not been submitted/);run("powerWeek=2;drawPowerRankings()");assert.equal(d.querySelectorAll('.unified-rankings>li').length,0);
  assert.equal(errors.length,0,errors.map(e=>e.message).join('\n'));dom.window.close();console.log(`PASS: ${mobile?'phone defaults':'desktop defaults'}, all ten pages, legal rankings, URLs, lazy archives, controls and modal focus`);
 }
 (async()=>{await bridgeChecks();await pageChecks();await pageChecks(true);await require('./check_worker.cjs')();})().catch(error=>{console.error(error);process.exitCode=1;});

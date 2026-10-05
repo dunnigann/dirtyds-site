@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {Miniflare,convertV4MiniflareOptions}=require('miniflare');
 module.exports=async function(){
- const LEAGUE='1388389962587590656',script=fs.readFileSync(path.resolve(__dirname,'../worker.js'),'utf8');
+ const LEAGUE='1388389962587590656',script=require('esbuild').buildSync({entryPoints:[path.resolve(__dirname,'../worker.js')],bundle:true,write:false,format:'esm',external:['cloudflare:workers']}).outputFiles[0].text;
  let offline=false,week=2,last=1,team='BUF',calls=0;
  const outbound=async request=>{calls++;if(offline)return new Response('Offline',{status:503});const p=new URL(request.url).pathname;
   let value;if(p==='/v1/league/'+LEAGUE)value={season:'2026',settings:{leg:week,last_scored_leg:last}};

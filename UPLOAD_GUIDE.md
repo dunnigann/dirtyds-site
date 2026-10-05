@@ -1,45 +1,45 @@
-# Upload this update
+# Dirty D’s season fixes and playoff predictor
 
-1. Extract the ZIP. Copy its **contents into the root of your existing `dirtyds-site` repository**, replacing files with the same paths. Do not create an extra nested `dirtyds-update` folder, and do not upload the ZIP itself as the website.
-2. Include the root `wrangler.jsonc`, `package.json`, `package-lock.json`, `.github/workflows/check.yml`, and the `dirtyds-github` folder. GitHub Desktop or a local clone is the easiest way to preserve all paths. If using GitHub’s browser uploader, upload folders in separate batches as necessary and ensure the workflow file is included.
-3. Commit the uploaded files to your existing deployment branch. Use your existing Cloudflare **Workers** project, with the repository root as its root directory and `npx wrangler deploy` as the deploy command. The checked-in public assets are already built. A build command of `npm run build` can also be used.
-4. The new Wrangler configuration creates the `LEAGUE_STORE` Durable Object/SQLite binding and a five-minute cron automatically on Worker deployment. Keep the included migration entry. This update does not require a Sleeper API token, a manually entered database ID, or a change to your domain.
-5. After Cloudflare finishes, hard-refresh the site. Check Home, Analyst Rankings, Matchups → List, Standings, Players, Draft Central and an archived season. `/api/snapshots` initially returns empty weeks until the first scheduled capture runs; within roughly five minutes it should show captured weeks.
+1. Extract the ZIP.
+2. Open https://github.com/dunnigann/dirtyds-site on the main branch (the repository’s top page).
+3. Choose Add file → Upload files.
+4. Drag all four items INSIDE the extracted folder: dirtyds-github, package.json, package-lock.json, and UPLOAD_GUIDE.md.
+5. Wait for every file, then commit directly to main with “Season fixes and playoff predictor”.
+6. Check Cloudflare → Workers & Pages → dirtyds-site → Deployments for Success.
+7. Open dirtydfantasy.com and press Ctrl+Shift+R.
 
-Only uploading `public/` to a static host will show the redesigned frontend and direct Sleeper fallback, but **will not activate the shared backend cache or scheduled snapshots**. Upload the full package and deploy the root Worker configuration to include all technical changes.
+This is an update package. It contains changed and new files only; existing files stay in place. Preserve the nested dirtyds-github folder. Do not upload the outer ZIP folder as another directory. No existing folders need to be deleted. No changes to wrangler.jsonc, secrets or Cloudflare bindings are required.
 
-## Included changes
+The first Playoff Predictor load collects the real remaining schedule and expert forecasts and may take up to 90 seconds. The scheduled Worker warms the model every five minutes. A missing expert projection or matchup produces an explanatory error instead of invented odds. If it fails, send the exact error and the Cloudflare deployment log.
 
-### Technical
+## Completed changes
 
-- Split the former monolithic page script into shared helpers and page modules; load historical player and season payloads on demand.
-- One active stylesheet with shared design tokens; generated assets have content hashes and cache headers, with a reproducible build.
-- Restricted backend Sleeper proxy, shared SQLite caching, request deduplication, cache expiration, request timeouts, retries, stale-data fallback, visible freshness status and manual refresh.
-- Visibility-aware live updates; transaction fetching stops at the current week rather than fetching all future weeks on every visit.
-- Stable manager user-ID mapping, finalized-score handling and independently copied weekly metadata snapshots captured on a schedule.
-- Missing projections stay missing rather than silently becoming zero; custom kicker scoring handles coarse distance buckets and marks estimates.
-- Efficient legal lineup assignment, position eligibility, bye handling, no duplicate starters and explicit fallback/unfilled-slot disclosure.
-- Page navigation uses browser history; selected weeks, archive seasons, matchup mode/presentation, rankings author and filters can be shared in URLs. Live player details can be linked directly.
-- Modal focus trapping, Escape handling, background isolation and focus restoration; visible form labels, focus styles and motion preferences.
-- Archive checks, behavioral regression tests, Cloudflare runtime/storage tests and a GitHub Actions validation workflow.
+- Weekly Review table cannot overlap the matchup review beneath it; recap headings wrap safely.
+- Removed the Field/List setting, list presentation and projected-final summary box. The field and original matchup selector remain.
+- Removed the separate Standings navigation tab.
+- Filled all 96 historical manager-season final places from the championship, third-place, fifth-place and consolation placement games.
+- Added Playoff Predictor under 2026 Season, ranked by playoff probability, with a quiet bottom methods dropdown.
+- 20,000 deterministic Monte Carlo trials use the real fantasy schedule, finalized W–L–T / PF / PA, actual league scoring, weekly legal optimal lineups, confirmed NFL byes, bench replacement, variance, and Sleeper seeding rules. Division-winner and median-game formats are supported if enabled by league settings.
+- CBS Sports ROS counting-stat forecasts drive QB/RB/WR/TE expectations. Sleeper weekly forecasts fill unmatched players, kickers and defenses. Expert data refreshes every six hours; simulations every five minutes. Required missing data prevents publishing false precision.
+- Week 4 remains unfinished in the model until Sleeper finalizes it. The predictor does not condition on in-progress scores.
+- Analyst and Jack rankings share the same one-team-per-row layout, record, notes and movement position. Analyst metrics and methodology are hidden in the bottom dropdown.
+- Published ranking controls show Weeks 1, 2 and 3 only. Analyst editions are reconstructed from each week’s recorded rosters and projection feeds through that week, then stored consistently for all visitors. Week 4 is not published automatically.
+- Jack Weeks 1–2 remain unsubmitted and contain no rankings; the original Week 3 order and writeups remain intact. Jack movement arrows await a prior submitted edition.
 
-### Visual
+## Important model limits
 
-- Shorter heroes and tighter page spacing; compact homepage with current league information.
-- Direct Standings navigation and a clearer Weekly Review label for the season recaps.
-- Analyst ranking cards with Strength / 100, projected starter points per week, ROS starter points, replacement value, positional strengths/weaknesses and usable bench coverage. Playoff odds and simulations are removed.
-- Matchup scoreboards with actual scores, estimated final totals and players remaining; Field/List controls and readable List defaults on phones.
-- Readable field text without the former seven-pixel mobile labels; horizontal field viewing remains available.
-- Labeled filters with reset controls, aligned numeric table values, sticky desktop headers and mobile table cards.
-- Collapsible scoring, management and auction/value record groups.
-- Horizontal mobile player leader carousel, compact team identity cards, consistent dark styling and larger mobile controls.
+The earliest historical roster lists are available, but original ROS forecasts and injury metadata were not archived. The retroactive Analyst editions are labeled reconstructions; they do not claim to reproduce original forecasts. Current NFL metadata can affect historical team labels when no original snapshot exists.
 
-## Validation and limits
+The playoff model assumes fixed current rosters and optimal projected starters, rather than perfect knowledge of eventual scores. Injuries use expert projected games played to approximate earliest missed games; future injury surprises and transactions are not forecast. CBS lacks some scoring bonus and special-stat fields, listed in the dropdown. The positional variability and correlation parameters are transparent assumptions, not a calibrated forecast guarantee.
 
-The included checks cover all ten pages in a DOM test environment, desktop/phone interaction defaults, historical reconciliation, custom scoring, retries, legal lineups, filters, modal focus, the Cloudflare Worker runtime, SQLite cache and snapshots. The Cloudflare deployment dry run passes.
+## Validation
 
-The updated site has not been deployed. Full browser screenshot/layout inspection could not be completed in this session because the browser cannot open local previews and automatic approval review rejected an external public preview tunnel. Review the deployed desktop and phone layouts after upload.
+Browser DOM checks cover desktop and phone modes, all navigation pages, ranking controls, removed controls, modal behavior and the predictor view. Independent model checks cover bye replacement, legal unique starters, records, ties, median games, division winners, symmetric odds, deterministic sampling, missing-data refusal, historical roster changes and all 96 historical finishes. Cloudflare runtime checks cover expert parsing, simulation endpoints, shared cache, frozen ranking editions and stale-feed handling. Wrangler deployment bundling passed.
 
-Snapshots start at deployment; earlier historical metadata is labeled as incomplete. Future projection availability depends on Sleeper’s undocumented feeds. Projected finals use pregame points adjusted by game time remaining and are labeled approximate; they are not live rest-of-game forecasts.
+The Cloudflare-to-CBS production fetch and the final live visual layout still need confirmation after upload. No live deployment was made here.
 
-No playoff model, playoff tab or deferred content feature work is included. Existing Jack’s Week 3 commentary is preserved.
+## Future ranking updates
+
+New editions require an intentional code update; there is no Week 4 ranking in this package. Keep the frozen Weeks 1–3 archived. Add Jack’s missing weeks only when he supplies those rankings.
+
+After rebuilding archive data from the source workbook, first apply the Week 17 correction, then run: python dirtyds-github/scripts/repair_finishes.py.

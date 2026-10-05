@@ -1,10 +1,10 @@
 {
   "name": "dirtyds-site",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
   "scripts": {
     "build": "node dirtyds-github/scripts/build_assets.cjs",
-    "test": "node dirtyds-github/scripts/validate_site.cjs && node dirtyds-github/scripts/check_update.cjs && node dirtyds-github/scripts/check_regressions.cjs",
+    "test": "node dirtyds-github/scripts/validate_site.cjs && node dirtyds-github/scripts/check_update.cjs && node dirtyds-github/scripts/check_regressions.cjs && node dirtyds-github/scripts/check_playoff_model.cjs && node dirtyds-github/scripts/check_model_worker.cjs",
     "dev": "wrangler dev",
     "deploy": "npm run build && wrangler deploy"
   },

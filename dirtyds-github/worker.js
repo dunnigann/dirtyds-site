@@ -40,13 +40,15 @@ export class LeagueStore extends DurableObject {
  async modelData({ranking=false}={}){
   const lf=await this.feed('league/'+LEAGUE),league=lf.value,season=String(league.season),end=Number(league.settings?.playoff_week_start||15)-1,last=Math.min(end,Number(league.settings?.last_scored_leg||0));
   const [uf,rf,pf]=await Promise.all([this.feed('league/'+LEAGUE+'/users'),this.feed('league/'+LEAGUE+'/rosters'),this.feed('players/nfl?active=true')]);
-  const data={league,season,users:uf.value,rosters:rf.value,players:pf.value,weeks:{},projections:{},nflGames:{},snapshots:{}},feeds=[lf,uf,rf,pf];
+  const data={league,season,users:uf.value,rosters:rf.value,players:pf.value,weeks:{},projections:{},nflGames:{},snapshots:{},unavailableProjectionWeeks:[]},feeds=[lf,uf,rf,pf];
   const jobs=[];
   const run=async()=>{while(jobs.length){const job=jobs.shift();await job();}};
   const finalWeek=ranking?Math.min(3,last):end;
   for(let w=1;w<=finalWeek;w++)jobs.push(async()=>{const f=await this.feed(`league/${LEAGUE}/matchups/${w}`);data.weeks[w]=f.value;feeds.push(f);});
-  const start=ranking?1:last+1;
-  for(let w=start;w<=(ranking?3:end);w++)jobs.push(async()=>{const f=await this.feed(`projections/nfl/regular/${season}/${w}`);data.projections[w]=Array.isArray(f.value)?Object.fromEntries(f.value.map(r=>[String(r.player_id||r.id),r])):f.value;feeds.push(f);});
+  // Future K/DEF forecasts are often unpublished. Load recent weeks too, and
+  // let the model estimate from those instead of treating missing data as zero.
+  const start=ranking?1:Math.max(1,last-2);
+  for(let w=start;w<=(ranking?3:end);w++)jobs.push(async()=>{try{const f=await this.feed(`projections/nfl/regular/${season}/${w}`);data.projections[w]=Array.isArray(f.value)?Object.fromEntries(f.value.map(r=>[String(r.player_id||r.id),r])):f.value||{};feeds.push(f);}catch(error){if(ranking)throw error;data.projections[w]={};data.unavailableProjectionWeeks.push(w);}});
   for(let w=ranking?1:last+1;w<=18;w++)jobs.push(async()=>{const f=await this.nflGames(season,w);data.nflGames[w]=f.value;feeds.push(f);});
   await Promise.all(Array.from({length:4},run));
   return {data,last,stale:feeds.some(f=>f.stale),dataAsOf:Math.min(...feeds.map(f=>f.saved))};
@@ -64,11 +66,11 @@ export class LeagueStore extends DurableObject {
   });
  }
  async playoffForecast(){
-  return this.cachedSource('playoff-model:2026:v1',300000,async()=>{
+  return this.cachedSource('playoff-model:2026:v2-waivers',300000,async()=>{
    const [built,expertFeed]=await Promise.all([this.modelData(),this.experts('2026')]),{data,last,stale,dataAsOf}=built,input=MODEL.buildPlayoffInput(data,expertFeed.value,last),iterations=20000;
    const hashInput=JSON.stringify({teams:input.teams,schedule:input.schedule,spots:input.spots,divisions:input.divisions,median:input.median});let seed=2166136261;for(let i=0;i<hashInput.length;i++)seed=Math.imul(seed^hashInput.charCodeAt(i),16777619)>>>0;
    const teams=MODEL.simulate(input,iterations,seed).map(t=>({...t,...this.identity(data,t.roster_id),record:input.teams.find(x=>x.id===t.roster_id)}));
-   return {season:data.season,through:input.through,end:input.end,spots:input.spots,iterations,seed,generatedAt:Date.now(),dataAsOf,expertAsOf:expertFeed.saved,stale:stale||expertFeed.stale,expertSource:'CBS Sports ROS counting-stat projections',expertLinks:['QB','RB','WR','TE'].map(pos=>expertURL(pos,data.season)),expertSlots:input.expertSlots,fallbackSlots:input.fallbackSlots,unsupportedScoring:input.unsupportedScoring,median:input.median,divisions:input.divisions,teams:teams.map(t=>({...t,record:{w:t.record.w,l:t.record.l,t:t.record.t,pf:t.record.pf,pa:t.record.pa}}))};
+   return {season:data.season,through:input.through,end:input.end,spots:input.spots,iterations,seed,generatedAt:Date.now(),dataAsOf,expertAsOf:expertFeed.saved,stale:stale||expertFeed.stale,expertSource:'CBS Sports ROS counting-stat projections',expertLinks:['QB','RB','WR','TE'].map(pos=>expertURL(pos,data.season)),expertSlots:input.expertSlots,fallbackSlots:input.fallbackSlots,waiverSlots:input.waiverSlots,recentProjectionSlots:input.recentProjectionSlots,estimatedReplacementSlots:input.estimatedReplacementSlots,unavailableProjectionWeeks:data.unavailableProjectionWeeks,unsupportedScoring:input.unsupportedScoring,median:input.median,divisions:input.divisions,teams:teams.map(t=>({...t,record:{w:t.record.w,l:t.record.l,t:t.record.t,pf:t.record.pf,pa:t.record.pa}}))};
   });
  }
  async capture(){

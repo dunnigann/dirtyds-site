@@ -153,10 +153,10 @@ function buildPlayoffInput(data,experts,through){
 }
 function compareSeeds(a,b){const ag=a.w+a.l+a.t,bg=b.w+b.l+b.t;const ap=ag?(a.w+.5*a.t)/ag:0,bp=bg?(b.w+.5*b.t)/bg:0;return bp-ap||b.pf-a.pf||b.pa-a.pa||(a.coin??0)-(b.coin??0);}
 function seedTeams(teams,divisions=0){const sorted=teams.slice().sort(compareSeeds);if(divisions<2)return sorted;const winners=[];for(let d=1;d<=divisions;d++){const winner=sorted.find(t=>t.division===d);if(!winner)throw new Error('Division membership is incomplete.');winners.push(winner);}winners.sort(compareSeeds);const ids=new Set(winners.map(t=>t.id));return winners.concat(sorted.filter(t=>!ids.has(t.id)));}
-function simulate(input,iterations=20000,seed=20261005){
+function simulateForecast(input,iterations=20000,seed=20261005){
  let state=seed>>>0;const random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return (state+.5)/4294967296;};
  const normal=()=>Math.sqrt(-2*Math.log(random()))*Math.cos(2*Math.PI*random());
- const counts=input.teams.map(t=>({id:t.id,playoff:0,first:0,wins:0,seeds:Array(input.teams.length).fill(0)}));
+ const counts=input.teams.map(t=>({id:t.id,playoff:0,first:0,wins:0,seeds:Array(input.teams.length).fill(0)})),cutoffRecords=new Map();
  for(let trial=0;trial<iterations;trial++){
   const teams=input.teams.map(t=>({...t,coin:random()}));
   for(let wi=0;wi<input.schedule.length;wi++){
@@ -164,9 +164,16 @@ function simulate(input,iterations=20000,seed=20261005){
    for(const [a,b] of input.schedule[wi].pairs){teams[a].pf=Math.round((teams[a].pf+weekly[a])*100)/100;teams[b].pf=Math.round((teams[b].pf+weekly[b])*100)/100;teams[a].pa=Math.round((teams[a].pa+weekly[b])*100)/100;teams[b].pa=Math.round((teams[b].pa+weekly[a])*100)/100;if(weekly[a]>weekly[b]){teams[a].w++;teams[b].l++;}else if(weekly[b]>weekly[a]){teams[b].w++;teams[a].l++;}else{teams[a].t++;teams[b].t++;}}
    if(input.median){const ordered=weekly.slice().sort((a,b)=>a-b),median=(ordered[(ordered.length-1)>>1]+ordered[ordered.length>>1])/2;teams.forEach((t,i)=>t[weekly[i]>median?'w':weekly[i]<median?'l':'t']++);}
   }
-  seedTeams(teams,input.divisions).forEach((t,i)=>{const c=counts[input.teams.findIndex(x=>x.id===t.id)];if(i<input.spots)c.playoff++;if(i===0)c.first++;c.wins+=t.w;c.seeds[i]++;});
+  const seeded=seedTeams(teams,input.divisions),lastQualifier=seeded[input.spots-1];
+  const key=`${lastQualifier.w}:${lastQualifier.l}:${lastQualifier.t}`,record=cutoffRecords.get(key)||{w:lastQualifier.w,l:lastQualifier.l,t:lastQualifier.t,count:0};record.count++;cutoffRecords.set(key,record);
+  seeded.forEach((t,i)=>{const c=counts[input.teams.findIndex(x=>x.id===t.id)];if(i<input.spots)c.playoff++;if(i===0)c.first++;c.wins+=t.w;c.seeds[i]++;});
  }
- return counts.map(c=>({roster_id:c.id,odds:100*c.playoff/iterations,first:100*c.first/iterations,expectedWins:c.wins/iterations,seedProbabilities:c.seeds.map(n=>100*n/iterations)})).sort((a,b)=>b.odds-a.odds||a.roster_id-b.roster_id);
+ const distribution=[...cutoffRecords.values()].sort((a,b)=>b.count-a.count||b.w-a.w||a.t-b.t),mode=distribution[0];
+ const byWins=distribution.slice().sort((a,b)=>a.w-b.w),quantile=q=>{let total=0;for(const r of byWins){total+=r.count;if(total>=iterations*q)return r.w;}return byWins.at(-1).w;};
+ const cutoff={seed:input.spots,record:{w:mode.w,l:mode.l,t:mode.t},probability:100*mode.count/iterations,expectedWins:distribution.reduce((sum,r)=>sum+r.w*r.count,0)/iterations,winRange:{low:quantile(.1),high:quantile(.9)},distribution:distribution.map(({count,...record})=>({...record,probability:100*count/iterations}))};
+ const teams=counts.map(c=>({roster_id:c.id,odds:100*c.playoff/iterations,first:100*c.first/iterations,expectedWins:c.wins/iterations,seedProbabilities:c.seeds.map(n=>100*n/iterations)})).sort((a,b)=>b.odds-a.odds||a.roster_id-b.roster_id);
+ return {teams,cutoff};
 }
-globalThis.DIRTY_DS_MODEL={assignLegalLineup,normalize,recordThrough,historicalRanks,expertIndex,buildPlayoffInput,compareSeeds,seedTeams,simulate};
+function simulate(input,iterations=20000,seed=20261005){return simulateForecast(input,iterations,seed).teams;}
+globalThis.DIRTY_DS_MODEL={assignLegalLineup,normalize,recordThrough,historicalRanks,expertIndex,buildPlayoffInput,compareSeeds,seedTeams,simulate,simulateForecast};
 })();

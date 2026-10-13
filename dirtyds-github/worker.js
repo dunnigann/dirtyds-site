@@ -2,8 +2,9 @@ import {DurableObject} from 'cloudflare:workers';
 import './public/assets/js/scoring.js';
 import './public/assets/js/football-model.js';
 import {parseCBS,expertURL} from './lib/expert-projections.mjs';
+import PUBLISHED_RANKINGS from './public/data/rankings-2026.json';
 const MODEL=globalThis.DIRTY_DS_MODEL;
-const PUBLISHED_RANKING_WEEKS=[1,2,3];
+const PUBLISHED_RANKING_WEEKS=PUBLISHED_RANKINGS.publishedWeeks;
 const MANAGERS={"466440358671151104":"James","607004933086052352":"Jake","729555035901534208":"Fritz","1060045335881457664":"Jack","1388342142245572608":"Dan","1388389695032938496":"Vinny","1388890524814966784":"Bobby","1388895706860777472":"Nick","1388907771327451136":"Tyler","1389748221072384001":"Brent","1389752255158177792":"Ben","1393744257201750016":"Jeff"};
 const LEAGUE='1388389962587590656';
 function compactPlayers(raw){const fields=['player_id','full_name','first_name','last_name','position','fantasy_positions','team','espn_id','injury_status','depth_chart_order','depth_chart_position','status'];return Object.fromEntries(Object.entries(raw||{}).filter(([id,p])=>p&&(['QB','RB','WR','TE','K','DEF'].includes(p.position)||/^[A-Z]{2,3}$/.test(id))).map(([id,p])=>[id,Object.fromEntries(fields.filter(k=>p[k]!=null).map(k=>[k,p[k]]))]));}
@@ -43,34 +44,28 @@ export class LeagueStore extends DurableObject {
   const data={league,season,users:uf.value,rosters:rf.value,players:pf.value,weeks:{},projections:{},nflGames:{},snapshots:{},unavailableProjectionWeeks:[]},feeds=[lf,uf,rf,pf];
   const jobs=[];
   const run=async()=>{while(jobs.length){const job=jobs.shift();await job();}};
-  const finalWeek=ranking?Math.min(3,last):end;
+  const finalWeek=ranking?Math.min(Math.max(...PUBLISHED_RANKING_WEEKS),last):end;
   for(let w=1;w<=finalWeek;w++)jobs.push(async()=>{const f=await this.feed(`league/${LEAGUE}/matchups/${w}`);data.weeks[w]=f.value;feeds.push(f);});
   // Future K/DEF forecasts are often unpublished. Load recent weeks too, and
   // let the model estimate from those instead of treating missing data as zero.
   const start=ranking?1:Math.max(1,last-2);
-  for(let w=start;w<=(ranking?3:end);w++)jobs.push(async()=>{try{const f=await this.feed(`projections/nfl/regular/${season}/${w}`);data.projections[w]=Array.isArray(f.value)?Object.fromEntries(f.value.map(r=>[String(r.player_id||r.id),r])):f.value||{};feeds.push(f);}catch(error){if(ranking)throw error;data.projections[w]={};data.unavailableProjectionWeeks.push(w);}});
+  for(let w=start;w<=(ranking?Math.max(...PUBLISHED_RANKING_WEEKS):end);w++)jobs.push(async()=>{try{const f=await this.feed(`projections/nfl/regular/${season}/${w}`);data.projections[w]=Array.isArray(f.value)?Object.fromEntries(f.value.map(r=>[String(r.player_id||r.id),r])):f.value||{};feeds.push(f);}catch(error){if(ranking)throw error;data.projections[w]={};data.unavailableProjectionWeeks.push(w);}});
   for(let w=ranking?1:last+1;w<=18;w++)jobs.push(async()=>{const f=await this.nflGames(season,w);data.nflGames[w]=f.value;feeds.push(f);});
   await Promise.all(Array.from({length:4},run));
   return {data,last,stale:feeds.some(f=>f.stale),dataAsOf:Math.min(...feeds.map(f=>f.saved))};
  }
  identity(data,id){const roster=data.rosters.find(r=>r.roster_id===id),user=data.users.find(u=>u.user_id===roster?.owner_id);return {manager:MANAGERS[roster?.owner_id]||user?.display_name||'Manager',team:user?.metadata?.team_name||user?.display_name||'Team',avatar:user?.avatar||null};}
  async rankingArchive(){
-  return this.cachedSource('published-rankings:2026:v1',86400000,async()=>{
-   const {data,last}=await this.modelData({ranking:true}),editions={};
-   for(const week of PUBLISHED_RANKING_WEEKS){if(week>last)continue;const key=`analyst-edition:${data.season}:${week}:v1`,saved=await this.ctx.storage.get(key);
-    if(saved){editions[week]=saved;continue;}
-    const teams=MODEL.historicalRanks(data,week).map(t=>({...t,...this.identity(data,t.roster_id)}));
-    const edition={week,teams,reconstructed:true,createdAt:Date.now()};await this.ctx.storage.put(key,edition);editions[week]=edition;
-   }
-   return {season:data.season,publishedWeeks:PUBLISHED_RANKING_WEEKS,editions};
-  });
+  // Publications are immutable. Publishing Week 4/5 must never recalculate
+  // Weeks 1–3 with newer rosters, metadata or projections.
+  return {value:PUBLISHED_RANKINGS,saved:Date.parse(PUBLISHED_RANKINGS.publishedAt),stale:false};
  }
  async playoffForecast(){
-  return this.cachedSource('playoff-model:2026:v2-waivers',300000,async()=>{
+  return this.cachedSource('playoff-model:2026:v3-cutoff',300000,async()=>{
    const [built,expertFeed]=await Promise.all([this.modelData(),this.experts('2026')]),{data,last,stale,dataAsOf}=built,input=MODEL.buildPlayoffInput(data,expertFeed.value,last),iterations=20000;
    const hashInput=JSON.stringify({teams:input.teams,schedule:input.schedule,spots:input.spots,divisions:input.divisions,median:input.median});let seed=2166136261;for(let i=0;i<hashInput.length;i++)seed=Math.imul(seed^hashInput.charCodeAt(i),16777619)>>>0;
-   const teams=MODEL.simulate(input,iterations,seed).map(t=>({...t,...this.identity(data,t.roster_id),record:input.teams.find(x=>x.id===t.roster_id)}));
-   return {season:data.season,through:input.through,end:input.end,spots:input.spots,iterations,seed,generatedAt:Date.now(),dataAsOf,expertAsOf:expertFeed.saved,stale:stale||expertFeed.stale,expertSource:'CBS Sports ROS counting-stat projections',expertLinks:['QB','RB','WR','TE'].map(pos=>expertURL(pos,data.season)),expertSlots:input.expertSlots,fallbackSlots:input.fallbackSlots,waiverSlots:input.waiverSlots,recentProjectionSlots:input.recentProjectionSlots,estimatedReplacementSlots:input.estimatedReplacementSlots,unavailableProjectionWeeks:data.unavailableProjectionWeeks,unsupportedScoring:input.unsupportedScoring,median:input.median,divisions:input.divisions,teams:teams.map(t=>({...t,record:{w:t.record.w,l:t.record.l,t:t.record.t,pf:t.record.pf,pa:t.record.pa}}))};
+   const forecast=MODEL.simulateForecast(input,iterations,seed),teams=forecast.teams.map(t=>({...t,...this.identity(data,t.roster_id),record:input.teams.find(x=>x.id===t.roster_id)}));
+   return {season:data.season,through:input.through,end:input.end,spots:input.spots,cutoff:forecast.cutoff,iterations,seed,generatedAt:Date.now(),dataAsOf,expertAsOf:expertFeed.saved,stale:stale||expertFeed.stale,expertSource:'CBS Sports ROS counting-stat projections',expertLinks:['QB','RB','WR','TE'].map(pos=>expertURL(pos,data.season)),expertSlots:input.expertSlots,fallbackSlots:input.fallbackSlots,waiverSlots:input.waiverSlots,recentProjectionSlots:input.recentProjectionSlots,estimatedReplacementSlots:input.estimatedReplacementSlots,unavailableProjectionWeeks:data.unavailableProjectionWeeks,unsupportedScoring:input.unsupportedScoring,median:input.median,divisions:input.divisions,teams:teams.map(t=>({...t,record:{w:t.record.w,l:t.record.l,t:t.record.t,pf:t.record.pf,pa:t.record.pa}}))};
   });
  }
  async capture(){

@@ -759,3 +759,12 @@ a.nav-link{text-decoration:none;display:inline-flex;align-items:center;justify-c
 .odds-track{height:7px;border-radius:99px;background:#354654;overflow:hidden}.odds-fill{height:100%;background:linear-gradient(90deg,#a65568,#f2ca68);border-radius:99px}.odds-caption{font-size:11px;color:var(--muted);margin-top:7px}
 .playoff-row.cut-line{border-bottom:2px dashed #d6b85c}.playoff-loader{padding:28px 0;color:var(--muted)}
 @media(max-width:700px){.z-ranking-list.unified-rankings>li{grid-template-columns:25px 34px minmax(0,1fr) 34px;gap:8px}.playoff-row{grid-template-columns:24px 34px minmax(0,1fr) 72px;gap:10px;padding:17px 12px}.playoff-row .z-photo{width:34px;height:34px}.playoff-row .playoff-bar{grid-column:3/5;grid-row:2}.playoff-chance{font-size:25px}.playoff-team h3{font-size:16px}.playoff-meta{gap:8px}.z-page .z-standings-shell{overflow:visible;contain:none}.z-page .z-standings{display:block}.z-page .z-standings tbody{display:grid}}
+
+/* All Seasons and Weekly Review must both contain every standings row. */
+.z-standings-shell{display:block;height:auto;max-height:none;overflow:auto;position:relative;isolation:isolate}
+.z-standings{height:auto;max-height:none;margin:0}
+.playoff-cutoff{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding:24px;margin:0 0 24px;border:1px solid #496073;border-top:3px solid var(--gold);border-radius:14px;background:#1b2938}
+.playoff-cutoff h2{margin:8px 0;font-size:clamp(38px,5vw,58px);color:var(--gold);font-variant-numeric:tabular-nums;line-height:1.1}
+.playoff-cutoff p{font-size:13px;line-height:1.6;color:var(--muted);margin:7px 0 0}
+.playoff-cutoff>div+div{align-self:center}.playoff-cutoff strong{color:#f5f7fb;font-size:16px}
+@media(max-width:780px){.z-standings-shell{overflow:visible;max-height:none}.playoff-cutoff{grid-template-columns:1fr;gap:14px;padding:18px}}

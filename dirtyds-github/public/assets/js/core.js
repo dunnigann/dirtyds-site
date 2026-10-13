@@ -5,7 +5,7 @@ const K26=window.DIRTY_DS_KEEPERS_2026||[];
 const app=document.getElementById('app'), nav=[...document.querySelectorAll('.nav-link')];
 const backdrop=document.getElementById('modalBackdrop'), modalContent=document.getElementById('modalContent');
 let years=(H?.league||[]).map(x=>Number(x.year)).sort((a,b)=>b-a);
-let currentPage='home', liveWeek=1, matchMode='dirtyds', matchIndex=0, powerView='analyst', powerWeek=3, transactionWeek=0, transactionFetchErrors=0,routeGeneration=0;
+let currentPage='home', liveWeek=1, matchMode='dirtyds', matchIndex=0, powerView='analyst', powerWeek=5, transactionWeek=0, transactionFetchErrors=0,routeGeneration=0;
 let archiveMatchYear=2025, archiveMatchWeek=17;
 let seasonYear=2026, playerSearch='', playerPos='ALL', playerOwner='ALL', playerSort='points', playerLimit=40, playerTopPos='QB';
 let draftYear=2026, draftPos='ALL', draftOwner='ALL', draftKind='ALL', h2hScope='all', recordYear='all';
@@ -198,7 +198,7 @@ function readRoute(){
  if(q.has('game'))matchIndex=Math.max(0,Number(q.get('game'))||0);
  matchMode=q.get('mode')==='nfl'?'nfl':'dirtyds';
  if(page==='matchups'){if(q.has('archiveYear'))archiveMatchYear=Math.min(2025,validYear(q.get('archiveYear')));if(q.has('archiveWeek'))archiveMatchWeek=Math.max(1,Math.min(18,Number(q.get('archiveWeek'))||17));}
- if(page==='power'){powerView=q.get('author')==='jack'?'jack':'analyst';powerWeek=Math.max(1,Math.min(3,Number(q.get('week'))||3));}
+ if(page==='power'){powerView=q.get('author')==='jack'?'jack':'analyst';powerWeek=Math.max(1,Math.min(5,Number(q.get('week'))||5));}
  if(page==='seasons')seasonYear=q.has('year')?validYear(q.get('year')):2026;
  if(page==='history'){recordYear=q.get('year')==='all'||!q.has('year')?'all':String(validYear(q.get('year')));h2hScope=['regular','playoffs'].includes(q.get('scope'))?q.get('scope'):'all';}
  if(page==='players'){playerSearch=q.get('search')||'';playerPos=q.get('position')||'ALL';playerOwner=q.get('manager')||'ALL';playerSort=q.get('sort')||'points';playerTopPos=['QB','RB','WR','TE','FLEX','K','DEF'].includes(q.get('leaders'))?q.get('leaders'):'QB';}

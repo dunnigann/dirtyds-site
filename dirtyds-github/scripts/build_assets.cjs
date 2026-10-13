@@ -13,8 +13,8 @@ for(const year of Object.keys(H.matchups))write('data/seasons/'+year+'.js',`wind
 const generated=path.join(pub,'assets/build');fs.mkdirSync(generated,{recursive:true});
 // Existing generations are intentionally retained for open tabs during an upload.
 const assets={};
-const files=['assets/css/site.css',...fs.readdirSync(path.join(pub,'assets/js')).filter(f=>f.endsWith('.js')).map(f=>'assets/js/'+f),...['archive-base','archive-players','award-data','lineup-data','photo-data','keepers-2026'].map(f=>'data/'+f+'.js'),...Object.keys(H.matchups).map(y=>'data/seasons/'+y+'.js')];
-for(const file of files){const value=read(file),hash=crypto.createHash('sha256').update(value).digest('hex').slice(0,12),name=file.replaceAll('/','-').replace(/\.(js|css)$/,'.'+hash+'.$1'),target='assets/build/'+name;write(target,value);assets[file]=target;}
+const files=['assets/css/site.css','data/rankings-2026.json',...fs.readdirSync(path.join(pub,'assets/js')).filter(f=>f.endsWith('.js')).map(f=>'assets/js/'+f),...['archive-base','archive-players','award-data','lineup-data','photo-data','keepers-2026'].map(f=>'data/'+f+'.js'),...Object.keys(H.matchups).map(y=>'data/seasons/'+y+'.js')];
+for(const file of files){const value=read(file),hash=crypto.createHash('sha256').update(value).digest('hex').slice(0,12),name=file.replaceAll('/','-').replace(/\.(js|css|json)$/,'.'+hash+'.$1'),target='assets/build/'+name;write(target,value);assets[file]=target;}
 const manifest='window.DIRTY_DS_ASSETS='+JSON.stringify(assets)+';\n',hash=crypto.createHash('sha256').update(manifest).digest('hex').slice(0,12),manifestPath='assets/build/manifest.'+hash+'.js';write(manifestPath,manifest);
 let html=fs.readFileSync(path.join(root,'source/index.template.html'),'utf8');
 html=html.replace(/(src|href)="([^"]+)"/g,(all,attr,file)=>assets[file]?`${attr}="${assets[file]}"`:file==='assets/manifest.js'?`${attr}="${manifestPath}"`:all);

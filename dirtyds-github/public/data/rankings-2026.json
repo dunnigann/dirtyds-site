@@ -1,0 +1,2631 @@
+{
+  "season": "2026",
+  "publishedWeeks": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "editions": {
+    "1": {
+      "week": 1,
+      "teams": [
+        {
+          "roster_id": 2,
+          "record": {
+            "w": 0,
+            "l": 1,
+            "t": 0,
+            "pf": 108.18,
+            "pa": 127.46
+          },
+          "average": 131.64538461538461,
+          "ros": 1711.39,
+          "vor": 62.116666666666674,
+          "coverage": {
+            "QB": 0.754325259515571,
+            "RB": 0.6367112810707457,
+            "WR": 0.714066102997694,
+            "TE": 0.7502230151650312
+          },
+          "depth": 0.7138314146872604,
+          "byPos": {
+            "QB": 40.64,
+            "RB": 40.24,
+            "WR": 26.66,
+            "TE": 11.21,
+            "K": 6.21,
+            "DEF": 10.76
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 1.246478873239437
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8434039860803544
+          },
+          "powerScore": 95.51172620290936,
+          "rank": 1,
+          "manager": "Bobby",
+          "team": "Slim Shiesty",
+          "avatar": "d22e52781a5d7a94bcbf2aa70e748382",
+          "blurb": "Opening night was a face-plant, but the roster hasn't lost its pedigree after one game. Hurts and Burrow give Bobby two credible Superflex starters, while Achane, Brown and Collins supply the explosive upside. Collins delivered 17.7; Loveland delivered a perfectly round zero. The No. 1 spot reflects the projected lineup, not a reward for 108.18 points. The two-time champion needs the supporting cast to start earning its seats."
+        },
+        {
+          "roster_id": 1,
+          "record": {
+            "w": 0,
+            "l": 1,
+            "t": 0,
+            "pf": 156.8,
+            "pa": 166.9
+          },
+          "average": 126.09307692307695,
+          "ros": 1639.2100000000003,
+          "vor": 58.36333333333334,
+          "coverage": {
+            "QB": 0.9427178549664839,
+            "RB": 0.6172747580044675,
+            "WR": 0.9691289966923924,
+            "TE": 0
+          },
+          "depth": 0.6322804024158359,
+          "byPos": {
+            "QB": 33.92,
+            "RB": 46.75,
+            "WR": 26.04,
+            "TE": 8.15,
+            "K": 6.9,
+            "DEF": 9.24
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.4099019854234733
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8237899398924391
+          },
+          "powerScore": 76.93157659686011,
+          "rank": 2,
+          "manager": "Vinny",
+          "team": "LgbtQB1",
+          "avatar": null,
+          "blurb": "Vinny scored 156.80 and still lost. Apparently the commissioner's office doesn't come with matchup immunity. Caleb's 37.26 and Gibbs' 31.1 showed how ugly this team can make things for an opponent, while Chase contributed just 2.2. That receiver imbalance is the concern: the backs look ready to win a title, but the WR slots need to help carry the bill. This is a dangerous 0–1 team."
+        },
+        {
+          "roster_id": 10,
+          "record": {
+            "w": 0,
+            "l": 1,
+            "t": 0,
+            "pf": 106.66,
+            "pa": 120.96
+          },
+          "average": 125.51461538461538,
+          "ros": 1631.69,
+          "vor": 57.42333333333333,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.5827439886845828,
+            "WR": 0.9044048734770385,
+            "TE": 0.8975609756097562
+          },
+          "depth": 0.5961774594428444,
+          "byPos": {
+            "QB": 35.46,
+            "RB": 45.64,
+            "WR": 24.82,
+            "TE": 8.2,
+            "K": 6.7,
+            "DEF": 9.06
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.376426237748178
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.7851945586839608
+          },
+          "powerScore": 73.940697627741,
+          "rank": 3,
+          "manager": "Jake",
+          "team": "RockNFlow",
+          "avatar": "23fe4994d864928df8f99d56b60c9179",
+          "blurb": "Taylor, Montgomery and Hall combined for 69.8 starter points, which should buy more than a 106.66-point afternoon. The quarterbacks explain the missing money: Baker managed 11.64 and Kyler finished below zero. Jake's projected backfield keeps him near the top, but Superflex punishes a roster that gets only one useful QB performance. A receiver stepping up would also stop every Sunday from becoming the Jonathan Taylor rescue mission."
+        },
+        {
+          "roster_id": 6,
+          "record": {
+            "w": 1,
+            "l": 0,
+            "t": 0,
+            "pf": 133.92,
+            "pa": 120.06
+          },
+          "average": 123.28923076923078,
+          "ros": 1602.7600000000002,
+          "vor": 54.68999999999999,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.5683297180043384,
+            "WR": 0.7098880597014925,
+            "TE": 0
+          },
+          "depth": 0.31955444442645775,
+          "byPos": {
+            "QB": 37.230000000000004,
+            "RB": 28.189999999999998,
+            "WR": 40.47,
+            "TE": 7.6,
+            "K": 6.81,
+            "DEF": 8.86
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.280291047136982
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.8450704225352114
+          },
+          "powerScore": 61.46177836132143,
+          "rank": 4,
+          "manager": "Dan",
+          "team": "Bear Goggles",
+          "avatar": "51385ba57cd089261f6de9ce483b8716",
+          "blurb": "The original champion opened with a win and two different players on exactly 29.7: Jeanty and Watson. Dart added 26.60, so this wasn't one star dragging a broken wagon across the line. The attractive part is the range of ways Dan can score. The less attractive part is thin replacement cover and a TE slot that produced 4.1. There's a contender here, provided the weaker slots stop making the stars work overtime."
+        },
+        {
+          "roster_id": 12,
+          "record": {
+            "w": 0,
+            "l": 1,
+            "t": 0,
+            "pf": 125.64,
+            "pa": 131.4
+          },
+          "average": 122.4753846153846,
+          "ros": 1592.1799999999998,
+          "vor": 50.82333333333334,
+          "coverage": {
+            "QB": 0.873453318335208,
+            "RB": 0.5775941230486685,
+            "WR": 0.9229188078108942,
+            "TE": 0.31526648599819335
+          },
+          "depth": 0.6723081837982411,
+          "byPos": {
+            "QB": 36.260000000000005,
+            "RB": 28.12,
+            "WR": 33.46,
+            "TE": 11.07,
+            "K": 6.47,
+            "DEF": 11.42
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 1.230911786508525
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8480522744408143
+          },
+          "powerScore": 60.54514882229801,
+          "rank": 5,
+          "manager": "Fritz",
+          "team": "iamfritz",
+          "avatar": "f0edbf4278f53f9425db175073df6584",
+          "blurb": "Bijan did Bijan things with 27.3, but the Steelers and McPherson supplied another 41. That is a pleasant bonus, not an offensive plan. Waddle, Gainwell and Stafford combined for only 7.1, leaving a lot of work to a very small committee. The projection model likes the reserve options more than that box score suggests. Fritz needs those options to become reliable weekly starters before the kicker is handed an assistant-coach contract."
+        },
+        {
+          "roster_id": 3,
+          "record": {
+            "w": 0,
+            "l": 1,
+            "t": 0,
+            "pf": 120.06,
+            "pa": 133.92
+          },
+          "average": 122.23076923076925,
+          "ros": 1589.0000000000002,
+          "vor": 52.78999999999999,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.588704318936877,
+            "WR": 0.8226555246053853,
+            "TE": 0.8148148148148149
+          },
+          "depth": 0.5565436645892693,
+          "byPos": {
+            "QB": 31.549999999999997,
+            "RB": 30.990000000000002,
+            "WR": 40.760000000000005,
+            "TE": 8.37,
+            "K": 6.73,
+            "DEF": 8.28
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.2894653590635876
+          },
+          "weakness": {
+            "pos": "QB",
+            "ratio": 0.911520404478151
+          },
+          "powerScore": 60.45608991717584,
+          "rank": 6,
+          "manager": "Nick",
+          "team": "Hammond Hammers",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "JSN and Javonte delivered 43.9 between them, while Saquon opened with a quieter 8.5. That's enough talent to stay interested, but Stroud and Ward combined for 28.16 in a format built to reward two quarterbacks. The receiving ceiling is real; the question is how often the QB slots can keep pace with the league's stronger pairs. Nick doesn't need every star to explode. He does need fewer positions treating Sunday like a day off."
+        },
+        {
+          "roster_id": 4,
+          "record": {
+            "w": 1,
+            "l": 0,
+            "t": 0,
+            "pf": 134.7,
+            "pa": 116.5
+          },
+          "average": 119.30076923076925,
+          "ros": 1550.9100000000003,
+          "vor": 48.30666666666667,
+          "coverage": {
+            "QB": 0.8732802317161478,
+            "RB": 0.724290780141844,
+            "WR": 0.8743922204213938,
+            "TE": 0.5958219800181653
+          },
+          "depth": 0.7669463030743877,
+          "byPos": {
+            "QB": 30.450000000000003,
+            "RB": 37.76,
+            "WR": 25.32,
+            "TE": 11.01,
+            "K": 5.75,
+            "DEF": 11.16
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 1.2242401779095629
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8010123378677634
+          },
+          "powerScore": 51.49334081220866,
+          "rank": 7,
+          "manager": "Tyler",
+          "team": "Yinzer 4 Life",
+          "avatar": "4092aa52a9d0bdfb748e39bac395ea59",
+          "blurb": "The defending champion started with a win, powered by Swift's 31.9 and McBride's 20. The roster also grades well for replacement cover, which matters more than a shiny bench full of names you cannot legally start together. Pickens' 4.3 and Dowdle's 3.1 show why Tyler still sits in the middle of this forecast. The title defense has a workable floor; finding the right weekly combinations should raise the ceiling."
+        },
+        {
+          "roster_id": 8,
+          "record": {
+            "w": 1,
+            "l": 0,
+            "t": 0,
+            "pf": 131.4,
+            "pa": 125.64
+          },
+          "average": 118.24615384615385,
+          "ros": 1537.2,
+          "vor": 46.733333333333334,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.7522485690923957,
+            "WR": 0.9618528610354223,
+            "TE": 0.784366576819407
+          },
+          "depth": 0.6246170017368062,
+          "byPos": {
+            "QB": 31.31,
+            "RB": 27.200000000000003,
+            "WR": 35.82,
+            "TE": 11.13,
+            "K": 6.59,
+            "DEF": 10.66
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 1.2375833951074873
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8203066097009301
+          },
+          "powerScore": 45.14203489015669,
+          "rank": 8,
+          "manager": "Ben",
+          "team": "Cheese Curds",
+          "avatar": "5915b79f654513c5bbb8e0155e85a8eb",
+          "blurb": "Walker scored 32.6 and Olave added 23.2, giving Ben a winning opener even with Darnold nearly disappearing at 0.52. That's a useful demonstration of the lineup's ability to survive one disaster. It's also a reminder that Superflex eventually sends the invoice for shaky QB weeks. The model sees a solid, reasonably deep roster rather than an early runaway favorite. Ben can change that argument quickly if both quarterbacks start showing up together."
+        },
+        {
+          "roster_id": 7,
+          "record": {
+            "w": 1,
+            "l": 0,
+            "t": 0,
+            "pf": 166.9,
+            "pa": 156.8
+          },
+          "average": 116.46769230769229,
+          "ros": 1514.0799999999997,
+          "vor": 45.980000000000004,
+          "coverage": {
+            "QB": 0.8413433700057904,
+            "RB": 0.30191353649893693,
+            "WR": 0.9625850340136054,
+            "TE": 0.48288508557457216
+          },
+          "depth": 0.6471817565232263,
+          "byPos": {
+            "QB": 35.239999999999995,
+            "RB": 28.799999999999997,
+            "WR": 32.86,
+            "TE": 8.18,
+            "K": 6.51,
+            "DEF": 9
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.0395444479595064
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8685599396833374
+          },
+          "powerScore": 40.56593109582538,
+          "rank": 9,
+          "manager": "Brent",
+          "team": "LongSpurs",
+          "avatar": "7572250c2fb084c434fed0e82229e183",
+          "blurb": "Brent dropped a league-high 166.90 and gets ninth here. Yes, the model has been invited to explain itself at the next family dinner. Henry, Coker and Jefferson supplied 91.8 alone, a formidable actual ceiling. The ranking reflects projected starter balance and replacement value across the remaining schedule, not the Week 1 scoreboard. Brent has already shown he can beat that forecast. Keeping the supporting slots productive is the next test."
+        },
+        {
+          "roster_id": 9,
+          "record": {
+            "w": 1,
+            "l": 0,
+            "t": 0,
+            "pf": 120.96,
+            "pa": 106.66
+          },
+          "average": 116.14923076923077,
+          "ros": 1509.94,
+          "vor": 45.400000000000006,
+          "coverage": {
+            "QB": 0.860730593607306,
+            "RB": 0.9251769464105156,
+            "WR": 0.9812623274161735,
+            "TE": 0
+          },
+          "depth": 0.6917924668584987,
+          "byPos": {
+            "QB": 36.64,
+            "RB": 24.990000000000002,
+            "WR": 33.41,
+            "TE": 8.32,
+            "K": 7.65,
+            "DEF": 8.72
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "QB",
+            "ratio": 1.0585771036475262
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.7536566976627295
+          },
+          "powerScore": 39.69834519585851,
+          "rank": 10,
+          "manager": "James",
+          "team": "MrWick",
+          "avatar": null,
+          "blurb": "The three-time champion opened 1–0 with 46.06 from Lamar and Purdy, a very comfortable Superflex foundation. Cook and Judkins were quieter, and the model is more cautious about the RB contribution than the trophy cabinet would suggest. Washington's 16.8 is an encouraging extra source of scoring. James doesn't need an undefeated parade to be dangerous. If the backs turn that quarterback advantage into a complete starting lineup, this opening placement will look conservative."
+        },
+        {
+          "roster_id": 5,
+          "record": {
+            "w": 1,
+            "l": 0,
+            "t": 0,
+            "pf": 127.46,
+            "pa": 108.18
+          },
+          "average": 115.99846153846154,
+          "ros": 1507.98,
+          "vor": 44.06333333333332,
+          "coverage": {
+            "QB": 0.691627358490566,
+            "RB": 0.8896690070210631,
+            "WR": 0.8590673575129533,
+            "TE": 0
+          },
+          "depth": 0.6100909307561455,
+          "byPos": {
+            "QB": 34.53,
+            "RB": 27.08,
+            "WR": 33.269999999999996,
+            "TE": 7.7,
+            "K": 6.48,
+            "DEF": 10.98
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.0525150268902246
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8166876099522493
+          },
+          "powerScore": 36.55140794582362,
+          "rank": 11,
+          "manager": "Jack",
+          "team": "Annie’s Boobs",
+          "avatar": "e714bda67d4388d30ba09c76f9be6077",
+          "blurb": "Flowers, Shough and Hubbard combined for 68.9, and Jack escaped Week 1 with the only result that matters in the standings. Pitts' zero and Herbert's 13.26 help explain the lower projection-based placement. The roster needs a stronger weekly return from those premium starter slots, especially with the Chargers connection tying part of the offense together. A win is a useful cushion, but it doesn't make the depth questions disappear."
+        },
+        {
+          "roster_id": 11,
+          "record": {
+            "w": 0,
+            "l": 1,
+            "t": 0,
+            "pf": 116.5,
+            "pa": 134.7
+          },
+          "average": 107.78769230769231,
+          "ros": 1401.24,
+          "vor": 40.74333333333334,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.7927835051546392,
+            "WR": 0.8587398373983739,
+            "TE": 0.9742120343839541
+          },
+          "depth": 0.6564338442342418,
+          "byPos": {
+            "QB": 32.12,
+            "RB": 32.14,
+            "WR": 26.43,
+            "TE": 6.98,
+            "K": 5.99,
+            "DEF": 9.16
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 0.9692887660216135
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.776130467012602
+          },
+          "powerScore": 14.233427018727904,
+          "rank": 12,
+          "manager": "Jeff",
+          "team": "El Jefe",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "Allen and the Sun God supplied 59.36 of Jeff's 116.50. Two excellent pillars; quite a lot of empty space between them. The backs can produce, but Ferguson's 1.6 and McLaurin's 2.4 left the star duo with an unreasonable workload. This placement is a bet against the supporting lineup's projected consistency, not against Josh Allen remembering how to play football. One dependable third scoring source would make El Jefe a much less comfortable opponent."
+        }
+      ],
+      "reconstructed": true,
+      "createdAt": 1791234265302
+    },
+    "2": {
+      "week": 2,
+      "teams": [
+        {
+          "roster_id": 1,
+          "record": {
+            "w": 0,
+            "l": 2,
+            "t": 0,
+            "pf": 262.74,
+            "pa": 310.98
+          },
+          "average": 128.6713888888889,
+          "ros": 1544.0566666666668,
+          "vor": 58.12555555555557,
+          "coverage": {
+            "QB": 0.9006454136514767,
+            "RB": 0.7265849204278634,
+            "WR": 0.9559881506559459,
+            "TE": 0
+          },
+          "depth": 0.6458046211838215,
+          "byPos": {
+            "QB": 34.900000000000006,
+            "RB": 50.29,
+            "WR": 23.006666666666668,
+            "TE": 8.263333333333334,
+            "K": 7.346666666666667,
+            "DEF": 10.613333333333333
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.4731839893240462
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.7778727400798311
+          },
+          "powerScore": 94.23829958307647,
+          "rank": 1,
+          "manager": "Vinny",
+          "team": "LgbtQB1",
+          "avatar": null,
+          "blurb": "The commissioner is 0–2 and still sits first. That is the distinction between roster strength and the standings, delivered with maximum potential for group-chat complaints. Chase bounced to 23 and Gibbs added 20.3, but Goedert's 0.9 and Caleb's 7.72 helped leave the total at 105.94. The backfield still offers multiple strong legal starters. Vinny needs the volatile QB and receiving slots to stop taking turns unplugging the offense."
+        },
+        {
+          "roster_id": 10,
+          "record": {
+            "w": 0,
+            "l": 2,
+            "t": 0,
+            "pf": 205.04,
+            "pa": 246.72
+          },
+          "average": 127.26805555555556,
+          "ros": 1527.2166666666667,
+          "vor": 55.425555555555576,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.5307039440838741,
+            "WR": 0.9933474448140309,
+            "TE": 0.9809602649006622
+          },
+          "depth": 0.6262529134496418,
+          "byPos": {
+            "QB": 34.620000000000005,
+            "RB": 46,
+            "WR": 25.173333333333332,
+            "TE": 8.053333333333333,
+            "K": 7.653333333333333,
+            "DEF": 10.22
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.3475136907716467
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.8411768119305981
+          },
+          "powerScore": 85.97404832956651,
+          "rank": 2,
+          "manager": "Jake",
+          "team": "RockNFlow",
+          "avatar": "23fe4994d864928df8f99d56b60c9179",
+          "blurb": "Taylor's 27.2 and Kelce's 20.6 accounted for almost half of Jake's 98.38. The model still likes the backfield, but the actual offense keeps asking the same two players to solve every problem. Nabers' 0.6 was especially painful, and neither quarterback cleared 13. Jake has enough pieces to improve without rebuilding the entire roster. Until the WR and Superflex slots cooperate, the gap between second in these rankings and 0–2 on the scoreboard will remain conspicuous."
+        },
+        {
+          "roster_id": 2,
+          "record": {
+            "w": 0,
+            "l": 2,
+            "t": 0,
+            "pf": 204.22,
+            "pa": 251.08
+          },
+          "average": 127.34250000000002,
+          "ros": 1528.1100000000001,
+          "vor": 54.32,
+          "coverage": {
+            "QB": 0.8148011100832563,
+            "RB": 0.6301886792452831,
+            "WR": 0.6992239764516994,
+            "TE": 0
+          },
+          "depth": 0.5360534414450597,
+          "byPos": {
+            "QB": 38.406666666666666,
+            "RB": 29.14666666666667,
+            "WR": 26.106666666666666,
+            "TE": 19.313333333333333,
+            "K": 7.216666666666666,
+            "DEF": 11.466666666666667
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 2.0172924041083964
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8538159211671943
+          },
+          "powerScore": 83.46449723109856,
+          "rank": 3,
+          "manager": "Bobby",
+          "team": "Slim Shiesty",
+          "avatar": "d22e52781a5d7a94bcbf2aa70e748382",
+          "blurb": "Another loss, another week below 100. Smith's 22.7 kept this from getting truly ugly, but Hurts and Burrow combined for only 32.34 and the remaining skill slots provided little relief. Bobby's projected depth prevents an immediate collapse in the rankings. It cannot manufacture wins. At 0–2, the two-time champ needs to turn a theoretically strong roster into a healthy, productive ten-player lineup before the early hole becomes a weekly emergency."
+        },
+        {
+          "roster_id": 9,
+          "record": {
+            "w": 2,
+            "l": 0,
+            "t": 0,
+            "pf": 265.04,
+            "pa": 212.6
+          },
+          "average": 124.97805555555557,
+          "ros": 1499.736666666667,
+          "vor": 53.132222222222225,
+          "coverage": {
+            "QB": 0.7137254901960784,
+            "RB": 0.5944291398836853,
+            "WR": 0.9718654434250764,
+            "TE": 0
+          },
+          "depth": 0.57000501837621,
+          "byPos": {
+            "QB": 38.36,
+            "RB": 38.92666666666667,
+            "WR": 25.17,
+            "TE": 8.466666666666667,
+            "K": 7.456666666666667,
+            "DEF": 11.046666666666667
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.140309049335601
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8510166705799485
+          },
+          "powerScore": 74.86436029289239,
+          "rank": 4,
+          "manager": "James",
+          "team": "MrWick",
+          "avatar": null,
+          "blurb": "Now this looks more like MrWick. Lamb's 31.3, Purdy's 28.48 and Cook's 20.4 drove a 144.08-point win and a 2–0 start. The improvement is useful because it came from several positions, rather than another quarterback-only escape. James climbs six places as the projected RB room catches up with the existing QB strength. The receiver floor still deserves attention, but the title credentials are starting to show up outside the trophy case."
+        },
+        {
+          "roster_id": 6,
+          "record": {
+            "w": 1,
+            "l": 1,
+            "t": 0,
+            "pf": 202.74,
+            "pa": 232.96
+          },
+          "average": 125.57500000000003,
+          "ros": 1506.9000000000003,
+          "vor": 53.59777777777779,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.8264381884944919,
+            "WR": 0.44371224601867104,
+            "TE": 0
+          },
+          "depth": 0.3175376086282907,
+          "byPos": {
+            "QB": 36.00333333333333,
+            "RB": 27.770000000000003,
+            "WR": 41.74333333333334,
+            "TE": 8.033333333333333,
+            "K": 7.976666666666667,
+            "DEF": 9.673333333333334
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.4113735618689838
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.813488156363666
+          },
+          "powerScore": 73.49127916314552,
+          "rank": 5,
+          "manager": "Dan",
+          "team": "Bear Goggles",
+          "avatar": "51385ba57cd089261f6de9ce483b8716",
+          "blurb": "Sixty-eight point eighty-two. There's no flattering way to frame that afternoon. Dart's 0.80 and Jeanty's 8.3 turned last week's fireworks into a wet match, and nobody in the starting lineup reached 13. Dan's fifth-place projection is about the roster's remaining potential, not an endorsement of this result. The thin bench makes an off week harder to absorb. Getting the quarterback pair and premium skill players back in rhythm has to come before any championship talk."
+        },
+        {
+          "roster_id": 3,
+          "record": {
+            "w": 1,
+            "l": 1,
+            "t": 0,
+            "pf": 253.1,
+            "pa": 226.74
+          },
+          "average": 124.41944444444444,
+          "ros": 1493.0333333333333,
+          "vor": 51.972222222222214,
+          "coverage": {
+            "QB": 0.8593749999999999,
+            "RB": 0,
+            "WR": 0.7970469798657719,
+            "TE": 0.9162244124336619
+          },
+          "depth": 0.6431615980748584,
+          "byPos": {
+            "QB": 31.683333333333334,
+            "RB": 42.196666666666665,
+            "WR": 28.589999999999996,
+            "TE": 8.793333333333333,
+            "K": 7.296666666666667,
+            "DEF": 9.706666666666665
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.236099696483933
+          },
+          "weakness": {
+            "pos": "QB",
+            "ratio": 0.9115392914512221
+          },
+          "powerScore": 72.72970821455334,
+          "rank": 6,
+          "manager": "Nick",
+          "team": "Hammond Hammers",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "JSN scored 38 and Kincaid added 19, enough to help Nick collect his first win. Saquon's 2.5 is the more uncomfortable number because this roster shouldn't need a 25-point Patriots defense to cover for its marquee back. The QB room remains the weak point in the projection comparison. Nick has legitimate star production at receiver and useful alternatives elsewhere. A steadier second quarterback would make that upside much easier to turn into repeated wins."
+        },
+        {
+          "roster_id": 4,
+          "record": {
+            "w": 1,
+            "l": 1,
+            "t": 0,
+            "pf": 227.52,
+            "pa": 249.54
+          },
+          "average": 119.85111111111111,
+          "ros": 1438.2133333333334,
+          "vor": 46.364444444444445,
+          "coverage": {
+            "QB": 0.8377959725603009,
+            "RB": 0.874788494077834,
+            "WR": 0.8524640342822161,
+            "TE": 0.5567679150693011
+          },
+          "depth": 0.780454103997413,
+          "byPos": {
+            "QB": 33.85666666666667,
+            "RB": 24.773333333333333,
+            "WR": 36.38333333333333,
+            "TE": 11.303333333333333,
+            "K": 6.47,
+            "DEF": 10.393333333333333
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.2301479220474292
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.7257044746242666
+          },
+          "powerScore": 52.71244428442369,
+          "rank": 7,
+          "manager": "Tyler",
+          "team": "Yinzer 4 Life",
+          "avatar": "4092aa52a9d0bdfb748e39bac395ea59",
+          "blurb": "The title defense took a 92.82-point detour. Hampton led the starters with just 16.5, while Rodgers and Daniels combined for 18.72. No amount of bench depth rescues two QB slots that quiet. The good news is that Tyler still has one of the stronger sets of replacement options in the model. The bad news is that choosing the right lineup is now part of the job. The reigning champ needs usable depth to become usable points."
+        },
+        {
+          "roster_id": 8,
+          "record": {
+            "w": 2,
+            "l": 0,
+            "t": 0,
+            "pf": 244.3,
+            "pa": 194.46
+          },
+          "average": 117.37305555555554,
+          "ros": 1408.4766666666665,
+          "vor": 46.498888888888885,
+          "coverage": {
+            "QB": 0.7762022194821209,
+            "RB": 0.7922535211267606,
+            "WR": 0.935716431360769,
+            "TE": 0.9828001375988993
+          },
+          "depth": 0.8717430773921375,
+          "byPos": {
+            "QB": 34.10333333333334,
+            "RB": 36.92666666666667,
+            "WR": 23.916666666666664,
+            "TE": 9.69,
+            "K": 7.43,
+            "DEF": 10.726666666666667
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.0817214975629206
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8086405259450575
+          },
+          "powerScore": 46.46312840057269,
+          "rank": 8,
+          "manager": "Ben",
+          "team": "Cheese Curds",
+          "avatar": "5915b79f654513c5bbb8e0155e85a8eb",
+          "blurb": "Ben is 2–0 without playing his cleanest football. Walker and Olave combined for 39.4, and Drew Lock's 21.40 helped cover a much thinner-than-ideal offensive afternoon. The projection model likes the reserve cover, which gives Ben ways to survive setbacks rather than begging one star for a miracle. The remaining concern is getting consistent production out of the full receiving group. Two wins buy patience, but the undefeated badge isn't a reason to stop improving the lineup."
+        },
+        {
+          "roster_id": 7,
+          "record": {
+            "w": 2,
+            "l": 0,
+            "t": 0,
+            "pf": 290.52,
+            "pa": 252.84
+          },
+          "average": 117.74305555555559,
+          "ros": 1412.916666666667,
+          "vor": 44.271111111111104,
+          "coverage": {
+            "QB": 0.9530975180769982,
+            "RB": 0.4434907010014306,
+            "WR": 0.9709233791748527,
+            "TE": 0.55703125
+          },
+          "depth": 0.7311357120633204,
+          "byPos": {
+            "QB": 35.46,
+            "RB": 26.21333333333333,
+            "WR": 33.43,
+            "TE": 8.533333333333333,
+            "K": 8.183333333333332,
+            "DEF": 10.053333333333333
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.1302934961258513
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.7678875119005963
+          },
+          "powerScore": 42.440918700652084,
+          "rank": 9,
+          "manager": "Brent",
+          "team": "LongSpurs",
+          "avatar": "7572250c2fb084c434fed0e82229e183",
+          "blurb": "A second win keeps the elder Dunnigan's season on schedule. Dak supplied 29.76, Kittle 16 and Aubrey 17, while Lawrence and Jefferson combined for only 13.16. Brent has enough high-end options to survive that kind of uneven week, but ninth in this forecast reflects the projected gaps behind them. The four-QB approach offers flexibility. Turning that flexibility into the right two starters, alongside steadier RB production, is how this roster climbs beyond its current tier."
+        },
+        {
+          "roster_id": 5,
+          "record": {
+            "w": 1,
+            "l": 1,
+            "t": 0,
+            "pf": 246.82,
+            "pa": 265.3
+          },
+          "average": 114.40944444444445,
+          "ros": 1372.9133333333334,
+          "vor": 42.30222222222223,
+          "coverage": {
+            "QB": 0.7322069693769799,
+            "RB": 0.6893236074270556,
+            "WR": 0.8487107797452627,
+            "TE": 0
+          },
+          "depth": 0.5675603391373245,
+          "byPos": {
+            "QB": 32.35666666666667,
+            "RB": 38.31333333333333,
+            "WR": 23.519999999999996,
+            "TE": 7.239999999999999,
+            "K": 7.98,
+            "DEF": 9.186666666666666
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.1223422001253123
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.7562235246329715
+          },
+          "powerScore": 26.53787749420953,
+          "rank": 10,
+          "manager": "Jack",
+          "team": "Annie’s Boobs",
+          "avatar": "e714bda67d4388d30ba09c76f9be6077",
+          "blurb": "The Panthers defense scored 27, Shough added 22.38 and McCaffrey delivered 20.6. That's a good foundation for 119.36, but the 1–1 record is a reminder that the rest of the lineup has to finish the job. Herbert, McConkey and Pitts combined for only 14.88. Jack's offense has workable weekly upside and less margin for a bad TE or Superflex call. The next improvement needs to come from a repeatable starter, not another heroic streaming defense."
+        },
+        {
+          "roster_id": 12,
+          "record": {
+            "w": 1,
+            "l": 1,
+            "t": 0,
+            "pf": 251.4,
+            "pa": 229.78
+          },
+          "average": 114.03166666666664,
+          "ros": 1368.3799999999997,
+          "vor": 41.26111111111111,
+          "coverage": {
+            "QB": 0.9624169435215949,
+            "RB": 0.5268037081821845,
+            "WR": 0.8603370058327932,
+            "TE": 0.41948717948717945
+          },
+          "depth": 0.692261209255938,
+          "byPos": {
+            "QB": 32.733333333333334,
+            "RB": 27.626666666666672,
+            "WR": 32.303333333333335,
+            "TE": 9.75,
+            "K": 6.776666666666666,
+            "DEF": 9.193333333333333
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.0922000469593802
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8092893818199574
+          },
+          "powerScore": 26.169093456228175,
+          "rank": 11,
+          "manager": "Fritz",
+          "team": "iamfritz",
+          "avatar": "f0edbf4278f53f9425db175073df6584",
+          "blurb": "Goff and Stafford combined for 56.76, and Waddle finally gave the receiving group 17.8 worth of assistance. That was enough for Fritz to even his record, despite Bijan dropping to 9.6 and Moore going slightly negative. The quarterbacks are offering a route to respectable weekly totals. The trouble is how often the receivers leave that route full of potholes. The model wants better RB cover, while the actual lineup also needs fewer vanishing acts at WR."
+        },
+        {
+          "roster_id": 11,
+          "record": {
+            "w": 1,
+            "l": 1,
+            "t": 0,
+            "pf": 273.62,
+            "pa": 254.06
+          },
+          "average": 111.43666666666667,
+          "ros": 1337.24,
+          "vor": 39.12111111111112,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.8167082294264338,
+            "WR": 0.7082896117523608,
+            "TE": 0.945389435989257
+          },
+          "depth": 0.6175968192920129,
+          "byPos": {
+            "QB": 34.61333333333333,
+            "RB": 21.46,
+            "WR": 35.57333333333334,
+            "TE": 7.446666666666666,
+            "K": 6.876666666666668,
+            "DEF": 10.373333333333333
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.2027612115520079
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.6286444305208596
+          },
+          "powerScore": 13.516815718292733,
+          "rank": 12,
+          "manager": "Jeff",
+          "team": "El Jefe",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "El Jefe answered the basement ranking with the week's highest total: 157.12. Allen's 40.82 and St. Brown's 30.7 were the headline act, but Ferguson's 18.3 made this a more complete offensive performance. The remaining-season roster model still prefers other teams' depth and starting balance. That's the disagreement to watch. If Ferguson and the backs can regularly provide a third and fourth contribution, this ranking will deserve a very public correction."
+        }
+      ],
+      "reconstructed": true,
+      "createdAt": 1791234265302
+    },
+    "3": {
+      "week": 3,
+      "teams": [
+        {
+          "roster_id": 6,
+          "record": {
+            "w": 1,
+            "l": 2,
+            "t": 0,
+            "pf": 301.04,
+            "pa": 334.56
+          },
+          "average": 127.27454545454547,
+          "ros": 1400.0200000000002,
+          "vor": 48.26833333333334,
+          "coverage": {
+            "QB": 0.8639910813823857,
+            "RB": 0.35267696730147324,
+            "WR": 0.6026326614561909,
+            "TE": 0.7948158914728682
+          },
+          "depth": 0.6535291504032296,
+          "byPos": {
+            "QB": 35.955,
+            "RB": 27.982499999999998,
+            "WR": 42.0625,
+            "TE": 10.32,
+            "K": 7.109999999999999,
+            "DEF": 10.07
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.4044956847177328
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.793543698784717
+          },
+          "powerScore": 94.54486687952934,
+          "rank": 1,
+          "manager": "Dan",
+          "team": "Bear Goggles",
+          "avatar": "51385ba57cd089261f6de9ce483b8716",
+          "blurb": "First in roster strength, 1–2 in the standings, and only 98.30 this week. Dan's ranking is an argument about a loaded projected lineup, not a claim that his Sundays have been enjoyable. Bowers contributed 22.6 and Watson 19.1, while Jeanty, Maye and McMillan left plenty of room for improvement. The Puka situation makes that projected ceiling harder to access right now. Dan has the pieces; getting them available and productive together is the entire assignment."
+        },
+        {
+          "roster_id": 9,
+          "record": {
+            "w": 3,
+            "l": 0,
+            "t": 0,
+            "pf": 402.96,
+            "pa": 287.9
+          },
+          "average": 125.03181818181817,
+          "ros": 1375.35,
+          "vor": 47.62916666666667,
+          "coverage": {
+            "QB": 0.7136855506047103,
+            "RB": 0.6379516630772912,
+            "WR": 0.8966408268733851,
+            "TE": 0
+          },
+          "depth": 0.5620695101388467,
+          "byPos": {
+            "QB": 41.400000000000006,
+            "RB": 37.475,
+            "WR": 25.7875,
+            "TE": 8.99,
+            "K": 7.647500000000001,
+            "DEF": 8.705
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "QB",
+            "ratio": 1.1897145251898344
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8610622875401732
+          },
+          "powerScore": 82.8811729997329,
+          "rank": 2,
+          "manager": "James",
+          "team": "MrWick",
+          "avatar": null,
+          "blurb": "Three wins, three different chances to remind the league who owns the crowded trophy shelf. Purdy's 31.28 led another useful QB week, with Lamar and Cook helping push the total to 137.92. James has enough scoring routes to avoid becoming a one-player operation. The model still sees the receiving contribution as a relative weakness, even with Lamb and Washington available. At 3–0, he has time to solve it without treating every waiver claim like a fire drill."
+        },
+        {
+          "roster_id": 2,
+          "record": {
+            "w": 0,
+            "l": 3,
+            "t": 0,
+            "pf": 279.52,
+            "pa": 389
+          },
+          "average": 124.37659090909091,
+          "ros": 1368.1425,
+          "vor": 46.85,
+          "coverage": {
+            "QB": 0.85423197492163,
+            "RB": 0.6666666666666666,
+            "WR": 0.6821874380820291,
+            "TE": 0.920591456736035
+          },
+          "depth": 0.7809193841015902,
+          "byPos": {
+            "QB": 36.5225,
+            "RB": 39.315000000000005,
+            "WR": 26.2675,
+            "TE": 9.13,
+            "K": 7.4425,
+            "DEF": 11.024999999999999
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.1149171988821998
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8770898163048569
+          },
+          "powerScore": 81.93632059895735,
+          "rank": 3,
+          "manager": "Bobby",
+          "team": "Slim Shiesty",
+          "avatar": "d22e52781a5d7a94bcbf2aa70e748382",
+          "blurb": "The projection model keeps Bobby third. The actual team is 0–3 after scoring 75.30. That difference deserves scrutiny, not a motivational poster. Burrow's 22.58 was useful, but Achane's 1.7 and the limited output around him left the lineup with no escape route. Depth grades well on paper; dependable healthy starters are a different question. Bobby still has recovery potential, but the forecast is asking for a rebound that the scoreboard has yet to see."
+        },
+        {
+          "roster_id": 10,
+          "record": {
+            "w": 1,
+            "l": 2,
+            "t": 0,
+            "pf": 306.64,
+            "pa": 345.02
+          },
+          "average": 124.73666666666668,
+          "ros": 1372.1033333333335,
+          "vor": 47.27666666666667,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.5009005763688762,
+            "WR": 0.9033273381294965,
+            "TE": 0.9405797101449276
+          },
+          "depth": 0.586201906160825,
+          "byPos": {
+            "QB": 33.48833333333333,
+            "RB": 45.955,
+            "WR": 25.27,
+            "TE": 8.625,
+            "K": 7.452500000000001,
+            "DEF": 9.085
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.3032181069472588
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8437826080907485
+          },
+          "powerScore": 81.19990397383428,
+          "rank": 4,
+          "manager": "Jake",
+          "team": "RockNFlow",
+          "avatar": "23fe4994d864928df8f99d56b60c9179",
+          "blurb": "Jake finally gets a win, though 101.60 was hardly a victory lap for the whole offense. Deebo led the skill players with 15.4, while Taylor fell to 8.2 and both quarterbacks stayed near 11. The strong RB projections keep this roster in the top four, but the margin between its expected ceiling and its weekly output remains wide. The job now is turning those recognizable names into several reliable starter slots at the same time."
+        },
+        {
+          "roster_id": 1,
+          "record": {
+            "w": 1,
+            "l": 2,
+            "t": 0,
+            "pf": 408.08,
+            "pa": 445.44
+          },
+          "average": 123.75568181818184,
+          "ros": 1361.3125000000002,
+          "vor": 47.775000000000006,
+          "coverage": {
+            "QB": 0.9933374651378991,
+            "RB": 0.6501923076923077,
+            "WR": 0.9990218454515813,
+            "TE": 0
+          },
+          "depth": 0.6606379045704471,
+          "byPos": {
+            "QB": 33.905,
+            "RB": 48.1725,
+            "WR": 22.3975,
+            "TE": 8.495,
+            "K": 7.52,
+            "DEF": 9.17
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.366103237012661
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.747867865639594
+          },
+          "powerScore": 79.30271554568846,
+          "rank": 5,
+          "manager": "Vinny",
+          "team": "LgbtQB1",
+          "avatar": null,
+          "blurb": "Gibbs dropped 37.9, Nix added 24.14 and the commissioner finally joined the win column. A 145.34-point week is a better reflection of why this roster has stayed high through the bad start. The backfield can create a major advantage without needing every player to peak. Receiver depth and the second QB slot remain less comfortable. Vinny has earned a little breathing room; the rest of the league has earned another week of commissioner confidence."
+        },
+        {
+          "roster_id": 7,
+          "record": {
+            "w": 2,
+            "l": 1,
+            "t": 0,
+            "pf": 394.54,
+            "pa": 364
+          },
+          "average": 124.26454545454546,
+          "ros": 1366.91,
+          "vor": 44.60666666666667,
+          "coverage": {
+            "QB": 0.6959900097127792,
+            "RB": 0.3427480916030535,
+            "WR": 0.8933260393873086,
+            "TE": 0.4053724053724054
+          },
+          "depth": 0.5843591365188867,
+          "byPos": {
+            "QB": 36.272499999999994,
+            "RB": 29.497500000000002,
+            "WR": 34.45,
+            "TE": 12.285,
+            "K": 8.0125,
+            "DEF": 9.82
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 1.3324295010845986
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8365069330796817
+          },
+          "powerScore": 73.78805933933083,
+          "rank": 6,
+          "manager": "Brent",
+          "team": "LongSpurs",
+          "avatar": "7572250c2fb084c434fed0e82229e183",
+          "blurb": "The Kittle–McBride reshuffle gives Brent a premium TE starter, but the new arrangement opened with a 104.02-point loss. Henry's 21.4 and a competent quarterback pair couldn't cover Jefferson, Coker and Hampton combining for 12.6. The TE projection is now this roster's strongest positional edge. The issue is converting its big names into a complete weekly lineup. At 2–1, Brent can afford patience, but the receiver floor needs repairing before that patience gets expensive."
+        },
+        {
+          "roster_id": 3,
+          "record": {
+            "w": 1,
+            "l": 2,
+            "t": 0,
+            "pf": 366.18,
+            "pa": 372.38
+          },
+          "average": 119.1281818181818,
+          "ros": 1310.4099999999999,
+          "vor": 41.513333333333335,
+          "coverage": {
+            "QB": 0,
+            "RB": 0,
+            "WR": 0.7634674922600619,
+            "TE": 0.8218210361067504
+          },
+          "depth": 0.3963221320917031,
+          "byPos": {
+            "QB": 28.744999999999997,
+            "RB": 39.78,
+            "WR": 29.495,
+            "TE": 9.555,
+            "K": 7.5525,
+            "DEF": 8.765
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.128103934160852
+          },
+          "weakness": {
+            "pos": "QB",
+            "ratio": 0.8260469571638112
+          },
+          "powerScore": 43.82067881334436,
+          "rank": 7,
+          "manager": "Nick",
+          "team": "Hammond Hammers",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "JSN supplied another 30.36 and Higgins added 18, yet Nick still slipped to 1–2. Stroud and Ward combined for 21.12, while Saquon's 8.5 kept the backfield from creating the advantage it was meant to provide. The roster has obvious top-end talent and fewer dependable escape hatches than some rivals. Nick needs a steadier Superflex return or a useful depth deal. Asking JSN to win every position battle by himself is an ambitious management strategy."
+        },
+        {
+          "roster_id": 8,
+          "record": {
+            "w": 3,
+            "l": 0,
+            "t": 0,
+            "pf": 389.94,
+            "pa": 307.54
+          },
+          "average": 118.29765151515151,
+          "ros": 1301.2741666666666,
+          "vor": 39.11916666666667,
+          "coverage": {
+            "QB": 0.7736979566753726,
+            "RB": 0.8741071428571429,
+            "WR": 0.8338672768878718,
+            "TE": 0.9404583956153463
+          },
+          "depth": 0.8555326930089334,
+          "byPos": {
+            "QB": 32.62583333333333,
+            "RB": 27.2925,
+            "WR": 36.2425,
+            "TE": 10.035,
+            "K": 7.3149999999999995,
+            "DEF": 11.045000000000002
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.210161898445942
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.7739762851454263
+          },
+          "powerScore": 42.22242747135188,
+          "rank": 8,
+          "manager": "Ben",
+          "team": "Cheese Curds",
+          "avatar": "5915b79f654513c5bbb8e0155e85a8eb",
+          "blurb": "Ben moved to 3–0 with his best offensive total so far: 145.64. London came alive for 23.9, Darnold supplied 27.66 and Adams added 17.2, exactly the kind of spread-out production an undefeated team wants to see. Eighth here is the model's starter-strength comparison, and it is a harsher assessment than the results deserve. The depth grade is excellent. If this receiving surge sticks, the projection gap becomes a much harder argument to defend."
+        },
+        {
+          "roster_id": 4,
+          "record": {
+            "w": 1,
+            "l": 2,
+            "t": 0,
+            "pf": 355.88,
+            "pa": 381.88
+          },
+          "average": 119.1618181818182,
+          "ros": 1310.7800000000002,
+          "vor": 38.16333333333334,
+          "coverage": {
+            "QB": 0.7817146033069335,
+            "RB": 0.944407233757535,
+            "WR": 0.8312050150917112,
+            "TE": 0
+          },
+          "depth": 0.6393317130390449,
+          "byPos": {
+            "QB": 36.2475,
+            "RB": 23.707500000000003,
+            "WR": 36.2575,
+            "TE": 9.252500000000001,
+            "K": 6.855,
+            "DEF": 10.82
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.2106627587198382
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.6723108099325894
+          },
+          "powerScore": 40.39175604440994,
+          "rank": 9,
+          "manager": "Tyler",
+          "team": "Yinzer 4 Life",
+          "avatar": "4092aa52a9d0bdfb748e39bac395ea59",
+          "blurb": "A 3.98-point loss to Jack is the sort of result that makes a manager stare at the bench for twenty minutes. Kittle's 23.2 and Garrett Wilson's 21.7 were enough to make 128.36 competitive, but not enough to close the last small gap. The trade has changed the lineup's shape and offered useful new options. Tyler's title defense needs those options to settle into consistent weekly roles, rather than a different emergency every Sunday."
+        },
+        {
+          "roster_id": 5,
+          "record": {
+            "w": 2,
+            "l": 1,
+            "t": 0,
+            "pf": 379.16,
+            "pa": 393.66
+          },
+          "average": 116.71628787878791,
+          "ros": 1283.879166666667,
+          "vor": 38.2825,
+          "coverage": {
+            "QB": 0.8190100212572121,
+            "RB": 0.7801157285639138,
+            "WR": 0.797812988172283,
+            "TE": 0
+          },
+          "depth": 0.5992346844983523,
+          "byPos": {
+            "QB": 33.515,
+            "RB": 39.427499999999995,
+            "WR": 23.41916666666667,
+            "TE": 7.5475,
+            "K": 7.9625,
+            "DEF": 9.43
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.1181075380625185
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.7819820154060911
+          },
+          "powerScore": 30.08814176816108,
+          "rank": 10,
+          "manager": "Jack",
+          "team": "Annie’s Boobs",
+          "avatar": "e714bda67d4388d30ba09c76f9be6077",
+          "blurb": "A win by 3.98 is still a win, and Jack will happily bank 2–1 while the offense sorts itself out. Shough's 23.80, McCaffrey's 19.6 and 23 from Minnesota kept the lineup afloat. Pitts managed one point, and the WR slots didn't offer a dependable collective floor. The lower projection ranking reflects those weak links, not the quality of the victory dance. A healthier receiving group and a real TE contribution would give Jack considerably more room to breathe."
+        },
+        {
+          "roster_id": 12,
+          "record": {
+            "w": 1,
+            "l": 2,
+            "t": 0,
+            "pf": 385.86,
+            "pa": 375.12
+          },
+          "average": 115.42431818181818,
+          "ros": 1269.6675,
+          "vor": 36.44666666666667,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.7065584854631508,
+            "WR": 0.878286270691334,
+            "TE": 0.5916345624656025
+          },
+          "depth": 0.5441198296550218,
+          "byPos": {
+            "QB": 34.1575,
+            "RB": 29.53,
+            "WR": 32.447500000000005,
+            "TE": 9.085,
+            "K": 6.875,
+            "DEF": 8.905000000000001
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.0834442491501608
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8374285866206628
+          },
+          "powerScore": 20.52040282191281,
+          "rank": 11,
+          "manager": "Fritz",
+          "team": "iamfritz",
+          "avatar": "f0edbf4278f53f9425db175073df6584",
+          "blurb": "Bijan's 34.3 did most of the heavy lifting in a 134.46-point loss. Goff and Stafford provided another 40.26, so the top of the lineup is doing its share. Williams and Waddle combined for just 12.3, and the reserve cover grades thinner than it did in the opener. Fritz has a competitive core and too many weeks that depend on it. One predictable receiver contribution would be worth more than another interesting bench name."
+        },
+        {
+          "roster_id": 11,
+          "record": {
+            "w": 2,
+            "l": 1,
+            "t": 0,
+            "pf": 384.78,
+            "pa": 358.08
+          },
+          "average": 113.57295454545455,
+          "ros": 1249.3025,
+          "vor": 36.365,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.9244075829383887,
+            "WR": 0.8824000000000001,
+            "TE": 0.9508196721311476
+          },
+          "depth": 0.6894068137673841,
+          "byPos": {
+            "QB": 34.745000000000005,
+            "RB": 35.0175,
+            "WR": 25.285,
+            "TE": 7.32,
+            "K": 7.2975,
+            "DEF": 9.145
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "QB",
+            "ratio": 0.9984693521188598
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.7939262472885033
+          },
+          "powerScore": 14.878258843968284,
+          "rank": 12,
+          "manager": "Jeff",
+          "team": "El Jefe",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "Allen and St. Brown were unusually quiet, but Love and Warren combined for 38.5 and helped Jeff reach 111.16 and a 2–1 record. That's encouraging because the supporting cast usually gets accused of watching the stars work. The model still sees a weaker TE contribution and a lineup that compares poorly across all legal slots. El Jefe doesn't need to win the projection argument today. He does need these secondary scorers to keep answering when Allen has an ordinary week."
+        }
+      ],
+      "reconstructed": true,
+      "createdAt": 1791234265302
+    },
+    "4": {
+      "week": 4,
+      "reconstructed": true,
+      "teams": [
+        {
+          "roster_id": 9,
+          "record": {
+            "w": 4,
+            "l": 0,
+            "t": 0,
+            "pf": 521.66,
+            "pa": 365.74
+          },
+          "average": 128.67883333333336,
+          "ros": 1286.7883333333336,
+          "vor": 48.41416666666667,
+          "coverage": {
+            "QB": 0.7002349781805975,
+            "RB": 0.9209838920330867,
+            "WR": 0.5380537675123059,
+            "TE": 0
+          },
+          "depth": 0.5398181594314976,
+          "byPos": {
+            "QB": 41.5425,
+            "RB": 41.6125,
+            "WR": 27.725,
+            "TE": 7.3475,
+            "K": 8.004999999999999,
+            "DEF": 9.02
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.2368414534466103
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.7897353217788525
+          },
+          "powerScore": 92.63035878828411,
+          "rank": 1,
+          "manager": "James",
+          "team": "MrWick",
+          "avatar": null,
+          "blurb": "MrWick is 4–0, although the 118.70-point win came with more questions than the record suggests. Lamb's 32.8 carried the receivers, while Lamar and Purdy supplied 38.50 together. The archived projections still put this roster first, but Lamar's injury concern makes the quarterback insurance suddenly relevant. Washington's 1.5 also shows how thin the weekly receiver floor can get. James has earned his cushion; the next task is protecting it while the lineup heals."
+        },
+        {
+          "roster_id": 6,
+          "record": {
+            "w": 2,
+            "l": 2,
+            "t": 0,
+            "pf": 483.56,
+            "pa": 439.44
+          },
+          "average": 128.65875,
+          "ros": 1286.5875,
+          "vor": 43.576666666666675,
+          "coverage": {
+            "QB": 0.9825064525379981,
+            "RB": 0.394010889292196,
+            "WR": 0.6527394560504535,
+            "TE": 0.6953397212543555
+          },
+          "depth": 0.6811491297837508,
+          "byPos": {
+            "QB": 34.94500000000001,
+            "RB": 27.8825,
+            "WR": 41.995,
+            "TE": 11.479999999999999,
+            "K": 7.7875,
+            "DEF": 10.55
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.2673989449659533
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8287469348326852
+          },
+          "powerScore": 87.68263625523856,
+          "rank": 2,
+          "manager": "Dan",
+          "team": "Bear Goggles",
+          "avatar": "51385ba57cd089261f6de9ce483b8716",
+          "blurb": "The first champion just reminded everyone that he knows the address of the winners' circle. Dan posted 182.52, the season's best team total through Week 4, with McMillan's 38.2 leading a healthy spread of production. Puka and Bowers back in the lineup turn a theoretical ceiling into something opponents actually have to face. Depth remains the vulnerability. At 2–2, though, this is a roster whose present finally looks as threatening as its projection."
+        },
+        {
+          "roster_id": 7,
+          "record": {
+            "w": 2,
+            "l": 2,
+            "t": 0,
+            "pf": 494.12,
+            "pa": 491.66
+          },
+          "average": 126.33574999999999,
+          "ros": 1263.3574999999998,
+          "vor": 42.089999999999996,
+          "coverage": {
+            "QB": 0.7409355106559646,
+            "RB": 0.7770743839023287,
+            "WR": 0.6915118739713143,
+            "TE": 0
+          },
+          "depth": 0.5523804421324019,
+          "byPos": {
+            "QB": 36.637499999999996,
+            "RB": 28.602500000000003,
+            "WR": 36.2825,
+            "TE": 13.1275,
+            "K": 8.535,
+            "DEF": 9.44
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 1.4109901921268304
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.8501473757213981
+          },
+          "powerScore": 74.01184855327305,
+          "rank": 3,
+          "manager": "Brent",
+          "team": "LongSpurs",
+          "avatar": "7572250c2fb084c434fed0e82229e183",
+          "blurb": "A 99.58-point loss to Tyler makes two straight disappointing weeks, but the model still likes Brent's legal starting lineup. McBride gives him a positional edge, Henry remains a central scoring piece and Dak offers a credible QB anchor. The problem is underneath: Coker scored zero, Raymond 1.6 and Jefferson wasn't in the starting group. The 2–2 record doesn't require a panic trade. It does require the receiving slots to stop donating possessions."
+        },
+        {
+          "roster_id": 1,
+          "record": {
+            "w": 1,
+            "l": 3,
+            "t": 0,
+            "pf": 512.96,
+            "pa": 627.96
+          },
+          "average": 123.022,
+          "ros": 1230.22,
+          "vor": 44.95666666666668,
+          "coverage": {
+            "QB": 0.8882931188561215,
+            "RB": 0.6067481093659105,
+            "WR": 0.8908083441981747,
+            "TE": 0
+          },
+          "depth": 0.5964623931050517,
+          "byPos": {
+            "QB": 34.815,
+            "RB": 49.239999999999995,
+            "WR": 21.71,
+            "TE": 8.6325,
+            "K": 7.12,
+            "DEF": 8.705
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.4635523741114111
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.6552025501895665
+          },
+          "powerScore": 65.00443980611364,
+          "rank": 4,
+          "manager": "Vinny",
+          "team": "LgbtQB1",
+          "avatar": null,
+          "blurb": "Kyren scored 31.7 and the team still finished at 104.88, which is what happens when too many other slots go quiet together. Chase's 4.2 and Schultz's 1.9 left the RB room doing most of the work, and Dan's 182.52 made the matchup unforgiving. The strong projected backfield keeps Vinny fourth despite a 1–3 start. Receiver availability and the second QB choice are now real pressure points. Another useful back isn't the missing ingredient."
+        },
+        {
+          "roster_id": 2,
+          "record": {
+            "w": 1,
+            "l": 3,
+            "t": 0,
+            "pf": 416.96,
+            "pa": 508.16
+          },
+          "average": 123.32000000000001,
+          "ros": 1233.2,
+          "vor": 40.31833333333333,
+          "coverage": {
+            "QB": 0.8197474167623422,
+            "RB": 0.9543715846994537,
+            "WR": 0.621071716357776,
+            "TE": 0.9655268279121492
+          },
+          "depth": 0.8401793864329302,
+          "byPos": {
+            "QB": 35.10249999999999,
+            "RB": 38.595,
+            "WR": 28.240000000000002,
+            "TE": 8.9925,
+            "K": 7.76,
+            "DEF": 9.605
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.1471528001387066
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8522763711355762
+          },
+          "powerScore": 63.24862715337767,
+          "rank": 5,
+          "manager": "Bobby",
+          "team": "Slim Shiesty",
+          "avatar": "d22e52781a5d7a94bcbf2aa70e748382",
+          "blurb": "Bobby finally gets off the floor with a 137.44-point win over Fritz. Collins' 27.3 and Burrow's 23.72 provided the necessary star power, while Likely's 10.1 gave the TE slot a welcome pulse. The projected backfield is why the model continues to give this roster a chance. The injury concerns and weak receiver cover are why the optimism needs conditions attached. One win stops the slide; it doesn't yet prove the recovery is underway."
+        },
+        {
+          "roster_id": 8,
+          "record": {
+            "w": 4,
+            "l": 0,
+            "t": 0,
+            "pf": 530.04,
+            "pa": 422.82
+          },
+          "average": 122.12491666666669,
+          "ros": 1221.249166666667,
+          "vor": 37.5175,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.9486111111111112,
+            "WR": 0.7855544252288911,
+            "TE": 0.9718608972657287
+          },
+          "depth": 0.6765066084014327,
+          "byPos": {
+            "QB": 32.903333333333336,
+            "RB": 28.1775,
+            "WR": 39.45,
+            "TE": 9.4175,
+            "K": 7.82,
+            "DEF": 10.844999999999999
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.1905914603859236
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.837515171030144
+          },
+          "powerScore": 51.64195827152361,
+          "rank": 6,
+          "manager": "Ben",
+          "team": "Cheese Curds",
+          "avatar": "5915b79f654513c5bbb8e0155e85a8eb",
+          "blurb": "Four wins, zero losses, and another 140-point afternoon. Walker's 30.4 set the pace, but Stevenson, Olave and Kraft all chipped in useful points. Ben is building the kind of lineup that can survive a merely decent quarterback week without collapsing. The model ranks the RB contribution lower than the receiver group, a fair place to watch as bye weeks arrive. Right now the team looks organized, deep and distinctly annoying to play against."
+        },
+        {
+          "roster_id": 11,
+          "record": {
+            "w": 2,
+            "l": 2,
+            "t": 0,
+            "pf": 462.62,
+            "pa": 476.78
+          },
+          "average": 120.53249999999998,
+          "ros": 1205.3249999999998,
+          "vor": 39.200833333333335,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.8945754716981129,
+            "WR": 0.9806615776081428,
+            "TE": 0.9902225219150369
+          },
+          "depth": 0.7163648928053232,
+          "byPos": {
+            "QB": 37.4,
+            "RB": 38.394999999999996,
+            "WR": 25.5475,
+            "TE": 7.415000000000001,
+            "K": 7.69,
+            "DEF": 10.510000000000002
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.1412082332251752
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.7710173722233049
+          },
+          "powerScore": 47.9531369559415,
+          "rank": 7,
+          "manager": "Jeff",
+          "team": "El Jefe",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "That 77.84-point loss was an ugly reminder of the floor beneath El Jefe's star pairing. Allen and St. Brown combined for only 30.02, McLaurin scored zero and the rest of the starters offered little rescue. The forecast still sees usable RB production and a more competitive roster than this one afternoon. At 2–2, Jeff needs receiver consistency more than another huge Allen game. Even a franchise QB can't be responsible for the entire office."
+        },
+        {
+          "roster_id": 10,
+          "record": {
+            "w": 1,
+            "l": 3,
+            "t": 0,
+            "pf": 421.92,
+            "pa": 485.12
+          },
+          "average": 120.66700000000003,
+          "ros": 1206.6700000000003,
+          "vor": 34.39416666666666,
+          "coverage": {
+            "QB": 0.8659033877038895,
+            "RB": 0.6489788793855821,
+            "WR": 0.9028969957081544,
+            "TE": 0.9986398258977148
+          },
+          "depth": 0.8541047721738352,
+          "byPos": {
+            "QB": 33.13666666666667,
+            "RB": 33.4875,
+            "WR": 31.7425,
+            "TE": 9.190000000000001,
+            "K": 7.545,
+            "DEF": 9.92
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 0.9953434225844005
+          },
+          "weakness": {
+            "pos": "QB",
+            "ratio": 0.9464407909221279
+          },
+          "powerScore": 43.78177218028334,
+          "rank": 8,
+          "manager": "Jake",
+          "team": "RockNFlow",
+          "avatar": "23fe4994d864928df8f99d56b60c9179",
+          "blurb": "Cousins, Taylor and Nabers combined for 65.0, yet Jake finished with 115.28 and a loss to Ben. Those are encouraging individual rebounds inside another frustrating team result. Rice's zero and Kelce's 2.5 explain some of the gap. The archived model identifies QB as the relative weakness, so one strong Cousins week shouldn't settle the Superflex question. Jake's 1–3 start leaves time to respond, but the lineup needs repeatable help around Taylor."
+        },
+        {
+          "roster_id": 3,
+          "record": {
+            "w": 1,
+            "l": 3,
+            "t": 0,
+            "pf": 485.8,
+            "pa": 502.86
+          },
+          "average": 118.99575,
+          "ros": 1189.9575,
+          "vor": 37.36083333333333,
+          "coverage": {
+            "QB": 0.9595446228908315,
+            "RB": 0,
+            "WR": 0.8561855670103091,
+            "TE": 0.8540580789277737
+          },
+          "depth": 0.6674470672072286,
+          "byPos": {
+            "QB": 29.322499999999998,
+            "RB": 29.5775,
+            "WR": 40.855000000000004,
+            "TE": 10.0725,
+            "K": 7.6825,
+            "DEF": 8.295
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.2329940206354095
+          },
+          "weakness": {
+            "pos": "QB",
+            "ratio": 0.8375015619700459
+          },
+          "powerScore": 38.338797148310114,
+          "rank": 9,
+          "manager": "Nick",
+          "team": "Hammond Hammers",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "Javonte's 28.8, Stroud's 23.08 and Higgins' 21.2 gave Nick a fighting chance against Jack. The 119.62 total still fell 10.86 short, with Saquon and Kincaid combining for just 2.7. The receiving group remains the best part of the projected lineup; QB replacement cover is the softer spot. Injury disruption makes both choices less forgiving. At 1–3, Nick needs a complete scoring week, not another three-player performance surrounded by vacancies."
+        },
+        {
+          "roster_id": 12,
+          "record": {
+            "w": 1,
+            "l": 3,
+            "t": 0,
+            "pf": 505.02,
+            "pa": 512.56
+          },
+          "average": 118.38250000000001,
+          "ros": 1183.825,
+          "vor": 34.7325,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.5244674726540012,
+            "WR": 0.9761158021712907,
+            "TE": 0.7701333333333333
+          },
+          "depth": 0.5676791520396562,
+          "byPos": {
+            "QB": 33.2525,
+            "RB": 33.14,
+            "WR": 32.1275,
+            "TE": 9.375,
+            "K": 7.415,
+            "DEF": 9.375
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 1.007658202337767
+          },
+          "weakness": {
+            "pos": "QB",
+            "ratio": 0.9497491922383478
+          },
+          "powerScore": 30.625932767945297,
+          "rank": 10,
+          "manager": "Fritz",
+          "team": "iamfritz",
+          "avatar": "f0edbf4278f53f9425db175073df6584",
+          "blurb": "Bijan put up 27.2, Goff 20.48 and Jones 14.8, but Bobby's first win arrived at Fritz's expense. The 119.16 total was respectable without giving him a genuine answer to 137.44. The model sees TE as a comparative strength and QB as the weaker projected contribution for this edition. The actual WR volatility still deserves attention. Fritz is 1–3, and a good core needs more consistent assistance before its owner runs out of patience."
+        },
+        {
+          "roster_id": 4,
+          "record": {
+            "w": 2,
+            "l": 2,
+            "t": 0,
+            "pf": 483.54,
+            "pa": 481.46
+          },
+          "average": 115.29291666666668,
+          "ros": 1152.9291666666668,
+          "vor": 38.3175,
+          "coverage": {
+            "QB": 0.7258322798145808,
+            "RB": 0.9605839416058393,
+            "WR": 0.8729984645755647,
+            "TE": 0
+          },
+          "depth": 0.6398536714989962,
+          "byPos": {
+            "QB": 39.644999999999996,
+            "RB": 24.0475,
+            "WR": 37.965,
+            "TE": 9.627500000000001,
+            "K": 8.127500000000001
+          },
+          "missing": 1,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.1457745194816626
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.7147598642657222
+          },
+          "powerScore": 24.13929548715175,
+          "rank": 11,
+          "manager": "Tyler",
+          "team": "Yinzer 4 Life",
+          "avatar": "4092aa52a9d0bdfb748e39bac395ea59",
+          "blurb": "Emanuel Wilson's 25.5 was exactly the sort of pickup payoff a defending champion needs. Rodgers, Mahomes and Kittle helped turn it into 127.66 and a win over Brent, even with one empty starter slot. The model is still cautious about RB cover, so Wilson needs to become a real weekly option rather than a one-week souvenir. Tyler has repaired the record to 2–2. Now the roster needs fewer emergency arrangements and more settled starters."
+        },
+        {
+          "roster_id": 5,
+          "record": {
+            "w": 3,
+            "l": 1,
+            "t": 0,
+            "pf": 509.64,
+            "pa": 513.28
+          },
+          "average": 116.17925,
+          "ros": 1161.7925,
+          "vor": 31.699999999999996,
+          "coverage": {
+            "QB": 0.971399730820996,
+            "RB": 0.48352462051092193,
+            "WR": 0.8663429593662152,
+            "TE": 0
+          },
+          "depth": 0.5803168276745333,
+          "byPos": {
+            "QB": 31.44,
+            "RB": 30.9725,
+            "WR": 33.9775,
+            "TE": 6.967499999999999,
+            "K": 8.100000000000001,
+            "DEF": 10.344999999999999
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.025432733720221
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.7488915759774283
+          },
+          "powerScore": 16.805844102796666,
+          "rank": 12,
+          "manager": "Jack",
+          "team": "Annie’s Boobs",
+          "avatar": "e714bda67d4388d30ba09c76f9be6077",
+          "blurb": "Hubbard's 25.4 and Flowers' 21.8 helped Jack reach 130.48 and 3–1, a much happier place than this projection ranking suggests. McConkey's zero and the weaker forecast at TE explain why the model stays skeptical. Bye weeks also make the RB reserve options harder to ignore. The upcoming Dunnigan matchup is a useful test of whether the younger branch can keep winning with a narrow lineup margin. Family bragging rights rarely come with a depth chart."
+        }
+      ]
+    },
+    "5": {
+      "week": 5,
+      "reconstructed": true,
+      "teams": [
+        {
+          "roster_id": 7,
+          "record": {
+            "w": 2,
+            "l": 3,
+            "t": 0,
+            "pf": 615.78,
+            "pa": 616.38
+          },
+          "average": 128.58,
+          "ros": 1157.22,
+          "vor": 48.645,
+          "coverage": {
+            "QB": 0.7451356536037271,
+            "RB": 0.538013399359161,
+            "WR": 0.6341562120598948,
+            "TE": 0
+          },
+          "depth": 0.4793263162556958,
+          "byPos": {
+            "QB": 37.375,
+            "RB": 36.655,
+            "WR": 25.915,
+            "TE": 14,
+            "K": 8.657499999999999,
+            "DEF": 9.330000000000002
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 1.5415318973229644
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8242047304266397
+          },
+          "powerScore": 87.72550447437341,
+          "rank": 1,
+          "manager": "Brent",
+          "team": "LongSpurs",
+          "avatar": "7572250c2fb084c434fed0e82229e183",
+          "blurb": "First in projected roster strength, 2–3 in actual wins, and now the wrong side of a 3.06-point loss to his son. Fantasy football has a sense of humor, and Brent probably isn't enjoying this particular joke. Henry, Lawrence, McBride and a returning Jefferson all contributed to 121.66. The model likes that balanced starting ceiling, especially the TE edge. The receiver floor and replacement choices still matter. A strong forecast is useful only if the lineup cashes it."
+        },
+        {
+          "roster_id": 9,
+          "record": {
+            "w": 4,
+            "l": 1,
+            "t": 0,
+            "pf": 645.32,
+            "pa": 551.6
+          },
+          "average": 126.5597222222222,
+          "ros": 1139.0375,
+          "vor": 51.68416666666667,
+          "coverage": {
+            "QB": 0.7636338909288727,
+            "RB": 0.9273504273504273,
+            "WR": 0.536479842674533,
+            "TE": 0
+          },
+          "depth": 0.5568660402384582,
+          "byPos": {
+            "QB": 41.082499999999996,
+            "RB": 39.9925,
+            "WR": 28.612499999999997,
+            "TE": 7.96,
+            "K": 6.785,
+            "DEF": 10.25
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "QB",
+            "ratio": 1.2650338076237153
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.8764709930493426
+          },
+          "powerScore": 83.78513088961995,
+          "rank": 2,
+          "manager": "James",
+          "team": "MrWick",
+          "avatar": null,
+          "blurb": "The undefeated run ends with Tyler's 185.86-point ambush. James managed 123.66 without Lamar in the starting group, with Washington's 27.4 and Cook's 22.3 covering a miserable 1.9 from Lamb. Penix supplying 14.40 is a useful demonstration of QB insurance in action. The model still sees a top-tier roster and a weaker TE contribution. At 4–1, MrWick has room to recover. The health of the premium starters determines how comfortable that recovery feels."
+        },
+        {
+          "roster_id": 2,
+          "record": {
+            "w": 1,
+            "l": 4,
+            "t": 0,
+            "pf": 542.46,
+            "pa": 684.12
+          },
+          "average": 122.63703703703703,
+          "ros": 1103.7333333333333,
+          "vor": 45.94166666666667,
+          "coverage": {
+            "QB": 0.8930247612882343,
+            "RB": 0.8156351791530946,
+            "WR": 0.6772151898734178,
+            "TE": 0.9030996928232338
+          },
+          "depth": 0.8222437057844951,
+          "byPos": {
+            "QB": 33.885,
+            "RB": 41.205,
+            "WR": 27.876666666666665,
+            "TE": 8.9525,
+            "K": 7.98,
+            "DEF": 8.11
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.1766273632610325
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8865938852090793
+          },
+          "powerScore": 61.79365873707764,
+          "rank": 3,
+          "manager": "Bobby",
+          "team": "Slim Shiesty",
+          "avatar": "d22e52781a5d7a94bcbf2aa70e748382",
+          "blurb": "Bobby scored 125.50 and still ran straight into Dan's 175.96. Likely's 26.9 and Braelon Allen's 18.1 gave this week more substance, but Brown, Pollard and Collins combined for only 18.8. Third here reflects what the backfield projects to produce, not what a 1–4 manager wants to hear about his record. The roster has rebound tools. With the standings tightening, healthy productive WR starts are becoming more valuable than theoretical upside on a crowded bench."
+        },
+        {
+          "roster_id": 1,
+          "record": {
+            "w": 2,
+            "l": 3,
+            "t": 0,
+            "pf": 669.46,
+            "pa": 762.84
+          },
+          "average": 122.33796296296295,
+          "ros": 1101.0416666666665,
+          "vor": 48.77,
+          "coverage": {
+            "QB": 0.929632168151702,
+            "RB": 0.6530345471521942,
+            "WR": 0.8358208955223881,
+            "TE": 0
+          },
+          "depth": 0.6046219027065711,
+          "byPos": {
+            "QB": 31.474999999999998,
+            "RB": 51.53,
+            "WR": 23.274166666666666,
+            "TE": 4.7075,
+            "K": 7.942500000000001,
+            "DEF": 10.21
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.4714623960403106
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.5183401004748467
+          },
+          "powerScore": 60.29689419207516,
+          "rank": 4,
+          "manager": "Vinny",
+          "team": "LgbtQB1",
+          "avatar": null,
+          "blurb": "The commissioner took Ben's perfect record and put a dent in it with 156.50. Gibbs and Irving supplied 65.7, while Chase's 16.7 and Willis' 18.88 made this a broader offensive effort than last week's. The running backs remain the roster's clearest competitive advantage. Tight end is the nagging hole: Mayer's 0.7 meant another almost-empty scoring slot. At 2–3, Vinny looks dangerous again, provided the weakest position stops volunteering to make things interesting."
+        },
+        {
+          "roster_id": 6,
+          "record": {
+            "w": 3,
+            "l": 2,
+            "t": 0,
+            "pf": 659.52,
+            "pa": 564.94
+          },
+          "average": 125.59481481481482,
+          "ros": 1130.3533333333335,
+          "vor": 39.51666666666667,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.6697947214076247,
+            "WR": 0,
+            "TE": 0.657142857142857
+          },
+          "depth": 0.33173439463762044,
+          "byPos": {
+            "QB": 17.925,
+            "RB": 33.9825,
+            "WR": 38.44916666666666,
+            "TE": 11.9,
+            "K": 7.8025,
+            "DEF": 8.68
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "TE",
+            "ratio": 1.3103021127245198
+          },
+          "weakness": {
+            "pos": "QB",
+            "ratio": 0.5519559666927548
+          },
+          "powerScore": 58.64204825260322,
+          "rank": 5,
+          "manager": "Dan",
+          "team": "Bear Goggles",
+          "avatar": "51385ba57cd089261f6de9ce483b8716",
+          "blurb": "Two weeks, 358.48 points. Puka and Bowers being available has changed the entire conversation, and Maye's 39.46 made Week 5 another miserable assignment for Dan's opponent. Watson added 29.3, showing that the receiving production reaches beyond one star. The model's fifth-place position reflects weaker relative QB depth and replacement cover across the remaining schedule. The actual starting ceiling is plainly championship-worthy. Keeping that ceiling accessible through injuries and byes is the catch."
+        },
+        {
+          "roster_id": 11,
+          "record": {
+            "w": 3,
+            "l": 2,
+            "t": 0,
+            "pf": 600.3,
+            "pa": 610.74
+          },
+          "average": 121.12092592592596,
+          "ros": 1090.0883333333336,
+          "vor": 44.655833333333334,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.8870056497175142,
+            "WR": 0.9859830320914791,
+            "TE": 0.9550128534704371
+          },
+          "depth": 0.7070003838198575,
+          "byPos": {
+            "QB": 35.095,
+            "RB": 41.105,
+            "WR": 26.079166666666666,
+            "TE": 7.779999999999999,
+            "K": 8.3275,
+            "DEF": 8.82
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.1737718181493686
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.8294259128786959
+          },
+          "powerScore": 51.056448999584006,
+          "rank": 6,
+          "manager": "Jeff",
+          "team": "El Jefe",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "Warren's 33.8 and Allen's 30.50 dragged Jeff past Fritz by 3.72, moving El Jefe to 3–2. That's a useful win, but the familiar dependency remains: St. Brown was under ten, Ferguson managed 3.4 and Love 2.2. The RB forecasts give Jeff more supporting potential than those last two numbers suggest. Receiver reliability is the projected weakness. If Warren becomes a regular contributor instead of an occasional rescue helicopter, this lineup gets harder to knock off course."
+        },
+        {
+          "roster_id": 8,
+          "record": {
+            "w": 4,
+            "l": 1,
+            "t": 0,
+            "pf": 664.92,
+            "pa": 579.32
+          },
+          "average": 123.41916666666667,
+          "ros": 1110.7725,
+          "vor": 37.590833333333336,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.5676576114812916,
+            "WR": 0.704428815814484,
+            "TE": 0.8845776031434184
+          },
+          "depth": 0.5391660076097985,
+          "byPos": {
+            "QB": 32.027499999999996,
+            "RB": 20.817500000000003,
+            "WR": 41.11,
+            "TE": 10.18,
+            "K": 7.970000000000001,
+            "DEF": 9.45
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.3074688970804227
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.5944531036205932
+          },
+          "powerScore": 49.12047259271808,
+          "rank": 7,
+          "manager": "Ben",
+          "team": "Cheese Curds",
+          "avatar": "5915b79f654513c5bbb8e0155e85a8eb",
+          "blurb": "Ben's first loss came against a 156.50-point Vinny performance, not because the undefeated leader suddenly forgot how to build a team. His 134.88 featured Love's 25.28, Adams' 19.6 and another useful Stevenson game. Walker wasn't in the starter group and Harvey managed 0.7, exposing the RB-cover issue the model keeps flagging. The receivers remain a strength, and 4–1 is an excellent platform. A cleaner plan for the depleted backfield weeks would make it sturdier."
+        },
+        {
+          "roster_id": 12,
+          "record": {
+            "w": 1,
+            "l": 4,
+            "t": 0,
+            "pf": 638.98,
+            "pa": 650.24
+          },
+          "average": 120.8438888888889,
+          "ros": 1087.595,
+          "vor": 44.38833333333333,
+          "coverage": {
+            "QB": 0,
+            "RB": 0.5446922050695635,
+            "WR": 0.91,
+            "TE": 0.8581765557163531
+          },
+          "depth": 0.5782171901964792,
+          "byPos": {
+            "QB": 36.7875,
+            "RB": 34.0275,
+            "WR": 31.7125,
+            "TE": 8.6375,
+            "K": 7.7375,
+            "DEF": 9.445
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "QB",
+            "ratio": 1.132779923275298
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.9510701259376503
+          },
+          "powerScore": 47.77150552717341,
+          "rank": 8,
+          "manager": "Fritz",
+          "team": "iamfritz",
+          "avatar": "f0edbf4278f53f9425db175073df6584",
+          "blurb": "Goff and Stafford combined for 56.26, yet Fritz lost by 3.72 and slipped to 1–4. Warren and Jones helped, but Moore's zero and Doubs' 2.1 made those WR choices painfully expensive. Bijan's 13.8 was perfectly respectable; the roster shouldn't require him to break thirty every week. QB is the model's strongest contribution for this edition. The remaining lineup needs to convert that foundation into wins before another close loss becomes the season's recurring punchline."
+        },
+        {
+          "roster_id": 3,
+          "record": {
+            "w": 1,
+            "l": 4,
+            "t": 0,
+            "pf": 590.84,
+            "pa": 614.14
+          },
+          "average": 120.4225,
+          "ros": 1083.8025,
+          "vor": 42.991666666666674,
+          "coverage": {
+            "QB": 0.9458917835671342,
+            "RB": 0.43837910247823175,
+            "WR": 0.9042721518987341,
+            "TE": 0.9041666666666667
+          },
+          "depth": 0.7981774261526917,
+          "byPos": {
+            "QB": 28.17,
+            "RB": 30.807499999999997,
+            "WR": 41.442499999999995,
+            "TE": 9.6,
+            "K": 7.4175,
+            "DEF": 9.125
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.3180437793056534
+          },
+          "weakness": {
+            "pos": "QB",
+            "ratio": 0.8674253602083628
+          },
+          "powerScore": 46.960777740296784,
+          "rank": 9,
+          "manager": "Nick",
+          "team": "Hammond Hammers",
+          "avatar": "d55d1f7075eda01948318de4af616075",
+          "blurb": "A 6.24-point loss to Jake leaves Nick at 1–4, with 105.04 offering very little room to blame matchup luck. JSN and Stroud combined for 41.24, but Ward managed five and Higgins and Kincaid each landed on 3.2. The projected receiver advantage is still there, although the Superflex floor keeps making it harder to use. Nick needs another dependable starter or a genuine QB upgrade. The schedule isn't going to wait for every injured piece to return."
+        },
+        {
+          "roster_id": 4,
+          "record": {
+            "w": 3,
+            "l": 2,
+            "t": 0,
+            "pf": 669.4,
+            "pa": 605.12
+          },
+          "average": 121.77249999999998,
+          "ros": 1095.9524999999999,
+          "vor": 37.63833333333334,
+          "coverage": {
+            "QB": 0.9400875126220127,
+            "RB": 0.9619940769990128,
+            "WR": 0.6137064786249449,
+            "TE": 0
+          },
+          "depth": 0.6289470170614926,
+          "byPos": {
+            "QB": 31.295,
+            "RB": 25.645000000000003,
+            "WR": 36.7475,
+            "TE": 10.1775,
+            "K": 8.2875,
+            "DEF": 8.995000000000001
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.1687232618696872
+          },
+          "weakness": {
+            "pos": "RB",
+            "ratio": 0.732304543886159
+          },
+          "powerScore": 43.0967332349178,
+          "rank": 10,
+          "manager": "Tyler",
+          "team": "Yinzer 4 Life",
+          "avatar": "4092aa52a9d0bdfb748e39bac395ea59",
+          "blurb": "The defending champion hung 185.86 on the previously unbeaten James, the biggest team score through Week 5. Daniels, Rodgers, Pickens and Evans all cleared twenty, so this was a lineup-wide eruption rather than one lucky star game. Tenth in the archived strength model is a conservative view of the remaining RB cover, and this week gives Tyler a strong argument against it. At 3–2, the comeback has substance. The next question is whether this supporting cast can repeat enough of it."
+        },
+        {
+          "roster_id": 5,
+          "record": {
+            "w": 4,
+            "l": 1,
+            "t": 0,
+            "pf": 634.36,
+            "pa": 634.94
+          },
+          "average": 117.82222222222221,
+          "ros": 1060.3999999999999,
+          "vor": 33.784166666666664,
+          "coverage": {
+            "QB": 0.9105155931672153,
+            "RB": 0,
+            "WR": 0.8436505994617078,
+            "TE": 0
+          },
+          "depth": 0.4385415481572308,
+          "byPos": {
+            "QB": 32.5725,
+            "RB": 24.3325,
+            "WR": 34.885,
+            "TE": 6.25,
+            "K": 8,
+            "DEF": 10.29
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "WR",
+            "ratio": 1.10948801932986
+          },
+          "weakness": {
+            "pos": "TE",
+            "ratio": 0.6881838827334662
+          },
+          "powerScore": 16.280285266263714,
+          "rank": 11,
+          "manager": "Jack",
+          "team": "Annie’s Boobs",
+          "avatar": "e714bda67d4388d30ba09c76f9be6077",
+          "blurb": "The younger Dunnigan wins the family matchup by 3.06 and moves to 4–1. Brissett's 24.78 and Shrader's 21 helped compensate for Shough's minus 0.16, which is a much more dramatic way to make a quarterback decision than anyone requested. McCaffrey still provided 15.8, but Mitchell's 4.4 and Gesicki's 6.9 underline the depth and TE concerns. Jack has built a valuable standings cushion. He needs it, because the current forecast leaves very little spare scoring capacity."
+        },
+        {
+          "roster_id": 10,
+          "record": {
+            "w": 2,
+            "l": 3,
+            "t": 0,
+            "pf": 533.2,
+            "pa": 590.16
+          },
+          "average": 116.63333333333334,
+          "ros": 1049.7,
+          "vor": 35.835,
+          "coverage": {
+            "QB": 0.9360274869109948,
+            "RB": 0,
+            "WR": 0.859266854652653,
+            "TE": 0
+          },
+          "depth": 0.44882358539091194,
+          "byPos": {
+            "QB": 32.015,
+            "RB": 40.135000000000005,
+            "WR": 21.205,
+            "TE": 8.8375,
+            "K": 7.6,
+            "DEF": 8.415
+          },
+          "missing": 0,
+          "strength": {
+            "pos": "RB",
+            "ratio": 1.1460730305662308
+          },
+          "weakness": {
+            "pos": "WR",
+            "ratio": 0.6744071506346476
+          },
+          "powerScore": 14.138298358641185,
+          "rank": 12,
+          "manager": "Jake",
+          "team": "RockNFlow",
+          "avatar": "23fe4994d864928df8f99d56b60c9179",
+          "blurb": "Jake beat Nick by 6.24 while scoring 111.28, with Nabers' 23.6 and a 24-point Jets defense supplying most of the separation. Taylor, Montgomery, Metcalf and Deebo combined for only 16.1. The backfield remains the roster's projected calling card, but the receiving forecast is now its weaker contribution. At 2–3, this is a useful win rather than evidence that all the problems are solved. More complete offensive weeks would reduce the dependence on streaming-defense heroics."
+        }
+      ]
+    }
+  },
+  "publishedAt": "2026-10-13T15:50:30.553Z",
+  "method": "Archived weekly projections through each edition, historical week rosters and confirmed bye schedule; starter-only roster strength.",
+  "provenance": {
+    "weeks1to3": "Existing published archive retained without reordering or recalculation",
+    "weeks4to5": "Reconstructed from finalized Sleeper week rosters and projections available through each edition, with NFL bye schedules",
+    "historicalInjuryCaveat": "Original ROS forecasts were not archived. Injury tags are not retroactively applied to historical projections. Availability concerns in the notes are editorial context."
+  }
+}

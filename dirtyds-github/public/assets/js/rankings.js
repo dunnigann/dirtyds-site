@@ -1,3 +1,5 @@
+const jackWeek1=['Brent','Vinny','Ben','Dan','Jack','Tyler','James','Jake','Fritz','Jeff','Nick','Bobby'].map(manager=>[manager,'']);
+const jackWeek2=['Brent','James','Ben','Vinny','Jack','Jeff','Fritz','Dan','Nick','Tyler','Jake','Bobby'].map(manager=>[manager,'']);
 const jackWeek3=[
   ['James','The three-time champion is looking to get back into the Hall of Winners with a deadly team stacked with the QB2, this year’s WR darling Parker Washington, and a deep bench of QBs for Superflex needs. That quarterback insurance matters when the bye weeks arrive, and the early undefeated run has given this roster room to breathe.'],
   ['Ben','The other 3–0 team is firmly in the hunt for his first chip after Drake London returned to form with Penix back. There is plenty of depth, while Adams benefits from Puka’s absence. The streak feels sustainable if those receivers keep delivering, with enough roster options to absorb an off week.'],
@@ -26,7 +28,8 @@ const jackWeek4=[
  ['Fritz',"It's hard to rank a team with Bijan this low, but the level of talent on this team is... suspect. Jamo and Waddle are extremely hit or miss and they're starters, Moore is injured, and the bench looks grim. Fritz may be relying too much on Bijan, but let's see if some of the other players can pick up the slack."],
  ['Bobby',"Injuries have decimated this team and I think they'll continue to have an impact, even if indirectly. Ja'Marr being out hurts Burrow and Brown, and DeVonta being out severely caps Hurts. I don't want to say it's a lost season, but at some point something big has to change when you're sitting at 1–3 with the least points for."]
 ];
-const jackEditions={3:jackWeek3,4:jackWeek4};
+const jackWeek5=['Ben','James','Jack','Dan','Brent','Vinny','Tyler','Jeff','Jake','Fritz','Nick','Bobby'].map(manager=>[manager,'']);
+const jackEditions={1:jackWeek1,2:jackWeek2,3:jackWeek3,4:jackWeek4,5:jackWeek5};
 function projectionEstimate(id,week=SL.currentWeek()){
  const p=SL.player(id),row=SL.data.projections?.[week]?.[id],games=SL.data.nflGames?.[week]||[],game=games.find(g=>g.a===p.team||g.b===p.team);
  if(games.length&&!game&&p.team)return {points:0,source:'Bye',available:false};
@@ -64,6 +67,77 @@ function rankTeams(){
 // Publication is deliberate: adding a new edition requires a code update.
 const PUBLISHED_POWER_WEEKS=[1,2,3,4,5];
 let publishedAnalystEditions={},rankingArchiveNote='';
+let rankingTrendManager='Jack',rankingTrendResizeObserver=null;
+function powerRankFor(manager,rosterId,week,author=powerView){
+ if(author==='jack'){
+  const index=(jackEditions[week]||[]).findIndex(([name])=>name===manager);
+  return index<0?null:index+1;
+ }
+ return publishedAnalystEditions[week]?.teams.find(t=>Number(t.roster_id)===Number(rosterId))?.rank??null;
+}
+function powerRankMovement(manager,rosterId,rank,week,author=powerView){
+ const previous=powerRankFor(manager,rosterId,week-1,author);
+ return previous===null?null:previous-rank;
+}
+function standingsForPowerWeek(week){
+ const teams=liveTeams(),model=window.DIRTY_DS_MODEL;
+ let records;
+ // Rebuild end-of-week standings, rather than applying today's record to old weeks.
+ if(Array.from({length:week},(_,i)=>i+1).every(weekComplete)){
+  try{records=model.recordThrough(SL.data,week);}catch{}
+ }
+ if(!records){
+  const saved=publishedAnalystEditions[week]?.teams||[];
+  const complete=teams.length&&teams.every(t=>{
+   const record=saved.find(row=>Number(row.roster_id)===Number(t.r.roster_id))?.record;
+   return record&&['w','l','t','pf','pa'].every(key=>Number.isFinite(record[key]));
+  });
+  if(!complete)return [];
+  records=Object.fromEntries(saved.map(t=>[t.roster_id,t.record]));
+ }
+ // Match the playoff model's record / PF / PA tiebreakers. Roster ID makes a
+ // complete tie deterministic, without using power rank as a standings input.
+ return teams.map(t=>({...t,id:t.r.roster_id,...records[t.r.roster_id]}))
+  .sort((a,b)=>model.compareSeeds(a,b)||a.id-b.id)
+  .map((t,i)=>({...t,rank:i+1}));
+}
+function rankingTrendHistory(manager,author=powerView){
+ const team=liveTeams().find(t=>t.manager===manager);
+ if(!team)return [];
+ return PUBLISHED_POWER_WEEKS.map(week=>({week,
+  standing:standingsForPowerWeek(week).find(t=>Number(t.id)===Number(team.r.roster_id))?.rank??null,
+  power:powerRankFor(manager,team.r.roster_id,week,author)
+ }));
+}
+function rankingTrendMarkup(){
+ const teams=liveTeams().sort((a,b)=>a.manager.localeCompare(b.manager));
+ if(!teams.some(t=>t.manager===rankingTrendManager))rankingTrendManager=teams[0]?.manager||'';
+ return `<section class="ranking-trend" aria-labelledby="rankingTrendTitle"><div class="ranking-trend-header"><div><div class="kicker">WEEK BY WEEK</div><h2 id="rankingTrendTitle">Ranking trajectory</h2><p>Standings vs. ${powerView==='jack'?'Jack’s':'Analyst'} power rankings. No. 1 is at the top.</p></div><label class="ranking-trend-picker" for="rankingTrendManager">Team / manager<select id="rankingTrendManager">${teams.map(t=>`<option value="${e(t.manager)}"${t.manager===rankingTrendManager?' selected':''}>${e(t.manager)} · ${e(t.team)}</option>`).join('')}</select></label></div><div class="ranking-trend-legend"><span><i class="trend-standings"></i>Standings</span><span><i class="trend-power"></i>${powerView==='jack'?'Jack’s':'Analyst'} power ranking</span></div><div id="rankingTrendPlot"></div></section>`;
+}
+function drawRankingTrend(){
+ const root=document.getElementById('rankingTrendPlot');if(!root)return;
+ const history=rankingTrendHistory(rankingTrendManager),author=powerView==='jack'?'Jack’s':'Analyst';
+ const size=Math.max(liveTeams().length,...Object.values(jackEditions).map(rows=>rows.length),2);
+ const width=Math.max(240,Math.round(root.clientWidth||680)),height=360,left=52,right=20,top=24,bottom=height-54;
+ const x=i=>left+i*(width-left-right)/Math.max(1,history.length-1),y=rank=>top+(rank-1)*(bottom-top)/(size-1);
+ const path=key=>history.map((row,i)=>row[key]===null?'':`${i===0||history[i-1][key]===null?'M':'L'}${x(i).toFixed(2)},${y(row[key]).toFixed(2)}`).join(' ');
+ const pointLabel=row=>`${rankingTrendManager}, Week ${row.week}: standings ${row.standing??'unavailable'}, ${author} power ranking ${row.power??'unavailable'}`;
+ root.innerHTML=`<svg class="ranking-trend-chart" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="rankingTrendSvgTitle rankingTrendSvgDesc"><title id="rankingTrendSvgTitle">${e(rankingTrendManager)}: standings and ${author} power ranking by week</title><desc id="rankingTrendSvgDesc">${e(history.map(pointLabel).join('. '))}</desc>${Array.from({length:size},(_,i)=>`<line class="trend-grid" x1="${left}" x2="${width-right}" y1="${y(i+1)}" y2="${y(i+1)}"/><text class="trend-tick" x="${left-12}" y="${y(i+1)+4}" text-anchor="end">${i+1}</text>`).join('')}<text class="trend-axis-label" transform="translate(15 ${(top+bottom)/2}) rotate(-90)" text-anchor="middle">Ranking</text>${history.map((row,i)=>`<text class="trend-tick" x="${x(i)}" y="${bottom+23}" text-anchor="middle">${row.week}</text>`).join('')}<text class="trend-axis-label" x="${(left+width-right)/2}" y="${height-6}" text-anchor="middle">Week</text><path class="trend-line trend-standings" d="${path('standing')}"/><path class="trend-line trend-power" d="${path('power')}"/>${history.map((row,i)=>`${row.standing===null?'':`<circle class="trend-dot trend-standings" cx="${x(i)}" cy="${y(row.standing)}" r="4.5"><title>${e(pointLabel(row))}</title></circle>`}${row.power===null?'':`<path class="trend-dot trend-power" d="M${x(i)},${y(row.power)-5} l5,5 -5,5 -5,-5 Z"><title>${e(pointLabel(row))}</title></path>`}`).join('')}</svg><p class="ranking-trend-note">Standings after each completed week, ordered by record, then points for and points against.${history.some(row=>row.standing===null||row.power===null)?' Gaps mean that week’s data is unavailable.':''}</p><details class="ranking-trend-data"><summary>View weekly numbers for ${e(rankingTrendManager)}</summary><table class="dd-table"><caption>${e(rankingTrendManager)} · weekly ranking comparison</caption><thead><tr><th scope="col">Week</th><th scope="col">Standings</th><th scope="col">${author} power rank</th></tr></thead><tbody>${history.map(row=>`<tr><th scope="row">${row.week}</th><td>${row.standing??'—'}</td><td>${row.power??'—'}</td></tr>`).join('')}</tbody></table></details>`;
+}
+function wireRankingTrend(){
+ const picker=document.getElementById('rankingTrendManager'),plot=document.getElementById('rankingTrendPlot');
+ if(picker)picker.onchange=()=>{rankingTrendManager=picker.value;drawRankingTrend();};
+ rankingTrendResizeObserver?.disconnect();
+ if(plot&&window.ResizeObserver){
+  let lastWidth=0;
+  rankingTrendResizeObserver=new ResizeObserver(entries=>{
+   const width=Math.round(entries[0].contentRect.width);
+   if(width!==lastWidth){lastWidth=width;drawRankingTrend();}
+  });
+  rankingTrendResizeObserver.observe(plot);
+ }
+ drawRankingTrend();
+}
 async function loadPublishedRankings(){
  if(Object.keys(publishedAnalystEditions).length)return;
  const valid=value=>value?.editions&&PUBLISHED_POWER_WEEKS.every(w=>Array.isArray(value.editions[w]?.teams)&&value.editions[w].teams.length);
@@ -89,9 +163,9 @@ function drawPowerRankings(){
  document.querySelectorAll('[data-power-view]').forEach(b=>{const active=b.dataset.powerView===powerView;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
  document.querySelectorAll('[data-power-week]').forEach(b=>{const active=Number(b.dataset.powerWeek)===powerWeek;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
  if(powerView==='jack'&&!jackEditions[powerWeek]){root.innerHTML=`<div class="ranking-empty">Jack’s Week ${powerWeek} rankings have not been submitted yet.</div>`;return;}
- const edition=publishedAnalystEditions[powerWeek],previous=publishedAnalystEditions[powerWeek-1]?.teams||[];
+ const edition=publishedAnalystEditions[powerWeek];
  if(powerView==='analyst'&&!edition){root.innerHTML=note('This edition could not be loaded. Use Refresh to retry.');return;}
  const teams=powerView==='jack'?jackEditions[powerWeek].map(([manager,blurb],i)=>{const t=liveTeams().find(t=>t.manager===manager);return t?{...t,roster_id:t.r.roster_id,rank:i+1,record:recordAt(t.r.roster_id,powerWeek),blurb}:null;}).filter(Boolean):edition.teams.map((t,i)=>({...t,blurb:t.blurb}));
- root.innerHTML=`<p class="z-muted">${powerView==='jack'?'Jack’s':'Analyst'} Rankings · Week ${powerWeek}</p><ol class="z-ranking-list unified-rankings">${teams.map((t,i)=>{const user=t.user||SL.rosterUser(SL.roster(t.roster_id)),old=powerView==='analyst'?previous.find(p=>p.roster_id===t.roster_id):null,delta=old?old.rank-(i+1):null;return `<li><strong class="z-rank">${i+1}</strong>${photo(t.avatar?'https://sleepercdn.com/avatars/thumbs/'+encodeURIComponent(t.avatar):userAvatar(user),t.manager)}<div><h3>${e(t.team)}</h3><small>${e(t.manager)} · ${weekRecord(t.record)}</small><p>${e(t.blurb).replace(/\b(QB|RB|WR|TE|FLEX|SUPERFLEX|K|DEF)\b/g,posBadge)}</p></div><span class="rank-move ${delta>0?'positive':delta<0?'negative':''}" aria-label="${delta===null?'No prior published ranking':delta===0?'No change':`${delta>0?'Up':'Down'} ${Math.abs(delta)} places`}">${delta===null?'—':delta===0?'•':`${delta>0?'↑':'↓'} ${Math.abs(delta)}`}</span></li>`;}).join('')}</ol>${powerView==='analyst'?`<details class="method-disclosure"><summary>About these rankings</summary><p>55% projected remaining-season starter points per week, 25% value above available replacements, 15% usable positional depth, and 5% roster balance. Eligible lineups maximize projected points with unique players and confirmed NFL bye weeks. Records are shown for context and do not determine the strength score.</p><p>Weeks 1–5 are reconstructed from Sleeper’s roster lists for those weeks, with weekly projection feeds through each edition as the forecast baseline. Later roster moves and later player scores are excluded. Original ROS forecasts and some early-season injury metadata were not archived, so these are reconstructions rather than original forecasts. Historical projection scoring does not retroactively apply today’s injury tags. NFL team metadata uses the captured feed where available. Weeks 1–3 retain their original published order. Each edition has a separately written team review. Editions are published deliberately and are not added automatically.</p>${rankingArchiveNote?`<p>${e(rankingArchiveNote)}</p>`:''}<p>Underlying figures are tucked below for anyone checking the math.</p><div class="dd-table-wrap"><table class="dd-table"><thead><tr><th>Team</th><th>Strength</th><th>ROS starter points</th><th>Value / week</th><th>Depth</th></tr></thead><tbody>${teams.map(t=>`<tr><td>${e(t.team)}</td><td>${t.powerScore.toFixed(1)}</td><td>${fmt(t.ros,0)}</td><td>${t.vor.toFixed(1)}</td><td>${Math.round(t.depth*100)}%</td></tr>`).join('')}</tbody></table></div></details>`:''}`;
- wireImageFallback(root);
+ root.innerHTML=`<p class="z-muted">${powerView==='jack'?'Jack’s':'Analyst'} Rankings · Week ${powerWeek}</p><ol class="z-ranking-list unified-rankings">${teams.map((t,i)=>{const user=t.user||SL.rosterUser(SL.roster(t.roster_id)),delta=powerRankMovement(t.manager,t.roster_id,t.rank,powerWeek);return `<li data-ranking-manager="${e(t.manager)}"><strong class="z-rank">${t.rank}</strong>${photo(t.avatar?'https://sleepercdn.com/avatars/thumbs/'+encodeURIComponent(t.avatar):userAvatar(user),t.manager)}<div><h3>${e(t.team)}</h3><small>${e(t.manager)} · ${weekRecord(t.record)}</small>${t.blurb?`<p>${e(t.blurb).replace(/\b(QB|RB|WR|TE|FLEX|SUPERFLEX|K|DEF)\b/g,posBadge)}</p>`:''}</div><span class="rank-move ${delta>0?'positive':delta<0?'negative':''}" aria-label="${delta===null?'No prior published ranking':delta===0?'No change, 0 places':`${delta>0?'Up':'Down'} ${Math.abs(delta)} places`}">${delta===null?'—':delta===0?'↔ 0':`${delta>0?'↑':'↓'} ${Math.abs(delta)}`}</span></li>`;}).join('')}</ol>${rankingTrendMarkup()}${powerView==='analyst'?`<details class="method-disclosure"><summary>About these rankings</summary><p>55% projected remaining-season starter points per week, 25% value above available replacements, 15% usable positional depth, and 5% roster balance. Eligible lineups maximize projected points with unique players and confirmed NFL bye weeks. Records are shown for context and do not determine the strength score.</p><p>Weeks 1–5 are reconstructed from Sleeper’s roster lists for those weeks, with weekly projection feeds through each edition as the forecast baseline. Later roster moves and later player scores are excluded. Original ROS forecasts and some early-season injury metadata were not archived, so these are reconstructions rather than original forecasts. Historical projection scoring does not retroactively apply today’s injury tags. NFL team metadata uses the captured feed where available. Weeks 1–3 retain their original published order. Each edition has a separately written team review. Editions are published deliberately and are not added automatically.</p>${rankingArchiveNote?`<p>${e(rankingArchiveNote)}</p>`:''}<p>Underlying figures are tucked below for anyone checking the math.</p><div class="dd-table-wrap"><table class="dd-table"><thead><tr><th>Team</th><th>Strength</th><th>ROS starter points</th><th>Value / week</th><th>Depth</th></tr></thead><tbody>${teams.map(t=>`<tr><td>${e(t.team)}</td><td>${t.powerScore.toFixed(1)}</td><td>${fmt(t.ros,0)}</td><td>${t.vor.toFixed(1)}</td><td>${Math.round(t.depth*100)}%</td></tr>`).join('')}</tbody></table></div></details>`:''}`;
+ wireImageFallback(root);wireRankingTrend();
 }

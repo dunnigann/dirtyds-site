@@ -17,8 +17,17 @@ async function loadHomeLeague(){
 function updateFeedStatus(){const target=document.getElementById('feedStatus');if(!target)return;const feeds=Object.values(SL.data.feeds||{}),stale=feeds.filter(x=>x.stale),times=feeds.map(x=>x.saved).filter(Boolean),latest=SL.data.updatedAt||Math.max(0,...times);target.innerHTML=`<span class="status-dot ${stale.length?'stale':''}"></span><span>${latest?`Checked ${new Date(latest).toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})}`:'Connecting to league'}${stale.length?` · ${stale.length} feed${stale.length>1?'s':''} using older/unavailable data`:''}</span><button id="refreshData" type="button">Refresh</button>`;target.classList.toggle('is-stale',stale.length>0);document.getElementById('refreshData').onclick=()=>refreshPage(true);}
 let refreshRunning=false;
 async function refreshPage(manual=false){
- if(refreshRunning||(!manual&&(document.hidden||!backdrop.hidden||document.activeElement?.matches('input,select,textarea'))))return;refreshRunning=true;const page=currentPage,week=liveWeek,focus=document.activeElement,scroll=window.scrollY;
- try{await SL.refresh();if(currentPage!==page)return;if(!location.hash.includes('week='))liveWeek=SL.currentWeek();else liveWeek=week;
+ const playerHistory=openLivePlayerHistory();
+ if(refreshRunning||(!manual&&(document.hidden||(!backdrop.hidden&&!playerHistory)||document.activeElement?.matches('input,select,textarea'))))return;refreshRunning=true;const page=currentPage,week=liveWeek,focus=document.activeElement,scroll=window.scrollY;
+ try{
+  await SL.refresh();
+  if(playerHistory){
+   await Promise.allSettled([SL.loadHistory(),SL.getNflGames(SL.currentWeek())]);
+   refreshPlayerHistory(playerHistory);
+   return;
+  }
+  if(currentPage!==page||!backdrop.hidden)return;
+  if(!location.hash.includes('week='))liveWeek=SL.currentWeek();else liveWeek=week;
   if(page==='home')await loadHomeLeague();
   if(page==='matchups'){await SL.getWeek(liveWeek,manual);await SL.getNflGames(liveWeek,manual);if(currentPage===page)await drawLiveMatchups();}
   if(['history','superlatives','history-stats'].includes(page)){
@@ -33,7 +42,7 @@ async function refreshPage(manual=false){
   if(page==='seasons'&&seasonYear===2026)drawSeasonDetail();
   if(manual&&['teams','draft'].includes(page))page==='teams'?drawTeamsPage(true):drawDraftPage(true);
  }catch(err){const target=document.getElementById('feedStatus');if(target)target.textContent='Refresh unavailable · previous data retained';}
- finally{refreshRunning=false;updateFeedStatus();if(currentPage===page){if(focus?.isConnected)focus.focus({preventScroll:true});else if(focus?.id)document.getElementById(focus.id)?.focus({preventScroll:true});window.scrollTo({top:scroll,behavior:'instant'});}}
+ finally{refreshRunning=false;updateFeedStatus();if(!playerHistory&&currentPage===page&&backdrop.hidden){if(focus?.isConnected)focus.focus({preventScroll:true});else if(focus?.id)document.getElementById(focus.id)?.focus({preventScroll:true});window.scrollTo({top:scroll,behavior:'instant'});}}
 }
 const filterLabels={pSearch:'Player name',pPos:'Position',pOwner:'Historical manager',pSort:'Sort by',dYear:'Season',dPos:'Position',dOwner:'Manager',dKind:'Entry type',amYear:'Season',amWeek:'Week',playerTopPos:'Leader position'};
 function polishControls(){

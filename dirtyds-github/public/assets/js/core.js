@@ -166,6 +166,29 @@ function weeklyStarterRows(week){
     return starterEntries(row,week).map(p=>({...p,week,owner}));
   });
 }
+// The commissioner confirmed these 2026 bench assignments. Use Sleeper's
+// weekly points and roster membership rather than storing a second copy.
+const confirmedBench2026={
+ 1:{2:['8131'],12:['9228']},                 // Isaiah Likely; Bryce Young
+ 2:{7:['4046'],8:['2133'],12:['9228']},      // Patrick Mahomes; Davante Adams; Bryce Young
+ 3:{2:['1373'],5:['3257']}                  // Geno Smith; Jacoby Brissett
+};
+function weeklyBenchSlots(row,week){
+  const {data}=SL,id=Number(row.roster_id),snapshot=data.snapshots?.[week];
+  const active=week===SL.currentWeek()&&week>num(data.league?.settings?.last_scored_leg);
+  const roster=active?SL.roster(id):snapshot?.rosters?.find(x=>Number(x.roster_id)===id);
+  const onTaxi=Number(data.league?.settings?.taxi_slots)>0;
+  const benchKnown=Boolean(roster&&(active||!snapshot.historicalMetadataUnknown)&&Array.isArray(row.players)&&(!onTaxi||Array.isArray(roster.taxi)));
+  const reserve=new Set([...(roster?.reserve||[]),...(roster?.taxi||[])].map(String));
+  const starters=new Set((row.starters||[]).map(String));
+  const nonStarters=[...new Set((row.players||[]).filter(Boolean).map(String))].filter(id=>id!=='0'&&!starters.has(id));
+  const confirmed=(String(data.season||2026)==='2026'?confirmedBench2026[week]?.[id]:null)||[];
+  return {
+    benchKnown,
+    benchIds:nonStarters.filter(p=>benchKnown?!reserve.has(p):confirmed.includes(p)),
+    unknownIds:benchKnown?[]:nonStarters.filter(p=>!confirmed.includes(p))
+  };
+}
 function livePlayerObj(id,row=null,slot=''){
   const snapshot=row?SL.data.snapshots?.[liveWeek]:null,p=snapshot?.players?.[id]||SL.player(id);
   const historicalRoster=snapshot?.rosters?.find(r=>r.roster_id===row?.roster_id),u=snapshot?.users?.find(u=>u.user_id===historicalRoster?.owner_id);

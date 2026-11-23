@@ -44,6 +44,18 @@ assert.equal(summarize({...historyFixture,weeks:[playoffWeek]}).top.length,4,'pl
 assert.equal(withPlayoffs.value[0].points,4000,'playoff starter points still contribute to auction value');
 
 assert.equal(computed.bench[0].points,20000,'bench includes active bench players and excludes IR');
+const partialBench={...week1,rosters:[
+ {...week1.rosters[0],benchKnown:false,players:[
+  ...week1.rosters[0].players,
+  {name:'Confirmed Bench',slot:'BN',status:'bench',points:32,benchConfirmed:true},
+  {name:'No Verified Score',slot:'BN',status:'bench',points:null,benchConfirmed:true}
+ ]},...week1.rosters.slice(1)
+]};
+const partial=summarize({...historyFixture,weeks:[partialBench]});
+assert.deepEqual(partial.bench.map(p=>p.name),['Confirmed Bench'],'only individually confirmed bench slots with known scores count in an unverified week');
+assert.deepEqual(partial.coverage[0].benchGaps,[1]);
+assert.deepEqual(partial.coverage[0].benchConfirmations,{1:1});
+assert.equal(partial.top.length,4,'bench coverage does not affect starter results');
 assert.deepEqual(computed.secondHigh.map(x=>x.week),[1],'a first place tie has no second place; ranks use the true opponent');
 assert.deepEqual(computed.secondLow.map(x=>x.week),[1],'the actual second lowest scorer must face the last place scorer');
 assert.deepEqual(computed.value[0],{year:fixtureYear,name:'Drafted Player',owner:'A',cost:5,points:2000},'attribute starter points to the original auction buyer only');
@@ -75,22 +87,39 @@ run("currentPage='superlatives';renderSuperlatives()");assert.match(el('recordWa
 assert.equal(context.window.DIRTY_DS_LINEUPS.championships['2025'].score,217.54);
 assert.equal(context.window.DIRTY_DS_LINEUPS.championships['2025'].starters.find(p=>p.name==='Derrick Henry').points,45.6);
 const oldWeek2=weeks[2];
+const playerFile=()=>el('modalContent').querySelector('[data-player-roster-history]');
+const rosterRows=()=>[...playerFile().querySelectorAll('.dd-history-row')].map(el=>[...el.children].map(x=>x.textContent));
+const refreshProfile=()=>run('refreshPlayerHistory(openLivePlayerHistory())');
 rosters[0].players=[];rosters[1].players.push('9509');
 weeks[2]=[{roster_id:1,matchup_id:1,points:10,starters:['0'],players_points:{}},{roster_id:2,matchup_id:1,points:25,starters:['9509','9509'],players_points:{'9509':25}}];
 run("playerProfile('Bijan Robinson','9509')");
-let rosterHistory=el('modalContent').innerHTML.split('<h3>Roster history</h3>')[1];
-assert.match(rosterHistory,/Ben · 1 start<.*?Week 2 · provisional/);
-assert.match(rosterHistory,/Jack · 1 start<.*?30.0 pts/);
-assert.match(rosterHistory,/Career totals include finalized weeks only/);
+assert.deepEqual(rosterRows(),[['2026','Ben · Cheese Curds1 start · 0 bench','25.0 pts'],['2026',"Jack · Annie's Boobs1 start · 0 bench",'30.0 pts']],'a trade preserves distinct manager rows, and duplicate slots do not count twice');
+const sameTarget=playerFile();
+weeks[2][1].players_points['9509']=26;
+refreshProfile();
+assert.equal(playerFile(),sameTarget,'scores refresh without replacing the popup');
+assert.equal(rosterRows()[0][2],'26.0 pts');
 league.settings.last_scored_leg=2;
-run("playerProfile('Bijan Robinson','9509')");
-rosterHistory=el('modalContent').innerHTML.split('<h3>Roster history</h3>')[1];
-assert.match(rosterHistory,/Ben · 1 start<.*?25.0 pts/);
-assert.match(rosterHistory,/Jack · 1 start<.*?30.0 pts/);
-assert.doesNotMatch(rosterHistory,/provisional/);
+refreshProfile();
+assert.equal(rosterRows().length,2,'finalizing the current week does not add a second row');
 assert.equal(run("seasonPlayerRows(2026).filter(p=>p.id==='9509').reduce((sum,p)=>sum+p.starts,0)"),2);
 assert.equal(run("seasonPlayerRows(2026).some(p=>p.id==='0')"),false);
-rosters[0].players=['9509'];rosters[1].players=['4984'];weeks[2]=oldWeek2;league.settings.last_scored_leg=1;
+league.settings.last_scored_leg=1;
+rosters[0].players=['9509'];rosters[1].players=['4984'];
+weeks[2]=[{roster_id:1,matchup_id:1,points:12,players:['9509'],starters:['9509'],players_points:{'9509':12}},oldWeek2[1]];
+refreshProfile();
+assert.deepEqual(rosterRows(),[['2026',"Jack · Annie's Boobs2 starts · 0 bench",'42.0 pts']],'the live week folds into the finalized totals for the same manager');
+weeks[2][0].starters=['0'];weeks[2][0].players_points['9509']=0;
+refreshProfile();
+assert.equal(rosterRows()[0][1],"Jack · Annie's Boobs1 start · 0 bench",'a zero before kickoff does not count as a bench appearance');
+SL.data.nflGames[2]=[{a:'ATL',b:'BUF',state:'in'}];
+refreshProfile();
+assert.deepEqual(rosterRows(),[['2026',"Jack · Annie's Boobs1 start · 1 bench",'30.0 pts']],'a scoreless bench appearance counts once the game starts');
+rosters[0].reserve=['9509'];
+refreshProfile();
+assert.equal(rosterRows()[0][1],"Jack · Annie's Boobs1 start · 0 bench",'IR is excluded');
+delete rosters[0].reserve;delete SL.data.nflGames[2];weeks[2]=oldWeek2;
+assert.doesNotMatch(playerFile().textContent,/provisional/);
 run('showChampionship(2025)');assert.match(el('modalContent').innerHTML,/Derrick Henry/);
 run("currentPage='teams';drawTeamsPage(true)");assert.equal((el('app').innerHTML.match(/data-manager=/g)||[]).length,13);assert.match(el('app').innerHTML,/HISTORICAL MANAGERS/);assert.match(el('app').innerHTML,/data-manager="Hunter"/);assert.doesNotMatch(el('app').innerHTML,/team-photo has-photo/);
 run("showManager('Tyler')");assert.match(el('modalContent').innerHTML,/Top 10 Most Started Players \(Points Scored\)/);assert.match(el('modalContent').innerHTML,/Final place: 1st/);assert.match(el('modalContent').innerHTML,/ PA/);

@@ -18,7 +18,7 @@ function matchupMargin(g){
 const isKickerOrDefense=position=>/^(K|PK|KICKER|D|DEF|DST|DEFST|DEFENSE|TEAMDEFENSE)$/.test(String(position||'').toUpperCase().replace(/[^A-Z]/g,''));
 
 function summarize({year,teamCount,weeks,draft=[]}){
- const starters=[],bench=[],secondHigh=[],secondLow=[],starterTotals=new Map(),lineupGaps=[],benchGaps=[];
+ const starters=[],bench=[],secondHigh=[],secondLow=[],starterTotals=new Map(),lineupGaps=[],benchGaps=[],benchConfirmations={};
  let matchupWeeks=0,lineupWeeks=0,benchWeeks=0;
  for(const {week,games,rosters=[]} of weeks){
   const final=games.filter(g=>cents(g.a.score)!==null&&cents(g.b.score)!==null&&g.a.id!==g.b.id);
@@ -45,13 +45,17 @@ function summarize({year,teamCount,weeks,draft=[]}){
   if(benchVerified)benchWeeks++;else benchGaps.push(week);
   for(const roster of participants){
    const seen=new Set();
-   const active=roster.players.filter(p=>p.status==='starter').concat(benchVerified?roster.players.filter(p=>p.status==='bench'):[]);
+   const active=roster.players.filter(p=>p.status==='starter').concat(roster.players.filter(p=>p.status==='bench'&&(benchVerified||p.benchConfirmed===true)&&cents(p.points)!==null));
    for(const p of active){
     const id=p.id||playerKey(p.name);
     if(!id||!p.name||seen.has(id))continue;
     seen.add(id);
     const row={year,week,owner:roster.owner,name:p.name,slot:p.slot,points:cents(p.points)};
-    if(p.status==='bench'){bench.push(row);continue;}
+    if(p.status==='bench'){
+     bench.push(row);
+     if(!benchVerified)benchConfirmations[week]=(benchConfirmations[week]||0)+1;
+     continue;
+    }
     starters.push(row);
     const key=JSON.stringify([roster.owner,id]),prior=starterTotals.get(key)||0;
     starterTotals.set(key,prior+row.points);
@@ -69,7 +73,7 @@ function summarize({year,teamCount,weeks,draft=[]}){
   bench:topTen(bench,(a,b)=>b.points-a.points||playerOrder(a,b)),
   secondHigh:secondHigh.sort(dateOrder),secondLow:secondLow.sort(dateOrder),
   value:topTen(eligible,(a,b)=>draftOrder(a,b,false)),busts:topTen(eligible,(a,b)=>draftOrder(a,b,true)),
-  coverage:[{year,matchupWeeks,lineupWeeks,benchWeeks,lineupGaps,benchGaps,lastWeek:Math.max(0,...weeks.map(w=>w.week)),draftAvailable:eligible.length>0}]
+  coverage:[{year,matchupWeeks,lineupWeeks,benchWeeks,lineupGaps,benchGaps,...(Object.keys(benchConfirmations).length?{benchConfirmations}:{}),lastWeek:Math.max(0,...weeks.map(w=>w.week)),draftAvailable:eligible.length>0}]
  };
 }
 

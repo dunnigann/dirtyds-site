@@ -25,17 +25,11 @@ function currentHistoryStatistics(){
   const week=i+1,games=liveHistoryGames(week),snapshot=data.snapshots?.[week];
   const rosters=games.length?(data.weeks[week]||[]).map(row=>{
    const id=Number(row.roster_id),{manager:owner}=identityAtWeek(id,week);
-   const roster=snapshot?.rosters?.find(x=>Number(x.roster_id)===id);
-   const onTaxi=Number(data.league?.settings?.taxi_slots)>0;
-   const benchKnown=Boolean(roster&&!snapshot.historicalMetadataUnknown&&Array.isArray(row.players)&&(!onTaxi||Array.isArray(roster.taxi)));
-   const reserve=new Set([...(roster?.reserve||[]),...(roster?.taxi||[])].map(String));
-   const all=(row.players||[]).map(String);
-   const playerName=player=>snapshot?.players?.[player]?.full_name||SL.fullName(player);
    const starters=starterEntries(row,week).map(p=>({...p,status:'starter'}));
-   const starterIds=new Set(starters.map(p=>p.id));
-   const bench=benchKnown?all.filter(p=>p&&p!=='0'&&!starterIds.has(p)&&!reserve.has(p)).map(p=>({
-    id:p,slot:'BN',name:playerName(p),status:'bench',points:scoreFor(row,p)
-   })):[];
+   const {benchKnown,benchIds}=weeklyBenchSlots(row,week);
+   const bench=benchIds.map(p=>({
+    id:p,slot:'BN',name:snapshot?.players?.[p]?.full_name||SL.fullName(p),status:'bench',points:scoreFor(row,p),benchConfirmed:!benchKnown
+   }));
    return {id,owner,benchKnown,players:starters.concat(bench)};
   }):[];
   return {week,games,rosters};
@@ -70,7 +64,13 @@ function historyCoverage(stats){
    const complete=current.lastWeek>=17&&current.lineupGaps.length===0;
    notes.push(`2026 through Week ${current.lastWeek}${complete?'.':' (season in progress).'}`);
    if(current.lineupGaps.length)notes.push(`Starter lineups missing for Week(s) ${current.lineupGaps.join(', ')}.`);
-   if(current.benchGaps.length)notes.push(`Bench slots could not be verified for Week(s) ${current.benchGaps.join(', ')}.`);
+   const confirmed=Object.entries(current.benchConfirmations||{});
+   if(confirmed.length){
+    const count=confirmed.reduce((total,[,n])=>total+n,0),weekLabel=confirmed.length===1?'Week':'Weeks';
+    notes.push(`Includes ${count} confirmed bench performances from ${weekLabel} ${confirmed.map(([week])=>week).join(', ')}. Other bench slots from those weeks are unverified.`);
+   }
+   const benchGaps=current.benchGaps.filter(week=>!current.benchConfirmations?.[week]);
+   if(benchGaps.length)notes.push(`Bench slots could not be verified for Week(s) ${benchGaps.join(', ')}.`);
    if(!current.draftAvailable)notes.push('2026 draft rankings need the paid auction picks and verified starter lineups for every completed week.');
   }else notes.push(liveHistoryStatus==='loading'?'Checking for completed 2026 weeks…':liveHistoryStatus==='failed'?'2026 data is currently unavailable.':'No finalized 2026 weeks yet.');
  }

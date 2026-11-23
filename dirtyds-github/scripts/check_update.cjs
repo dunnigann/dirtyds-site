@@ -1,3 +1,4 @@
+require('./audit_player_attribution.cjs');
 // Reproducible checks for the archive and live identity / week logic.
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.resolve(__dirname,'..');
@@ -30,11 +31,18 @@ const week2={week:2,games:[game(2,'A',90,'D',80),game(2,'B',90,'C',60)],rosters:
 const week3={week:3,games:[game(3,'A',80,'B',90),game(3,'C',84,'D',60)],rosters:[
  roster('A',[['Waiver Add',20]]),roster('B',[['Drafted Player',21]]),roster('C',[['Reacquired',1]]),roster('D',[['Keeper',10]])
 ]};
-const draft=[{name:'Drafted Player',owner:'A',cost:5},{name:'Bench Only',owner:'A',cost:10},{name:'Never Used',owner:'A',cost:2},{name:'Keeper',owner:'D',cost:1,keeper:true},{name:'Other Player',owner:'B',cost:null}];
+const draft=[{name:'Drafted Player',owner:'A',cost:5},{name:'Bench Only',owner:'A',cost:10},{name:'Never Used',owner:'A',cost:2},{name:'Keeper',owner:'D',cost:1,keeper:true},{name:'Other Player',owner:'B',cost:null},{name:'IR Player',owner:'A',cost:40,position:'K'},{name:'Other Player',owner:'B',cost:1,position:'D/ST'}];
 const historyFixture={year:fixtureYear,teamCount:4,weeks:[week1,week2,week3],draft};
 const computed=summarize(historyFixture);
 assert.equal(computed.top[0].name,'Other Player','high bench and IR scores never enter the starters list');
 assert.equal(computed.bottom[0].points,-200,'a started negative score counts');
+const playoffWeek={...week1,week:4,games:[game(4,'A',100,'B',90),game(4,'C',80,'D',70)].map(g=>({...g,playoff:true}))};
+const withPlayoffs=summarize({...historyFixture,weeks:[week1,week2,week3,playoffWeek]});
+assert.deepEqual(withPlayoffs.secondHigh.map(x=>x.week),[1]);
+assert.deepEqual(withPlayoffs.secondLow.map(x=>x.week),[1]);
+assert.equal(summarize({...historyFixture,weeks:[playoffWeek]}).top.length,4,'playoff starts remain eligible for the player leaderboards');
+assert.equal(withPlayoffs.value[0].points,4000,'playoff starter points still contribute to auction value');
+
 assert.equal(computed.bench[0].points,20000,'bench includes active bench players and excludes IR');
 assert.deepEqual(computed.secondHigh.map(x=>x.week),[1],'a first place tie has no second place; ranks use the true opponent');
 assert.deepEqual(computed.secondLow.map(x=>x.week),[1],'the actual second lowest scorer must face the last place scorer');
@@ -48,6 +56,12 @@ const archived=Object.values(context.window.DIRTY_DS_HISTORY_SUMMARY);
 assert.equal(archived.length,8);
 assert.ok(archived.every(s=>s.coverage[0].lineupGaps.length===0&&s.value.length===10&&s.busts.length===10),'all yearly auction boards have complete archived coverage');
 assert.equal(combine(archived).top[0].name,'Alvin Kamara');
+for(const stats of archived){
+ const cutoff=stats.coverage[0].year<=2020?14:15;
+ assert.ok([...stats.secondHigh,...stats.secondLow].every(g=>g.week<cutoff));
+ const draft=context.window.DIRTY_DS_DATA.draftHistory;
+ for(const p of [...stats.value,...stats.busts])assert.ok(draft.some(x=>x.year===p.year&&x.owner===p.owner&&x.player===p.name&&!['K','DEF'].includes(x.position)));
+}
 assert.equal(run('canonicalManager(SL.roster(1))'),'Jack');
 assert.equal(run('canonicalManager(SL.roster(2))'),'Ben');
 assert.equal(run('completedWeeks().join(",")'),'1');
@@ -60,6 +74,23 @@ run("currentPage='history';renderHistory()");assert.match(el('app').innerHTML,/H
 run("currentPage='superlatives';renderSuperlatives()");assert.match(el('recordWall').innerHTML,/Bijan Robinson/);assert.match(el('recordWall').innerHTML,/POSITION PRODUCTION/);
 assert.equal(context.window.DIRTY_DS_LINEUPS.championships['2025'].score,217.54);
 assert.equal(context.window.DIRTY_DS_LINEUPS.championships['2025'].starters.find(p=>p.name==='Derrick Henry').points,45.6);
+const oldWeek2=weeks[2];
+rosters[0].players=[];rosters[1].players.push('9509');
+weeks[2]=[{roster_id:1,matchup_id:1,points:10,starters:['0'],players_points:{}},{roster_id:2,matchup_id:1,points:25,starters:['9509','9509'],players_points:{'9509':25}}];
+run("playerProfile('Bijan Robinson','9509')");
+let rosterHistory=el('modalContent').innerHTML.split('<h3>Roster history</h3>')[1];
+assert.match(rosterHistory,/Ben · 1 start<.*?Week 2 · provisional/);
+assert.match(rosterHistory,/Jack · 1 start<.*?30.0 pts/);
+assert.match(rosterHistory,/Career totals include finalized weeks only/);
+league.settings.last_scored_leg=2;
+run("playerProfile('Bijan Robinson','9509')");
+rosterHistory=el('modalContent').innerHTML.split('<h3>Roster history</h3>')[1];
+assert.match(rosterHistory,/Ben · 1 start<.*?25.0 pts/);
+assert.match(rosterHistory,/Jack · 1 start<.*?30.0 pts/);
+assert.doesNotMatch(rosterHistory,/provisional/);
+assert.equal(run("seasonPlayerRows(2026).filter(p=>p.id==='9509').reduce((sum,p)=>sum+p.starts,0)"),2);
+assert.equal(run("seasonPlayerRows(2026).some(p=>p.id==='0')"),false);
+rosters[0].players=['9509'];rosters[1].players=['4984'];weeks[2]=oldWeek2;league.settings.last_scored_leg=1;
 run('showChampionship(2025)');assert.match(el('modalContent').innerHTML,/Derrick Henry/);
 run("currentPage='teams';drawTeamsPage(true)");assert.equal((el('app').innerHTML.match(/data-manager=/g)||[]).length,13);assert.match(el('app').innerHTML,/HISTORICAL MANAGERS/);assert.match(el('app').innerHTML,/data-manager="Hunter"/);assert.doesNotMatch(el('app').innerHTML,/team-photo has-photo/);
 run("showManager('Tyler')");assert.match(el('modalContent').innerHTML,/Top 10 Most Started Players \(Points Scored\)/);assert.match(el('modalContent').innerHTML,/Final place: 1st/);assert.match(el('modalContent').innerHTML,/ PA/);

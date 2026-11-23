@@ -31,9 +31,7 @@ function currentHistoryStatistics(){
    const reserve=new Set([...(roster?.reserve||[]),...(roster?.taxi||[])].map(String));
    const all=(row.players||[]).map(String);
    const playerName=player=>snapshot?.players?.[player]?.full_name||SL.fullName(player);
-   const starters=lineupSlots(row).map(({id:player,slot},idx)=>({
-    id:player,slot,name:playerName(player),status:'starter',points:row.starters_points?.[idx]??scoreFor(row,player)
-   })).filter((p,i)=>row.starters[i]&&p.id!=='0');
+   const starters=starterEntries(row,week).map(p=>({...p,status:'starter'}));
    const starterIds=new Set(starters.map(p=>p.id));
    const bench=benchKnown?all.filter(p=>p&&p!=='0'&&!starterIds.has(p)&&!reserve.has(p)).map(p=>({
     id:p,slot:'BN',name:playerName(p),status:'bench',points:scoreFor(row,p)
@@ -59,7 +57,7 @@ function historyList(title,rows,{auction=false}={}){
 function historyMatchupList(title,rows){
  return `<section class="history-stat-card"><h2>${title}</h2><p class="history-case-count">${rows.length} ${rows.length===1?'matchup':'matchups'}</p>${rows.length?`<ul class="history-game-list">${rows.map(g=>{
   const [winner,loser]=[g.first,g.second].sort((a,b)=>b.points-a.points);
-  return `<li><small>${g.year} · Week ${g.week}${g.playoff?' · Playoffs':''}</small><div class="history-game-score"><span><strong>${e(winner.owner)}</strong> <b>${historyPoints(winner.points)}</b></span><span>def.</span><span><strong>${e(loser.owner)}</strong> <b>${historyPoints(loser.points)}</b></span></div></li>`;
+  return `<li><small>${g.year} · Week ${g.week}</small><div class="history-game-score"><span><strong>${e(winner.owner)}</strong> <b>${historyPoints(winner.points)}</b></span><span>def.</span><span><strong>${e(loser.owner)}</strong> <b>${historyPoints(loser.points)}</b></span></div></li>`;
  }).join('')}</ul>`:'<p class="history-empty">No qualifying matchups for this season.</p>'}</section>`;
 }
 function historyCoverage(stats){
@@ -88,8 +86,8 @@ function drawDetailedStatistics(){
    <div class="history-player-grid">${historyList('Top 10 Starter Performances',stats.top)}${historyList('Bottom 10 Starter Performances',stats.bottom)}${historyList('Top 10 Bench Performances',stats.bench)}</div>
    <div class="history-matchup-grid">${historyMatchupList('2nd-Highest Scorer Lost to the Highest',stats.secondHigh)}${historyMatchupList('2nd-Lowest Scorer Beat the Lowest',stats.secondLow)}</div>
    <div class="history-matchup-grid">${historyList('Top 10 Points Per Dollar',stats.value,{auction:true})}${historyList('Top 10 Busts',stats.busts,{auction:true})}</div>
-   <p class="history-method">Completed matchups include playoffs. Player rankings include kickers and defenses and exclude IR. Only teams with an opponent count toward weekly scoring ranks. A tie for highest or lowest score leaves no second place at that end.</p>
-   <p class="history-method">Draft value is the season’s starter points for the drafting manager divided by the original auction price. Bench points, points for other managers, keeper entries and picks without a positive bid are excluded. Paid picks with no starts count as zero. When ratios tie, the higher bid ranks first.</p>`;
+   <p class="history-method">The two weekly scoring matchup lists use regular-season games only. Player performance lists include playoffs, kickers and defenses, and exclude IR. A tie for highest or lowest score leaves no second place at that end.</p>
+   <p class="history-method">Draft value is the season’s starter points for the drafting manager divided by the original auction price. Bench points, points for other managers, keeper entries, kickers, defenses and picks without a positive bid are excluded. Paid picks with no starts count as zero. When ratios tie, the higher bid ranks first.</p>`;
  document.querySelectorAll('[data-detail-year]').forEach(b=>{const active=b.dataset.detailYear===detailYear;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
 }
 function renderDetailedStatistics(){

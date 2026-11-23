@@ -34,12 +34,13 @@ function seasonRows(year){
 function seasonDraft(year){return year===2026?liveDraftRows():(D.draftHistory||[]).filter(x=>x.year===year);}
 function seasonPlayerRows(year){
   if(year===2026){
-    const out={};
-    for(const w of completedWeeks())for(const row of SL.data.weeks[w]||[]){
-      const roster=SL.roster(row.roster_id),owner=managerFor(roster);
-      lineupSlots(row).forEach(({id,slot})=>{const key=`${owner}:${id}`,p=SL.player(id);const x=out[key]??={year,owner,id,player:SL.fullName(id),position:p.position||slot,slot,points:0,starts:0};x.points+=num(scoreFor(row,id));x.starts++;});
+    const out=new Map();
+    for(const week of completedWeeks())for(const p of weeklyStarterRows(week)){
+      const key=p.owner+':'+p.id;
+      if(!out.has(key))out.set(key,{year,owner:p.owner,id:p.id,player:p.name,position:p.position,slot:p.slot,points:0,starts:0,lastWeek:week});
+      const row=out.get(key);row.points+=num(p.points);row.starts++;row.lastWeek=week;
     }
-    return Object.values(out);
+    return [...out.values()];
   }
   return (H.players||[]).flatMap(p=>(p.seasons||[]).filter(s=>s.year===year&&s.starts).map(s=>({...s,player:p.name,position:p.position})));
 }
@@ -68,7 +69,7 @@ function recordCandidates(year){
     x.positions[p.position]=(x.positions[p.position]||0)+num(p.points);
   }
   if(year===2026)for(const w of completedWeeks())for(const row of SL.data.weeks[w]||[]){
-    const owner=managerFor(SL.roster(row.roster_id)),x=byOwner[owner];if(!x)continue;
+    const owner=identityAtWeek(row.roster_id,w).manager,x=byOwner[owner];if(!x)continue;
     const optimal=optimalLineup(row);x.optimal=(x.optimal||0)+optimal;x.missed=(x.missed||0)+Math.max(0,optimal-num(row.points));
     x.actual=(x.actual||0)+num(row.points);x.games=(x.games||0)+1;
     x.effSum=(x.effSum||0)+(optimal?num(row.points)/optimal:0);
@@ -218,12 +219,16 @@ function playerProfile(name,id){
   if(confirmed)auctionEntries.push({year:2026,owner:confirmed.owner,cost:confirmed.cost,type:'Keeper'});
   const auction=uniquePlayerYears(auctionEntries);
   const priced=auction.filter(x=>x.cost!=null);
-  const logs=[];let liveStarts=0,livePoints=0;
-  if(id)for(const w of completedWeeks())for(const row of SL.data.weeks[w]||[]){
-    const starter=lineupSlots(row).some(x=>x.id===String(id));if(!starter)continue;
-    const score=num(scoreFor(row,id)),owner=managerFor(SL.roster(row.roster_id));
-    liveStarts++;livePoints+=score;logs.push({week:w,owner,score});
-  }
+  const liveRows=id?seasonPlayerRows(2026).filter(p=>p.id===String(id)).sort((a,b)=>b.lastWeek-a.lastWeek):[];
+  const liveStarts=liveRows.reduce((sum,p)=>sum+p.starts,0),livePoints=liveRows.reduce((sum,p)=>sum+p.points,0);
+  const activeWeek=SL.currentWeek();
+  // Keep scoring in an open week distinct from confirmed career totals.
+  const provisional=id&&activeWeek>num(SL.data.league?.settings?.last_scored_leg)
+    ? weeklyStarterRows(activeWeek).find(p=>p.id===String(id)&&p.points!==null&&p.points!==0):null;
+  const liveHistory=[
+    ...(provisional?[{year:2026,owner:provisional.owner,starts:1,points:provisional.points,week:activeWeek}]:[]),
+    ...liveRows
+  ].map(p=>`<div class="dd-history-row"><strong>${p.year}</strong><span>${e(p.owner)} · ${p.starts} ${p.starts===1?'start':'starts'}${p.week?`<br><small>Week ${p.week} · provisional</small>`:''}</span><b>${fmt(p.points,1)} pts</b></div>`).join('');
   const currentRoster=id?findRosterByPlayer(id):null;
   const trophies={gold:[],silver:[],bronze:[],last:[]};
   if(historical){
@@ -234,6 +239,6 @@ function playerProfile(name,id){
   const trophyRows=[['gold','🥇','Gold'],['silver','🥈','Silver'],['bronze','🥉','Bronze'],['last','💀','Last']].filter(([key])=>trophies[key].length);
   const head=(id&&current?.position!=='DEF'?SL.headshot(id):'')||(historical?archivePortrait(historical):'');
   const summary=history.map(x=>`<div class="dd-history-row"><strong>${x.year}</strong><span>${e(x.owner||x.team)} · ${e(x.team)}<br><small>${x.starts} starts · ${x.benchApps} bench</small></span><b>${fmt(x.points,1)} pts</b></div>`).join('');
-  openModal(`<div class="modal-hero"><div class="modal-hero-grid">${head?photo(head,playerName):`<div class="modal-avatar">${e(historical?.position||current?.position||initials(playerName))}</div>`}<div><div class="eyebrow">PLAYER FILE</div><h2>${e(playerName)}</h2><p>${posBadge(current?.position||historical?.position)} · ${e(current?.team||historical?.nflTeam||'NFL')}${currentRoster?` · ${e(managerFor(currentRoster))}`:''}</p></div></div></div><div class="modal-body"><div class="player-career-grid"><div><strong>${num(historical?.starts)+liveStarts}</strong><small>Career starts</small></div><div><strong>${fmt(num(historical?.points)+livePoints,1)}</strong><small>Career starter points</small></div><div><strong>${priced.length?dollar(priced.reduce((n,x)=>n+num(x.cost),0)/priced.length):'—'}</strong><small>Avg overall draft cost</small></div><div><strong>${auction.length}</strong><small>Times drafted</small></div></div><div class="player-profile-columns"><div class="dd-modal-block"><h3>Trophy case</h3>${trophyRows.length?trophyRows.map(([key,icon,label])=>`<div class="dd-history-row"><strong>${icon}</strong><span>${trophies[key].length}× ${label}<br><small>${trophies[key].join(', ')}</small></span></div>`).join(''):'No recorded podium or last-place roster appearance.'}</div><div class="dd-modal-block"><h3>Draft history</h3>${auction.length?auction.map(x=>`<div class="dd-history-row"><strong>${x.year}</strong><span>${e(x.owner)} · ${e(x.type)}</span><b>${x.cost==null?'—':dollar(x.cost)}</b></div>`).join(''):'No recorded auction or keeper entry.'}</div></div><div class="dd-modal-block"><h3>Roster history</h3>${logs.length?`<div class="dd-history-row"><strong>2026</strong><span>${e(currentRoster?managerFor(currentRoster):logs.at(-1).owner)} · ${liveStarts} starts</span><b>${fmt(livePoints,1)} pts</b></div>`:''}${summary||!logs.length&&'No archived roster appearances.'}</div></div>`);
+  openModal(`<div class="modal-hero"><div class="modal-hero-grid">${head?photo(head,playerName):`<div class="modal-avatar">${e(historical?.position||current?.position||initials(playerName))}</div>`}<div><div class="eyebrow">PLAYER FILE</div><h2>${e(playerName)}</h2><p>${posBadge(current?.position||historical?.position)} · ${e(current?.team||historical?.nflTeam||'NFL')}${currentRoster?` · ${e(managerFor(currentRoster))}`:''}</p></div></div></div><div class="modal-body"><div class="player-career-grid"><div><strong>${num(historical?.starts)+liveStarts}</strong><small>Career starts</small></div><div><strong>${fmt(num(historical?.points)+livePoints,1)}</strong><small>Career starter points</small></div><div><strong>${priced.length?dollar(priced.reduce((n,x)=>n+num(x.cost),0)/priced.length):'—'}</strong><small>Avg overall draft cost</small></div><div><strong>${auction.length}</strong><small>Times drafted</small></div></div><div class="player-profile-columns"><div class="dd-modal-block"><h3>Trophy case</h3>${trophyRows.length?trophyRows.map(([key,icon,label])=>`<div class="dd-history-row"><strong>${icon}</strong><span>${trophies[key].length}× ${label}<br><small>${trophies[key].join(', ')}</small></span></div>`).join(''):'No recorded podium or last-place roster appearance.'}</div><div class="dd-modal-block"><h3>Draft history</h3>${auction.length?auction.map(x=>`<div class="dd-history-row"><strong>${x.year}</strong><span>${e(x.owner)} · ${e(x.type)}</span><b>${x.cost==null?'—':dollar(x.cost)}</b></div>`).join(''):'No recorded auction or keeper entry.'}</div></div><div class="dd-modal-block"><h3>Roster history</h3>${liveHistory+summary||'No recorded roster appearances.'}${provisional?'<p class="dd-modal-caption">Career totals include finalized weeks only.</p>':''}</div></div>`);
   wireImageFallback(modalContent);
 }

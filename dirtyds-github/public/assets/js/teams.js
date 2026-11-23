@@ -24,14 +24,10 @@ function managerFinalPlace(owner,year){
 function managerMostStarted(owner){
   const entries=new Map();
   for(const p of L?.managerLeaders?.[owner]||[])entries.set(norm(p.name),{...p});
-  const r=liveTeams().find(x=>x.manager===owner)?.r;
-  if(r)for(const week of completedWeeks()){
-    const row=matchupRowForRoster(r.roster_id,week);if(!row)continue;
-    for(const {id} of lineupSlots(row)){
-      const player=SL.player(id);if(['K','DEF'].includes(player.position))continue;
-      const name=SL.fullName(id),key=norm(name),value=entries.get(key)||{name,starts:0,points:0};
-      value.starts++;value.points+=num(scoreFor(row,id));entries.set(key,value);
-    }
+  for(const p of seasonPlayerRows(2026)){
+    if(p.owner!==owner||['K','DEF'].includes(p.position))continue;
+    const key=norm(p.player),value=entries.get(key)||{name:p.player,starts:0,points:0};
+    value.starts+=p.starts;value.points+=p.points;entries.set(key,value);
   }
   return [...entries.values()].sort((a,b)=>b.starts-a.starts||b.points-a.points||a.name.localeCompare(b.name)).slice(0,10);
 }

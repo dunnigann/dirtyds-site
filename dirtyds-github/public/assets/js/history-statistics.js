@@ -15,22 +15,24 @@ function matchupMargin(g){
  return {year:g.year,week:g.week,playoff:g.playoff,winner:winner.owner,loser:loser.owner,winnerScore:Math.max(a,b),loserScore:Math.min(a,b),margin:Math.abs(a-b)};
 }
 
+const isKickerOrDefense=position=>/^(K|PK|KICKER|D|DEF|DST|DEFST|DEFENSE|TEAMDEFENSE)$/.test(String(position||'').toUpperCase().replace(/[^A-Z]/g,''));
+
 function summarize({year,teamCount,weeks,draft=[]}){
  const starters=[],bench=[],secondHigh=[],secondLow=[],starterTotals=new Map(),lineupGaps=[],benchGaps=[];
  let matchupWeeks=0,lineupWeeks=0,benchWeeks=0;
- for(const {week,games,rosters=[],allowByes=false} of weeks){
+ for(const {week,games,rosters=[]} of weeks){
   const final=games.filter(g=>cents(g.a.score)!==null&&cents(g.b.score)!==null&&g.a.id!==g.b.id);
   if(!final.length||final.length!==games.length){lineupGaps.push(week);continue;}
   const playoff=final.some(g=>g.playoff);
   const sides=final.flatMap(({a,b})=>[[a,b],[b,a]]).map(([p,opp])=>({id:p.id,owner:p.owner,opponent:opp.id,points:cents(p.score)}));
-  if(new Set(sides.map(p=>p.id)).size!==sides.length||(!playoff&&!allowByes&&sides.length!==teamCount)){lineupGaps.push(week);continue;}
+  if(new Set(sides.map(p=>p.id)).size!==sides.length||(!playoff&&sides.length!==teamCount)){lineupGaps.push(week);continue;}
   matchupWeeks++;
-  for(const [results,dir] of [[secondHigh,-1],[secondLow,1]]){
+  if(!playoff)for(const [results,dir] of [[secondHigh,-1],[secondLow,1]]){
    const ranked=sides.slice().sort((a,b)=>dir*(a.points-b.points));
    const [first,second]=ranked;
    if(!second||first.points===second.points)continue; // A tie for first leaves no second place.
    const opponent=ranked.find(p=>p.id===first.opponent);
-   if(opponent?.points===second.points)results.push({year,week,playoff,first,second:opponent});
+   if(opponent?.points===second.points)results.push({year,week,first,second:opponent});
   }
 
   const byId=new Map(rosters.map(r=>[r.id,r]));
@@ -56,7 +58,7 @@ function summarize({year,teamCount,weeks,draft=[]}){
    }
   }
  }
- const purchased=draft.filter(p=>!p.keeper&&p.cost>0&&Number.isFinite(p.cost)&&p.owner&&p.name).map(p=>({
+ const purchased=draft.filter(p=>!p.keeper&&!isKickerOrDefense(p.position)&&p.cost>0&&Number.isFinite(p.cost)&&p.owner&&p.name).map(p=>({
   year,owner:p.owner,name:p.name,cost:p.cost,points:starterTotals.get(JSON.stringify([p.owner,p.id||playerKey(p.name)]))??0
  }));
  // An incomplete lineup archive can silently turn missing production into a draft bust.

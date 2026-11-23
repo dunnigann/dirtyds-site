@@ -150,6 +150,22 @@ function lineupSlots(row){
   const starters=row?.starters||[], positions=SL?.data?.league?.roster_positions||[];
   return starters.map((id,i)=>({id:String(id),slot:positions[i]||SL.player(id).position||'FLEX'}));
 }
+function starterEntries(row,week){
+  const seen=new Set();
+  return lineupSlots(row).flatMap(({id,slot},index)=>{
+    if(!row.starters[index]||id==='0'||seen.has(id))return [];
+    seen.add(id);
+    const player=SL.data.snapshots?.[week]?.players?.[id]||SL.player(id);
+    const raw=row.starters_points?.[index]??scoreFor(row,id);
+    return [{id,slot,name:player.full_name||SL.fullName(id),position:player.position||slot,points:Number.isFinite(raw)?raw:null}];
+  });
+}
+function weeklyStarterRows(week){
+  return (SL?.data?.weeks?.[week]||[]).flatMap(row=>{
+    const {manager:owner}=identityAtWeek(row.roster_id,week);
+    return starterEntries(row,week).map(p=>({...p,week,owner}));
+  });
+}
 function livePlayerObj(id,row=null,slot=''){
   const snapshot=row?SL.data.snapshots?.[liveWeek]:null,p=snapshot?.players?.[id]||SL.player(id);
   const historicalRoster=snapshot?.rosters?.find(r=>r.roster_id===row?.roster_id),u=snapshot?.users?.find(u=>u.user_id===historicalRoster?.owner_id);

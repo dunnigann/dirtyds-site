@@ -8,7 +8,7 @@ let years=(H?.league||[]).map(x=>Number(x.year)).sort((a,b)=>b-a);
 let currentPage='home', liveWeek=1, matchMode='dirtyds', matchIndex=0, powerView='analyst', powerWeek=5, transactionWeek=0, transactionFetchErrors=0,routeGeneration=0;
 let archiveMatchYear=2025, archiveMatchWeek=17;
 let seasonYear=2026, playerSearch='', playerPos='ALL', playerOwner='ALL', playerSort='points', playerLimit=40, playerTopPos='QB';
-let draftYear=2026, draftPos='ALL', draftOwner='ALL', draftKind='ALL', h2hScope='all', recordYear='all';
+let draftYear=2026, draftPos='ALL', draftOwner='ALL', draftKind='ALL', h2hScope='all', recordYear='all', detailYear='all';
 const nflCache={};
 const optimalCache=new Map();
 const managerHandles={zwack12:'Ben',zwack:'Ben',mrwick:'James',bdunnigan:'Brent',jwosman1981:'Jeff',jdunnigan:'Jack',vincat:'Vinny',iamfritz:'Fritz',nickmo2699:'Nick',tymid02:'Tyler',rocknflow:'Jake',dcorello:'Dan',gryf6:'Bobby'};
@@ -72,11 +72,27 @@ function closeModal({clearRoute=true}={}){backdrop.hidden=true;document.body.sty
 document.getElementById('modalClose').onclick=closeModal;
 backdrop.onclick=ev=>{if(ev.target===backdrop)closeModal();};
 document.addEventListener('keydown',ev=>{if(backdrop.hidden)return;if(ev.key==='Escape')closeModal();if(ev.key==='Tab'){const nodes=[...backdrop.querySelectorAll('button,a[href],input,select,textarea,[tabindex="0"]')].filter(x=>!x.disabled&&x.getClientRects().length);const first=nodes[0],last=nodes.at(-1);if(ev.shiftKey&&document.activeElement===first){ev.preventDefault();last?.focus();}else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first?.focus();}}});
-document.getElementById('mobileMenu').onclick=()=>{const n=document.getElementById('mainNav');const open=n.classList.toggle('open');document.getElementById('mobileMenu').setAttribute('aria-expanded',String(open));};
-nav.filter(b=>b.dataset.page).forEach(b=>b.onclick=ev=>{ev.preventDefault();if(b.dataset.page==='seasons')seasonYear=2025;go(b.dataset.page);});
-const seasonMenu=document.getElementById('seasonMenu');
-seasonMenu.onclick=()=>{const expanded=seasonMenu.getAttribute('aria-expanded')==='true';seasonMenu.setAttribute('aria-expanded',String(!expanded));seasonMenu.parentElement.classList.toggle('expanded',!expanded);};
-document.addEventListener('click',ev=>{if(!ev.target.closest('.nav-dropdown')){seasonMenu.setAttribute('aria-expanded','false');seasonMenu.parentElement.classList.remove('expanded');}});
+const mobileMenu=document.getElementById('mobileMenu'),mainNav=document.getElementById('mainNav');
+const seasonMenu=document.getElementById('seasonMenu'),historyMenu=document.getElementById('historyMenu'),historySubmenu=document.getElementById('historySubmenu');
+const dropdowns=[seasonMenu,historyMenu];
+function setNavDropdown(button,open){
+ button.setAttribute('aria-expanded',String(open));button.parentElement.classList.toggle('expanded',open);
+ if(button===historyMenu)historySubmenu.hidden=!open;
+}
+function closeNavDropdowns(){dropdowns.forEach(b=>setNavDropdown(b,false));}
+mobileMenu.onclick=()=>{const open=mainNav.classList.toggle('open');mobileMenu.setAttribute('aria-expanded',String(open));if(!open)closeNavDropdowns();};
+nav.filter(b=>b.dataset.page).forEach(b=>b.onclick=ev=>{if(ev.ctrlKey||ev.metaKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();if(b.dataset.page==='seasons')seasonYear=2025;go(b.dataset.page);});
+dropdowns.forEach(button=>{
+ button.onclick=()=>{const open=button.getAttribute('aria-expanded')!=='true';closeNavDropdowns();setNavDropdown(button,open);};
+ button.onkeydown=ev=>{if(ev.key!=='ArrowDown')return;ev.preventDefault();closeNavDropdowns();setNavDropdown(button,true);button.parentElement.querySelector('.nav-submenu a')?.focus();};
+});
+document.addEventListener('click',ev=>{dropdowns.filter(b=>!b.parentElement.contains(ev.target)).forEach(b=>setNavDropdown(b,false));});
+mainNav.addEventListener('keydown',ev=>{
+ if(ev.key!=='Escape')return;
+ const expanded=dropdowns.find(b=>b.getAttribute('aria-expanded')==='true');
+ if(expanded){ev.preventDefault();setNavDropdown(expanded,false);expanded.focus();}
+ else if(mainNav.classList.contains('open')){mobileMenu.click();mobileMenu.focus();}
+});
 
 function liveLoading(title='Loading live 2026 data…'){
   return `<div class="page z-page">${pageHero('DIRTY D’S',title)}<div class="wrap skeleton-grid" aria-busy="true" aria-label="Loading ${e(title)}"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div>`;
@@ -179,7 +195,11 @@ function wireLivePlayerButtons(root=document){root.querySelectorAll('[data-live-
 async function ensureArchive(options={}){
  const result=await window.DIRTY_DS_ARCHIVE.load(options);({D,H,A,P,L}=result);years=(H.league||[]).map(x=>Number(x.year)).sort((a,b)=>b-a);
 }
-function updateNavActive(){nav.forEach(b=>{const active=b.dataset.page===currentPage;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});}
+function updateNavActive(){
+ nav.filter(b=>b.dataset.page).forEach(b=>{const active=b.dataset.page===currentPage;b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+ seasonMenu.classList.toggle('active',['season2026','power','playoffs','transactions'].includes(currentPage));
+ historyMenu.classList.toggle('active',['history','superlatives','history-stats'].includes(currentPage));
+}
 function routeHash(){
  const q=new URLSearchParams();
  if(['matchups','season2026','transactions'].includes(currentPage))q.set('week',currentPage==='transactions'?transactionWeek:liveWeek);
@@ -188,7 +208,9 @@ function routeHash(){
  if(currentPage==='seasons')q.set('year',seasonYear);
  if(currentPage==='players'){if(playerSearch)q.set('search',playerSearch);q.set('position',playerPos);q.set('manager',playerOwner);q.set('sort',playerSort);q.set('leaders',playerTopPos);}
  if(currentPage==='draft'){q.set('year',draftYear);q.set('position',draftPos);q.set('manager',draftOwner);q.set('entry',draftKind);}
- if(currentPage==='history'){q.set('year',recordYear);q.set('scope',h2hScope);}
+ if(currentPage==='history')q.set('scope',h2hScope);
+ if(currentPage==='superlatives')q.set('year',recordYear);
+ if(currentPage==='history-stats')q.set('year',detailYear);
  return '#'+currentPage+(q.size?'?'+q:'');
 }
 function syncRoute(){updateNavActive();history.replaceState(null,'',routeHash());if(typeof lastHandledHash!=='undefined')lastHandledHash=location.hash;}
@@ -200,15 +222,27 @@ function readRoute(){
  if(page==='matchups'){if(q.has('archiveYear'))archiveMatchYear=Math.min(2025,validYear(q.get('archiveYear')));if(q.has('archiveWeek'))archiveMatchWeek=Math.max(1,Math.min(18,Number(q.get('archiveWeek'))||17));}
  if(page==='power'){powerView=q.get('author')==='jack'?'jack':'analyst';powerWeek=Math.max(1,Math.min(5,Number(q.get('week'))||5));}
  if(page==='seasons')seasonYear=q.has('year')?validYear(q.get('year')):2026;
- if(page==='history'){recordYear=q.get('year')==='all'||!q.has('year')?'all':String(validYear(q.get('year')));h2hScope=['regular','playoffs'].includes(q.get('scope'))?q.get('scope'):'all';}
+ if(page==='history')h2hScope=['regular','playoffs'].includes(q.get('scope'))?q.get('scope'):'all';
+ if(page==='superlatives')recordYear=q.get('year')==='all'||!q.has('year')?'all':String(validYear(q.get('year')));
+ if(page==='history-stats')detailYear=q.get('year')==='all'||!q.has('year')?'all':String(validYear(q.get('year')));
  if(page==='players'){playerSearch=q.get('search')||'';playerPos=q.get('position')||'ALL';playerOwner=q.get('manager')||'ALL';playerSort=q.get('sort')||'points';playerTopPos=['QB','RB','WR','TE','FLEX','K','DEF'].includes(q.get('leaders'))?q.get('leaders'):'QB';}
  if(page==='draft'){draftYear=q.has('year')?validYear(q.get('year')):2026;draftPos=q.get('position')||'ALL';draftOwner=q.get('manager')||'ALL';draftKind=q.get('entry')||'ALL';}
  return page;
 }
 async function go(page,{restore=false}={}){
- const routes={home:renderHome,season2026:renderSeason2026,power:renderPowerPage,playoffs:renderPlayoffs,transactions:renderTransactions,matchups:renderMatchups,seasons:renderSeasons,history:renderHistory,players:renderPlayers,teams:renderTeams,draft:renderDraft};
+ const routes={home:renderHome,season2026:renderSeason2026,power:renderPowerPage,playoffs:renderPlayoffs,transactions:renderTransactions,matchups:renderMatchups,seasons:renderSeasons,history:renderHistory,superlatives:renderSuperlatives,'history-stats':renderDetailedStatistics,players:renderPlayers,teams:renderTeams,draft:renderDraft};
  if(!routes[page])page='home';const generation=++routeGeneration,requestedPlayer=restore?new URLSearchParams(location.hash.split('?')[1]||'').get('player'):null;currentPage=page;if(!backdrop.hidden)closeModal({clearRoute:!restore});
- updateNavActive();seasonMenu.classList.toggle('active',['season2026','power','playoffs','transactions'].includes(page));seasonMenu.setAttribute('aria-expanded','false');seasonMenu.parentElement.classList.remove('expanded');document.getElementById('mainNav').classList.remove('open');document.getElementById('mobileMenu').setAttribute('aria-expanded','false');
- if(!restore){history.pushState(null,'',routeHash());if(typeof lastHandledHash!=='undefined')lastHandledHash=location.hash;}app.innerHTML=liveLoading(page==='home'?'Dirty D’s':page[0].toUpperCase()+page.slice(1));
- try{if(['matchups','seasons','history','players','teams','draft'].includes(page))await ensureArchive({players:['history','players','teams'].includes(page),years:page==='matchups'?[archiveMatchYear]:page==='history'||page==='teams'?[2018,2019,2020,2021,2022,2023,2024,2025]:page==='seasons'&&seasonYear!==2026?[seasonYear]:[]});if(generation!==routeGeneration)return;routes[page]();window.scrollTo({top:0,behavior:'instant'});if(requestedPlayer&&generation===routeGeneration)await showLivePlayer(requestedPlayer);}catch(err){if(generation===routeGeneration)app.innerHTML=liveError(err);}updateFeedStatus();
+ updateNavActive();closeNavDropdowns();mainNav.classList.remove('open');mobileMenu.setAttribute('aria-expanded','false');
+ if(!restore){history.pushState(null,'',routeHash());if(typeof lastHandledHash!=='undefined')lastHandledHash=location.hash;}
+ const titles={home:'Dirty D’s',history:'Hall of Fame',superlatives:'Superlatives','history-stats':'Detailed Statistics'};
+ app.innerHTML=liveLoading(titles[page]||page[0].toUpperCase()+page.slice(1));
+ try{
+  if(['matchups','seasons','history','superlatives','history-stats','players','teams','draft'].includes(page)){
+   const archiveYears=page==='matchups'?[archiveMatchYear]:['superlatives','teams'].includes(page)?[2018,2019,2020,2021,2022,2023,2024,2025]:page==='seasons'&&seasonYear!==2026?[seasonYear]:[];
+   await ensureArchive({players:['superlatives','players','teams'].includes(page),years:archiveYears,historyStatistics:page==='history-stats'});
+  }
+  if(generation!==routeGeneration)return;
+  routes[page]();window.scrollTo({top:0,behavior:'instant'});
+  if(requestedPlayer&&generation===routeGeneration)await showLivePlayer(requestedPlayer);
+ }catch(err){if(generation===routeGeneration)app.innerHTML=liveError(err);}updateFeedStatus();
 }

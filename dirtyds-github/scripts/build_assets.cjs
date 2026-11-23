@@ -1,5 +1,6 @@
 // Split archive payloads and generate deterministic, cache-safe deployed assets.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),crypto=require('node:crypto');
+const buildHistoryStatistics=require('./build_history_statistics.cjs');
 const root=path.resolve(__dirname,'..'),pub=path.join(root,'public');
 const read=p=>fs.readFileSync(path.join(pub,p),'utf8');
 const write=(p,value)=>{fs.mkdirSync(path.dirname(path.join(pub,p)),{recursive:true});fs.writeFileSync(path.join(pub,p),value);};
@@ -10,10 +11,11 @@ delete baseD.players;delete baseD.rivalries;delete baseD.draftCentral;
 write('data/archive-base.js','window.DIRTY_DS_DATA='+JSON.stringify(baseD)+';\nwindow.DIRTY_DS_HISTORY='+JSON.stringify({...H,players:[],weekly:{},matchups:{}})+';\n');
 write('data/archive-players.js','window.DIRTY_DS_DATA.players='+JSON.stringify(D.players)+';\nwindow.DIRTY_DS_HISTORY.players='+JSON.stringify(H.players)+';\n');
 for(const year of Object.keys(H.matchups))write('data/seasons/'+year+'.js',`window.DIRTY_DS_HISTORY.matchups['${year}']=${JSON.stringify(H.matchups[year])};\nwindow.DIRTY_DS_HISTORY.weekly['${year}']=${JSON.stringify(H.weekly[year])};\n`);
+write('data/history-statistics.js',buildHistoryStatistics(D,H));
 const generated=path.join(pub,'assets/build');fs.mkdirSync(generated,{recursive:true});
 // Existing generations are intentionally retained for open tabs during an upload.
 const assets={};
-const files=['assets/css/site.css','data/rankings-2026.json',...fs.readdirSync(path.join(pub,'assets/js')).filter(f=>f.endsWith('.js')).map(f=>'assets/js/'+f),...['archive-base','archive-players','award-data','lineup-data','photo-data','keepers-2026'].map(f=>'data/'+f+'.js'),...Object.keys(H.matchups).map(y=>'data/seasons/'+y+'.js')];
+const files=['assets/css/site.css','assets/css/league-history.css','data/rankings-2026.json',...fs.readdirSync(path.join(pub,'assets/js')).filter(f=>f.endsWith('.js')).map(f=>'assets/js/'+f),...['archive-base','archive-players','award-data','lineup-data','photo-data','keepers-2026','history-statistics'].map(f=>'data/'+f+'.js'),...Object.keys(H.matchups).map(y=>'data/seasons/'+y+'.js')];
 for(const file of files){const value=read(file),hash=crypto.createHash('sha256').update(value).digest('hex').slice(0,12),name=file.replaceAll('/','-').replace(/\.(js|css|json)$/,'.'+hash+'.$1'),target='assets/build/'+name;write(target,value);assets[file]=target;}
 const manifest='window.DIRTY_DS_ASSETS='+JSON.stringify(assets)+';\n',hash=crypto.createHash('sha256').update(manifest).digest('hex').slice(0,12),manifestPath='assets/build/manifest.'+hash+'.js';write(manifestPath,manifest);
 let html=fs.readFileSync(path.join(root,'source/index.template.html'),'utf8');

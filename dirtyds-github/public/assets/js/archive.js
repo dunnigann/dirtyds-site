@@ -53,7 +53,7 @@ function optimalLineup(row){
  optimalCache.set(key,safe);return safe;
 }
 function recordCandidates(year){
-  const rows=seasonRows(year),games=year===2026?completedWeeks().flatMap(w=>matchupGroups(w).map(g=>({year,week:w,a:{owner:managerFor(SL.roster(g[0].roster_id)),score:g[0].points},b:{owner:managerFor(SL.roster(g[1].roster_id)),score:g[1].points}}))):Object.values(H.matchups?.[String(year)]||{}).flat();
+  const rows=seasonRows(year),games=year===2026?completedWeeks().flatMap(liveHistoryGames):Object.values(H.matchups?.[String(year)]||{}).flat().map(g=>({...g,a:{...g.a,id:g.a.teamId},b:{...g.b,id:g.b.teamId}}));
   const weeks=year===2026?completedWeeks().flatMap(w=>(SL.data.weeks[w]||[]).map(r=>({year,week:w,owner:managerFor(SL.roster(r.roster_id)),score:num(r.points)}))):Object.values(H.weekly?.[String(year)]||{}).flat();
   const purchases=seasonDraft(year).filter(x=>x.cost!=null&&!x.keeper);
   const players=seasonPlayerRows(year);
@@ -90,6 +90,12 @@ function recordCandidates(year){
   const archived=(A?.seasons?.[String(year)]||[]).map(r=>({...r,points:r.starterPoints,kd:num(r.positions?.K)+num(r.positions?.DST),positions:{...r.positions,DEF:r.positions?.DST||0}}));
   return {year,rows,games,weeks,purchases,players,byOwner:year===2026?Object.values(byOwner):(archived.length?archived:Object.values(byOwner))};
 }
+function marginCandidates(games){
+  return games.map(historyStatistics.matchupMargin).filter(Boolean).map(g=>({
+    value:g.margin/100,owner:`${g.winner} over ${g.loser}`,year:g.year,format:'points',
+    detail:`Week ${g.week}${g.playoff?' · Playoffs':''} · ${historyPoints(g.winnerScore)} to ${historyPoints(g.loserScore)}`
+  }));
+}
 function recordDefinitions(){
   const definitions=[
     ['Goat','Most Regular Season Points For',x=>x.rows.map(r=>({value:r.pf,owner:r.owner,team:r.team,year:x.year}))],
@@ -106,8 +112,8 @@ function recordDefinitions(){
     ['Cheapskate','Most Starter Points from FAAB-winning Players per FAAB Dollar',x=>x.byOwner.map(r=>({value:r.cheapRatio,owner:r.owner,year:x.year}))],
     ['Revolutionary','Most Points per Dollar Spent (FAAB + Auction)',x=>x.byOwner.map(r=>({value:r.pointsPerDollar,owner:r.owner,year:x.year}))],
     ['Troubled Times','Least Points per Dollar Spent',x=>x.byOwner.map(r=>({value:r.pointsPerDollar,owner:r.owner,year:x.year})),true],
-    ['Closest Game','Smallest final-score margin',x=>x.games.map(g=>({value:Math.abs(num(g.a.score)-num(g.b.score)),owner:`${g.a.owner} vs ${g.b.owner}`,year:x.year,detail:`Week ${g.week} · ${fmt(g.a.score)}–${fmt(g.b.score)} final`})),true],
-    ['Biggest Blowout','Largest final-score margin',x=>x.games.map(g=>({value:Math.abs(num(g.a.score)-num(g.b.score)),owner:`${g.a.owner} vs ${g.b.owner}`,year:x.year,detail:`Week ${g.week} · ${fmt(g.a.score)}–${fmt(g.b.score)} final`}))],
+    ['Closest Matchup','Smallest margin of victory',x=>marginCandidates(x.games),true],
+    ['Biggest Blowout','Largest margin of victory',x=>marginCandidates(x.games)],
     ['Highest Scoring Week','Highest single-team score',x=>x.weeks.map(r=>({value:r.score,owner:r.owner,year:x.year,detail:`Week ${r.week} · team score`}))],
     ['Lowest Scoring Week','Lowest single-team score',x=>x.weeks.map(r=>({value:r.score,owner:r.owner,year:x.year,detail:`Week ${r.week} · team score`})),true],
     ['Largest Auction Purchase','Single auction bid',x=>x.purchases.map(r=>({value:r.cost,owner:r.owner,team:r.player,year:x.year,format:'money'}))]
@@ -130,12 +136,12 @@ function recordsFor(selection){
   const sources=selected.map(recordCandidates);
   return recordDefinitions().map(([title,detail,fn,ascending])=>{
     const seasonFinished=completedWeeks().length>=num(SL?.data?.league?.settings?.playoff_week_start||15)-1;
-    const eligible=selection==='all'?sources.filter(x=>x.year!==2026||seasonFinished||['Highest Scoring Week','Lowest Scoring Week','Largest Auction Purchase'].includes(title)):sources;
+    const eligible=selection==='all'?sources.filter(x=>x.year!==2026||seasonFinished||['Highest Scoring Week','Lowest Scoring Week','Largest Auction Purchase','Closest Matchup','Biggest Blowout'].includes(title)):sources;
     const candidates=eligible.flatMap(fn).filter(r=>typeof r.value==='number'&&Number.isFinite(r.value));
     candidates.sort((a,b)=>ascending?a.value-b.value:b.value-a.value);
     const result=candidates[0];
     if(!result)return {title,value:'Unavailable',detail:unavailableReason(title,selection)};
-    const value=result.format==='money'?dollar(result.value):result.format==='percent'?`${fmt(result.value,1)}%`:fmt(result.value);
+    const value=result.format==='money'?dollar(result.value):result.format==='percent'?`${fmt(result.value,1)}%`:result.format==='points'?`${fmt(result.value)} pts`:fmt(result.value);
     return {title,value,owner:result.owner,team:result.team,year:result.year,detail:result.detail||detail};
   });
 }
@@ -177,11 +183,10 @@ function auctionRecordCards(){
   ].filter(Boolean);
 }
 function renderHistory(){
-  app.innerHTML=`<div class="page">${pageHero('THE ARCHIVE','League History')}<section class="section history-banner"><div class="wrap"><div class="eyebrow">EST. 2018 · DIRTY D'S</div><h2>One league. Nine seasons.</h2><p>Select a banner to see the championship week starting lineup.</p><div class="history-banner-grid banners">${D.champions.map(bannerCard).join('')}</div></div></section><section class="section"><div class="wrap">${heading('THE PODIUM','Champions, runners-up & third.')}<div class="dd-table-wrap"><table class="dd-table"><thead><tr><th>Season</th><th>Champion</th><th>Runner-up</th><th>Third</th></tr></thead><tbody>${(D.podium||[]).map(x=>`<tr><td><strong>${x.year}</strong></td><td><strong>🥇 ${e(x.gold)}</strong><small>${e(x.goldTeam)}</small></td><td>🥈 ${e(x.silver)}<small>${e(x.silverTeam)}</small></td><td>🥉 ${e(x.bronze)}<small>${e(x.bronzeTeam)}</small></td></tr>`).join('')}</tbody></table></div></div></section><section class="section alt"><div class="wrap">${heading('SUPERLATIVES','The awards wall.')}<div class="dd-season-bar record-year-bar">${[['all','All Time'],[2026,'2026'],...years.map(y=>[y,String(y)])].map(([k,label])=>`<button data-record-year="${k}">${label}</button>`).join('')}</div><div id="recordWall"></div></div></section><section class="section alt"><div class="wrap">${heading('HEAD TO HEAD','Who owns whom?')}<div class="dd-season-bar">${[['all','All Games'],['regular','Regular'],['playoffs','Playoffs']].map(([k,v])=>`<button data-h2h="${k}" class="${h2hScope===k?'active':''}">${v}</button>`).join('')}</div><div id="h2h"></div></div></section></div>`;
+  app.innerHTML=`<div class="page"><section class="history-hall"><div class="wrap"><h1>Hall of Fame</h1><div class="hall-banners">${D.champions.map(hallBanner).join('')}</div></div></section><section class="section"><div class="wrap">${heading('THE PODIUM','Champions, runners-up & third.')}<div class="dd-table-wrap"><table class="dd-table"><thead><tr><th>Season</th><th>Champion</th><th>Runner-up</th><th>Third</th></tr></thead><tbody>${(D.podium||[]).map(x=>`<tr><td><strong>${x.year}</strong></td><td><strong>🥇 ${e(x.gold)}</strong><small>${e(x.goldTeam)}</small></td><td>🥈 ${e(x.silver)}<small>${e(x.silverTeam)}</small></td><td>🥉 ${e(x.bronze)}<small>${e(x.bronzeTeam)}</small></td></tr>`).join('')}</tbody></table></div></div></section><section class="section alt"><div class="wrap">${heading('HEAD TO HEAD','Who owns whom?')}<div class="dd-season-bar">${[['all','All Games'],['regular','Regular'],['playoffs','Playoffs']].map(([k,v])=>`<button data-h2h="${k}" class="${h2hScope===k?'active':''}">${v}</button>`).join('')}</div><div id="h2h"></div></div></section></div>`;
   wireBanners();
-  document.querySelectorAll('[data-record-year]').forEach(b=>b.onclick=()=>{recordYear=b.dataset.recordYear;syncRoute();drawRecords();});drawRecords();
   document.querySelectorAll('[data-h2h]').forEach(b=>b.onclick=()=>{h2hScope=b.dataset.h2h;syncRoute();document.querySelectorAll('[data-h2h]').forEach(x=>x.classList.toggle('active',x===b));drawH2H();});drawH2H();
-  ensureLive().then(()=>{if(currentPage==='history'){drawRecords();drawH2H();}}).catch(()=>{});
+  ensureLive().then(()=>{if(currentPage==='history')drawH2H();}).catch(()=>{});
 }
 function drawH2H(){
   const root=document.getElementById('h2h');if(!root)return;const data=h2hWithCurrent(h2hScope),order=D.ownerOrder||[];
@@ -232,4 +237,3 @@ function playerProfile(name,id){
   openModal(`<div class="modal-hero"><div class="modal-hero-grid">${head?photo(head,playerName):`<div class="modal-avatar">${e(historical?.position||current?.position||initials(playerName))}</div>`}<div><div class="eyebrow">PLAYER FILE</div><h2>${e(playerName)}</h2><p>${posBadge(current?.position||historical?.position)} · ${e(current?.team||historical?.nflTeam||'NFL')}${currentRoster?` · ${e(managerFor(currentRoster))}`:''}</p></div></div></div><div class="modal-body"><div class="player-career-grid"><div><strong>${num(historical?.starts)+liveStarts}</strong><small>Career starts</small></div><div><strong>${fmt(num(historical?.points)+livePoints,1)}</strong><small>Career starter points</small></div><div><strong>${priced.length?dollar(priced.reduce((n,x)=>n+num(x.cost),0)/priced.length):'—'}</strong><small>Avg overall draft cost</small></div><div><strong>${auction.length}</strong><small>Times drafted</small></div></div><div class="player-profile-columns"><div class="dd-modal-block"><h3>Trophy case</h3>${trophyRows.length?trophyRows.map(([key,icon,label])=>`<div class="dd-history-row"><strong>${icon}</strong><span>${trophies[key].length}× ${label}<br><small>${trophies[key].join(', ')}</small></span></div>`).join(''):'No recorded podium or last-place roster appearance.'}</div><div class="dd-modal-block"><h3>Draft history</h3>${auction.length?auction.map(x=>`<div class="dd-history-row"><strong>${x.year}</strong><span>${e(x.owner)} · ${e(x.type)}</span><b>${x.cost==null?'—':dollar(x.cost)}</b></div>`).join(''):'No recorded auction or keeper entry.'}</div></div><div class="dd-modal-block"><h3>Roster history</h3>${logs.length?`<div class="dd-history-row"><strong>2026</strong><span>${e(currentRoster?managerFor(currentRoster):logs.at(-1).owner)} · ${liveStarts} starts</span><b>${fmt(livePoints,1)} pts</b></div>`:''}${summary||!logs.length&&'No archived roster appearances.'}</div></div>`);
   wireImageFallback(modalContent);
 }
-

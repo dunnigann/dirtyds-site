@@ -11,6 +11,7 @@
   <title>Dirty D's — League Archive</title>
   <link rel="icon" href="assets/images/logo/dirtyds-chicken.jpg" type="image/jpeg">
   <link rel="stylesheet" href="assets/css/site.css">
+  <link rel="stylesheet" href="assets/css/league-history.css">
 </head>
 <body>
   <header class="site-header">
@@ -23,7 +24,14 @@
       <div class="nav-dropdown"><button class="nav-link nav-season" id="seasonMenu" type="button" aria-haspopup="true" aria-expanded="false">2026 Season <span aria-hidden="true">⌄</span></button><div class="nav-submenu" aria-label="2026 Season pages"><a class="nav-link" href="#season2026" data-page="season2026">Weekly Review</a><a class="nav-link" href="#power" data-page="power">Power Rankings</a><a class="nav-link" href="#playoffs" data-page="playoffs">Playoff Predictor</a><a class="nav-link" href="#transactions" data-page="transactions">Transactions</a></div></div>
       <a class="nav-link" href="#matchups" data-page="matchups">Matchups</a>
       <a class="nav-link" href="#seasons?year=2025" data-page="seasons">All Seasons</a>
-      <a class="nav-link" href="#history" data-page="history">League History</a>
+      <div class="nav-dropdown nav-history">
+        <button class="nav-link history-menu-toggle" id="historyMenu" type="button" aria-expanded="false" aria-controls="historySubmenu">League History <span class="history-menu-chevron" aria-hidden="true"></span></button>
+        <div id="historySubmenu" class="nav-submenu" aria-label="League History pages" hidden>
+          <a class="nav-link" href="#history" data-page="history">Home</a>
+          <a class="nav-link" href="#superlatives" data-page="superlatives">Superlatives</a>
+          <a class="nav-link" href="#history-stats" data-page="history-stats">Detailed Statistics</a>
+        </div>
+      </div>
       <a class="nav-link" href="#players" data-page="players">Players</a>
       <a class="nav-link" href="#teams" data-page="teams">Teams</a>
       <a class="nav-link" href="#draft" data-page="draft">Draft Central</a>
@@ -57,6 +65,8 @@
   <script defer src="assets/js/transactions.js"></script>
   <script defer src="assets/js/matchups.js"></script>
   <script defer src="assets/js/archive.js"></script>
+  <script defer src="assets/js/history-statistics.js"></script>
+  <script defer src="assets/js/history-pages.js"></script>
   <script defer src="assets/js/players.js"></script>
   <script defer src="assets/js/teams.js"></script>
   <script defer src="assets/js/draft.js"></script>

@@ -11,6 +11,7 @@
   <title>Dirty D's — League Archive</title>
   <link rel="icon" href="assets/images/logo/dirtyds-chicken.jpg" type="image/jpeg">
   <link rel="stylesheet" href="assets/build/assets-css-site.5d0025398268.css">
+  <link rel="stylesheet" href="assets/build/assets-css-league-history.1fc5d38b173d.css">
 </head>
 <body>
   <header class="site-header">
@@ -23,7 +24,14 @@
       <div class="nav-dropdown"><button class="nav-link nav-season" id="seasonMenu" type="button" aria-haspopup="true" aria-expanded="false">2026 Season <span aria-hidden="true">⌄</span></button><div class="nav-submenu" aria-label="2026 Season pages"><a class="nav-link" href="#season2026" data-page="season2026">Weekly Review</a><a class="nav-link" href="#power" data-page="power">Power Rankings</a><a class="nav-link" href="#playoffs" data-page="playoffs">Playoff Predictor</a><a class="nav-link" href="#transactions" data-page="transactions">Transactions</a></div></div>
       <a class="nav-link" href="#matchups" data-page="matchups">Matchups</a>
       <a class="nav-link" href="#seasons?year=2025" data-page="seasons">All Seasons</a>
-      <a class="nav-link" href="#history" data-page="history">League History</a>
+      <div class="nav-dropdown nav-history">
+        <button class="nav-link history-menu-toggle" id="historyMenu" type="button" aria-expanded="false" aria-controls="historySubmenu">League History <span class="history-menu-chevron" aria-hidden="true"></span></button>
+        <div id="historySubmenu" class="nav-submenu" aria-label="League History pages" hidden>
+          <a class="nav-link" href="#history" data-page="history">Home</a>
+          <a class="nav-link" href="#superlatives" data-page="superlatives">Superlatives</a>
+          <a class="nav-link" href="#history-stats" data-page="history-stats">Detailed Statistics</a>
+        </div>
+      </div>
       <a class="nav-link" href="#players" data-page="players">Players</a>
       <a class="nav-link" href="#teams" data-page="teams">Teams</a>
       <a class="nav-link" href="#draft" data-page="draft">Draft Central</a>
@@ -43,24 +51,26 @@
     </div>
   </div>
 
-  <script src="assets/build/manifest.6a76a0f567dd.js"></script>
+  <script src="assets/build/manifest.714c1cb32b55.js"></script>
   <script defer src="assets/build/data-keepers-2026.d7c885c37e2e.js"></script>
   <script defer src="assets/build/assets-js-scoring.c82c16bb038a.js"></script>
   <script defer src="assets/build/assets-js-sleeper-live.5c42f3afcc64.js"></script>
-  <script defer src="assets/build/assets-js-archive-loader.3ef117dd1887.js"></script>
+  <script defer src="assets/build/assets-js-archive-loader.8a5949e1222c.js"></script>
   <script defer src="assets/build/assets-js-football-model.abe86d501f3b.js"></script>
-  <script defer src="assets/build/assets-js-core.8e82fed23dc6.js"></script>
+  <script defer src="assets/build/assets-js-core.7b3bff790f28.js"></script>
   <script defer src="assets/build/assets-js-home.d61f7bb05625.js"></script>
   <script defer src="assets/build/assets-js-season.a511fa2f042b.js"></script>
   <script defer src="assets/build/assets-js-rankings.dc045a091199.js"></script>
   <script defer src="assets/build/assets-js-playoffs.65e65eb942ff.js"></script>
   <script defer src="assets/build/assets-js-transactions.276ff0e4c740.js"></script>
   <script defer src="assets/build/assets-js-matchups.80de40c575cb.js"></script>
-  <script defer src="assets/build/assets-js-archive.9af07b08bf05.js"></script>
+  <script defer src="assets/build/assets-js-archive.313dc627c24a.js"></script>
+  <script defer src="assets/build/assets-js-history-statistics.52a5c5e36299.js"></script>
+  <script defer src="assets/build/assets-js-history-pages.626bcaf138e7.js"></script>
   <script defer src="assets/build/assets-js-players.e65510aceee7.js"></script>
   <script defer src="assets/build/assets-js-teams.7c5720719d44.js"></script>
   <script defer src="assets/build/assets-js-draft.bc9fc1973ec9.js"></script>
-  <script defer src="assets/build/assets-js-enhancements.0ba43a25df00.js"></script>
+  <script defer src="assets/build/assets-js-enhancements.169bd609d579.js"></script>
   <script defer src="assets/build/assets-js-responsive.27fe20b1f755.js"></script>
   <script defer src="assets/build/assets-js-app.dd3d3de6ae77.js"></script>
 </body>

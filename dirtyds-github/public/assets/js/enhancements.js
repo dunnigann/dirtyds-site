@@ -21,6 +21,10 @@ async function refreshPage(manual=false){
  try{await SL.refresh();if(currentPage!==page)return;if(!location.hash.includes('week='))liveWeek=SL.currentWeek();else liveWeek=week;
   if(page==='home')await loadHomeLeague();
   if(page==='matchups'){await SL.getWeek(liveWeek,manual);await SL.getNflGames(liveWeek,manual);if(currentPage===page)await drawLiveMatchups();}
+  if(['history','superlatives','history-stats'].includes(page)){
+   await SL.loadHistory();
+   if(currentPage===page){if(page==='history')drawH2H();else if(page==='superlatives')drawRecords();else{liveHistoryStatus='ready';drawDetailedStatistics();}}
+  }
   if(page==='season2026'&&backdrop.hidden)drawSeason2026();
   if(page==='power'){if(manual){publishedAnalystEditions={};await loadPublishedRankings();}if(currentPage===page)drawPowerRankings();}
   if(page==='playoffs'&&manual&&currentPage===page)await renderPlayoffs();

@@ -47,4 +47,4 @@ Projected lineups maximize points under league slot eligibility, use each player
 
 The code reads future weekly projections rather than subtracting season-to-date points from preseason totals. Projection/stat endpoints are undocumented Sleeper feeds; changes or missing responses are handled explicitly. Coarse 50+ yard kicker projections are split using recorded distances when available and labeled estimates. Weekly rank movement appears only after a previous-week ranking has been saved in that browser.
 
-No playoff probability calculation, simulation, new playoff tab or deferred editorial/content features are included.
+The Playoff Predictor retains the shared 20,000-simulation forecast. In regular-season Weeks 12–14 it also shows possible seeds and example results using Sleeper’s actual remaining matchups and finalized scores. The scenario guide is independent of the projection feed. Detailed Statistics uses the archive’s regular-season standings and final playoff rosters; in-season Sleeper PF and podium awards appear only when the corresponding results are verified.

@@ -20,6 +20,7 @@ async function refreshPage(manual=false){
  const playerHistory=openLivePlayerHistory();
  if(refreshRunning||(!manual&&(document.hidden||(!backdrop.hidden&&!playerHistory)||document.activeElement?.matches('input,select,textarea'))))return;refreshRunning=true;const page=currentPage,week=liveWeek,focus=document.activeElement,scroll=window.scrollY;
  try{
+  if(page==='playoffs'){await Promise.allSettled([refreshPlayoffGuide(manual),...(manual?[refreshPlayoffOdds()]:[])]);return;}
   await SL.refresh();
   if(playerHistory){
    await Promise.allSettled([SL.loadHistory(),SL.getNflGames(SL.currentWeek())]);
@@ -32,11 +33,11 @@ async function refreshPage(manual=false){
   if(page==='matchups'){await SL.getWeek(liveWeek,manual);await SL.getNflGames(liveWeek,manual);if(currentPage===page)await drawLiveMatchups();}
   if(['history','superlatives','history-stats'].includes(page)){
    await SL.loadHistory();
+   if(page==='history-stats')await SL.loadWinnerBracket();
    if(currentPage===page){if(page==='history')drawH2H();else if(page==='superlatives')drawRecords();else{liveHistoryStatus='ready';drawDetailedStatistics();}}
   }
   if(page==='season2026'&&backdrop.hidden)drawSeason2026();
   if(page==='power'){if(manual){publishedAnalystEditions={};await loadPublishedRankings();}if(currentPage===page)drawPowerRankings();}
-  if(page==='playoffs'&&manual&&currentPage===page)await renderPlayoffs();
   if(page==='transactions'){await SL.getTransactions(SL.currentWeek(),manual);if(currentPage===page)drawTransactionsPage();}
   if(page==='players'){await SL.loadStats(manual);if(currentPage===page)drawTopPlayers();}
   if(page==='seasons'&&seasonYear===2026)drawSeasonDetail();

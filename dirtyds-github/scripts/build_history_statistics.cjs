@@ -23,7 +23,18 @@ module.exports=function buildHistoryStatistics(D,H){
    return {week:Number(week),games,rosters};
   });
   const draft=D.draftHistory.filter(p=>p.year===year).map(p=>({...p,name:p.player}));
-  seasonData[year]=summarize({year,teamCount,weeks,draft});
+  const table=H.standings[year]||[],fieldSize=teamCount/2;
+  const places=new Set(table.map(t=>t.finalPlace));
+  const playoffIds=places.size===teamCount&&table.every(t=>Number.isInteger(t.finalPlace)&&t.finalPlace>=1&&t.finalPlace<=teamCount)?
+   table.filter(t=>t.finalPlace<=fieldSize).map(t=>t.teamId):[];
+  const standings=table.map(t=>({id:t.teamId,team:t.team,owner:t.owner,pf:t.pf,seed:playoffIds.includes(t.teamId)?t.rank:null}));
+  const podiumTeams=[1,2,3].map(p=>table.find(t=>t.finalPlace===p));
+  const [gold,silver,bronze]=podiumTeams,fourth=table.find(t=>t.finalPlace===4);
+  const final=weeks.at(-1),title=g=>g.playoff&&g.winner===gold?.owner&&
+   [g.a.id,g.b.id].includes(gold.teamId)&&[g.a.id,g.b.id].includes(silver?.teamId);
+  const third=g=>g.playoff&&g.winner===bronze?.owner&&[g.a.id,g.b.id].includes(bronze.teamId)&&[g.a.id,g.b.id].includes(fourth?.teamId);
+  const podium=gold&&silver&&bronze&&final?.games.some(title)&&final.games.some(third)?podiumTeams.map(t=>t.teamId):[];
+  seasonData[year]=summarize({year,teamCount,weeks,draft,postseason:{standings,playoffIds,podium,finalWeek:final?.week}});
  }
  return 'window.DIRTY_DS_HISTORY_SUMMARY='+JSON.stringify(seasonData)+';\n';
 };

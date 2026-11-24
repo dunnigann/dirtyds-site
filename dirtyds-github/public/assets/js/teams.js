@@ -13,7 +13,7 @@ function drawTeamsPage(hasLive=true){
     const currentRecord=x?recordAt(x.r.roster_id,Math.max(...completedWeeks(),0)):{w:0,l:0};
     return `<button class="team-card ${owner==='Hunter'?'alumni':''}" data-manager="${e(owner)}"><div class="team-photo"><div class="team-initials">${e(initials(owner))}</div></div><div class="team-body"><div class="team-name">${e(owner)}</div><div class="team-franchise">${e(x?.team||profile.currentTeam)}</div><div class="team-record"><strong>${oldW+currentRecord.w}–${oldL+currentRecord.l}</strong><span>League regular-season record</span></div></div></button>`;
   };
-  app.innerHTML=`<div class="page">${pageHero('THE FRANCHISES','Teams')}<section class="section"><div class="wrap">${heading('CURRENT MANAGERS','The franchises.')}<div class="team-grid">${(D.ownerOrder||[]).filter(owner=>owner!=='Hunter').map(card).join('')}</div></div></section><section class="section alt"><div class="wrap">${heading('HISTORICAL MANAGERS','Past members of the league.')}<div class="team-grid">${card('Hunter')}</div></div></section></div>`;
+  app.innerHTML=`<div class="page">${pageHeading('Teams')}<section class="section"><div class="wrap">${heading('CURRENT MANAGERS','The franchises.')}<div class="team-grid">${(D.ownerOrder||[]).filter(owner=>owner!=='Hunter').map(card).join('')}</div></div></section><section class="section alt"><div class="wrap">${heading('HISTORICAL MANAGERS','Past members of the league.')}<div class="team-grid">${card('Hunter')}</div></div></section></div>`;
   document.querySelectorAll('[data-manager]').forEach(b=>b.onclick=()=>showManager(b.dataset.manager));wireImageFallback(app);
 }
 function managerFinalPlace(owner,year){

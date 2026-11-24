@@ -2,8 +2,8 @@
 (() => {
  'use strict';
  const LEAGUE_ID='1388389962587590656',API='https://api.sleeper.app/v1',DAY=86400000;
- const data={league:null,users:[],rosters:[],players:{},state:null,drafts:[],picks:[],weeks:{},transactions:{},stats:{},projections:{},rosProjections:{},snapshots:{},nflGames:{},season:'2026',feeds:{},updatedAt:0};
- const clock={},pending=new Map();let readyPromise=null,refreshPromise=null,proxy=null;
+ const data={league:null,users:[],rosters:[],players:{},state:null,drafts:[],picks:[],weeks:{},transactions:{},stats:{},projections:{},rosProjections:{},snapshots:{},winnerBracket:[],nflGames:{},season:'2026',feeds:{},updatedAt:0};
+ const clock={},pending=new Map();let readyPromise=null,refreshPromise=null,proxy=null,seedFinalWeek=null;
  const cacheKey=p=>'dirtyds-v6:'+p;
  const clone=value=>typeof structuredClone==='function'?structuredClone(value):JSON.parse(JSON.stringify(value));
  const getSaved=p=>{try{return JSON.parse(localStorage.getItem(cacheKey(p))||'null');}catch{return null;}};
@@ -45,7 +45,48 @@
    await loadSnapshots();await Promise.allSettled([getWeek(currentWeek(),force),getProjections(currentWeek(),force)]);data.updatedAt=Date.now();return data;
   })();try{return await readyPromise;}catch(err){readyPromise=null;throw err;}
  }
- async function loadHistory(){await init();await Promise.allSettled(Array.from({length:currentWeek()},(_,i)=>getWeek(i+1)));}
+ async function loadHistory(){
+  await init();
+  const last=Math.min(18,Math.max(0,Number(data.league?.settings?.last_scored_leg)||0));
+  await Promise.allSettled(Array.from({length:Math.max(currentWeek(),last)},(_,i)=>getWeek(i+1)));
+ }
+ async function loadSeedSchedule(force=false){
+  const engine=window.DIRTY_DS_SEED_GUIDE,leaguePath=`league/${LEAGUE_ID}`;
+  const [league,state]=await Promise.all([json(leaguePath,60000,force),json('state/nfl',60000,force).catch(()=>null)]);
+  // The NFL calendar can roll over before league scoring finalizes on Tuesday.
+  const verified=path=>Boolean(data.feeds[path]?.saved)&&Date.now()-data.feeds[path].saved<86400000;
+  if(!verified(leaguePath))return null;
+  const official=verified('state/nfl')?state:null,current=engine.leagueWeek(league,official),end=Number(league.settings?.playoff_week_start)-1;
+  if(!engine.showSeedScenarios(current)||current>end)return null;
+  const start=Number(league.settings?.start_week||1),last=Math.min(Number(league.settings?.last_scored_leg)||0,end);
+  if(!Number.isInteger(start)||start<1||!Number.isInteger(end)||end>18||end<start)return {league,state:official,error:'The Sleeper schedule is incomplete.'};
+  if(last<current-1)return {league,state:official,waiting:true};
+  try{
+   const [users,rosters]=await Promise.all([json(leaguePath+'/users',300000,force),json(leaguePath+'/rosters',45000,force)]);
+   if(!Array.isArray(users)||!Array.isArray(rosters))throw new Error('The Sleeper team list is incomplete.');
+   const weeks={},finalKey=`${league.season}:${last}`;let next=start;
+   async function load(){
+    while(next<=end){
+     const w=next++,path=leaguePath+'/matchups/'+w;
+     // Don't let a previously cached live score become a finalized score.
+     weeks[w]=await json(path,w<last?21600000:60000,force||(w===last&&finalKey!==seedFinalWeek));
+     if(w===last&&finalKey!==seedFinalWeek&&data.feeds[path]?.stale)throw new Error('Waiting for verified scores.');
+    }
+   }
+   await Promise.all(Array.from({length:5},load));
+   seedFinalWeek=finalKey;
+   return {league,state:official,users,rosters,weeks};
+  }catch{return {league,state:official,error:'Sleeper’s finalized scores or remaining matchups are unavailable. Try refreshing.'};}
+ }
+ async function loadWinnerBracket(){
+  const league=data.league,start=Number(league?.settings?.playoff_week_start);
+  const week=window.DIRTY_DS_SEED_GUIDE.leagueWeek(league,data.state);
+  if(!Number.isInteger(start)||Number(league?.settings?.last_scored_leg)<start-1||(!(week>=start)&&league?.status!=='complete'))return;
+  try{
+   const bracket=await json(`league/${LEAGUE_ID}/winners_bracket`,60000);
+   if(Array.isArray(bracket))data.winnerBracket=bracket;
+  }catch{}
+ }
  async function loadStats(force=false){await init();try{data.stats=await json(`stats/nfl/regular/${data.season}`,300000,force,slimStats);}catch{}return data.stats;}
  async function getNflGames(w,force=false){
   const key='espn/'+data.season+'/'+w,saved=getSaved(key),ttl=w===currentWeek()?45000:DAY;
@@ -64,6 +105,6 @@
  const fullName=id=>player(id).full_name,headshot=id=>id&&player(id).position!=='DEF'?`https://sleepercdn.com/content/nfl/players/thumb/${encodeURIComponent(id)}.jpg`:'';
  const scoreDetails=(row,id)=>window.DIRTY_DS_SCORING.calculate(row,data.league?.scoring_settings||{},{actual:data.stats[id]}),leaguePoints=(row,id)=>scoreDetails(row,id).points;
  const pickCost=p=>{const m=p?.metadata||{},v=m.amount??m.price??m.cost??m.bid_amount??p?.amount??p?.price;return v==null||v===''?null:Number(v);},pickPlayerId=p=>String(p?.player_id||p?.metadata?.player_id||'');
- window.DIRTY_DS_LIVE={LEAGUE_ID,data,init,refresh,loadHistory,loadStats,loadRankings,getNflGames,getWeek,getTransactions,getProjections,getROSProjections,currentWeek,user,roster,rosterUser,teamName,managerName,player,fullName,headshot,leaguePoints,statPoints:leaguePoints,projectionPoints:leaguePoints,scoreDetails,pickCost,pickPlayerId};
+ window.DIRTY_DS_LIVE={LEAGUE_ID,data,init,refresh,loadHistory,loadSeedSchedule,loadWinnerBracket,loadStats,loadRankings,getNflGames,getWeek,getTransactions,getProjections,getROSProjections,currentWeek,user,roster,rosterUser,teamName,managerName,player,fullName,headshot,leaguePoints,statPoints:leaguePoints,projectionPoints:leaguePoints,scoreDetails,pickCost,pickPlayerId};
  Object.defineProperty(window.DIRTY_DS_LIVE,'ready',{get:()=>init()});
 })();

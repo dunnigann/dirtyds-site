@@ -11,17 +11,18 @@
   <title>Dirty D's — League Archive</title>
   <link rel="icon" href="assets/images/logo/dirtyds-chicken.jpg" type="image/jpeg">
   <link rel="stylesheet" href="assets/build/assets-css-site.5d0025398268.css">
-  <link rel="stylesheet" href="assets/build/assets-css-league-history.1fc5d38b173d.css">
+  <link rel="stylesheet" href="assets/build/assets-css-league-history.040d4c268fb3.css">
+  <link rel="stylesheet" href="assets/build/assets-css-interface.fd79d764510b.css">
 </head>
 <body>
   <header class="site-header">
     <a class="brand" href="#home" aria-label="Dirty D's home">
       <span class="brand-mark"><img src="assets/images/logo/dirtyds-chicken.jpg" alt="Dirty D's logo"></span>
-      <span class="brand-copy"><strong>DIRTY D'S</strong><small>LEAGUE ARCHIVE</small></span>
+      <span class="brand-copy"><strong>DIRTY D'S</strong></span>
     </a>
     <nav id="mainNav" class="main-nav" aria-label="Primary navigation">
       <a class="nav-link active" href="#home" data-page="home">Home</a>
-      <div class="nav-dropdown"><button class="nav-link nav-season" id="seasonMenu" type="button" aria-haspopup="true" aria-expanded="false">2026 Season <span aria-hidden="true">⌄</span></button><div class="nav-submenu" aria-label="2026 Season pages"><a class="nav-link" href="#season2026" data-page="season2026">Weekly Review</a><a class="nav-link" href="#power" data-page="power">Power Rankings</a><a class="nav-link" href="#playoffs" data-page="playoffs">Playoff Predictor</a><a class="nav-link" href="#transactions" data-page="transactions">Transactions</a></div></div>
+      <div class="nav-dropdown"><button class="nav-link nav-season" id="seasonMenu" type="button" aria-expanded="false" aria-controls="seasonSubmenu">2026 Season <span class="history-menu-chevron" aria-hidden="true"></span></button><div id="seasonSubmenu" class="nav-submenu" aria-label="2026 Season pages" hidden><a class="nav-link" href="#season2026" data-page="season2026">Weekly Review</a><a class="nav-link" href="#power" data-page="power">Power Rankings</a><a class="nav-link" href="#playoffs" data-page="playoffs">Playoff Predictor</a><a class="nav-link" href="#transactions" data-page="transactions">Transactions</a></div></div>
       <a class="nav-link" href="#matchups" data-page="matchups">Matchups</a>
       <a class="nav-link" href="#seasons?year=2025" data-page="seasons">All Seasons</a>
       <div class="nav-dropdown nav-history">
@@ -41,7 +42,7 @@
   <div id="feedStatus" class="feed-status" role="status" aria-live="polite"></div>
   <main id="app"></main>
   <footer class="site-footer">
-    <div><strong>DIRTY D'S</strong> · Fantasy football history, now with live Sleeper data and auction receipts.</div>
+    <div><strong>DIRTY D'S</strong></div>
     <div id="footerMeta">2018–2026</div>
   </footer>
   <div id="modalBackdrop" class="modal-backdrop" hidden>
@@ -51,27 +52,28 @@
     </div>
   </div>
 
-  <script src="assets/build/manifest.9cf409d3b18b.js"></script>
+  <script src="assets/build/manifest.cf83d4dea969.js"></script>
   <script defer src="assets/build/data-keepers-2026.d7c885c37e2e.js"></script>
   <script defer src="assets/build/assets-js-scoring.c82c16bb038a.js"></script>
-  <script defer src="assets/build/assets-js-sleeper-live.5c42f3afcc64.js"></script>
+  <script defer src="assets/build/assets-js-sleeper-live.cbda96e816ea.js"></script>
   <script defer src="assets/build/assets-js-archive-loader.8a5949e1222c.js"></script>
   <script defer src="assets/build/assets-js-football-model.abe86d501f3b.js"></script>
-  <script defer src="assets/build/assets-js-core.c2916c64450c.js"></script>
-  <script defer src="assets/build/assets-js-home.d61f7bb05625.js"></script>
-  <script defer src="assets/build/assets-js-season.a511fa2f042b.js"></script>
-  <script defer src="assets/build/assets-js-rankings.dc045a091199.js"></script>
-  <script defer src="assets/build/assets-js-playoffs.65e65eb942ff.js"></script>
-  <script defer src="assets/build/assets-js-transactions.276ff0e4c740.js"></script>
-  <script defer src="assets/build/assets-js-matchups.80de40c575cb.js"></script>
-  <script defer src="assets/build/assets-js-archive.26f0f1eb6d49.js"></script>
-  <script defer src="assets/build/assets-js-history-statistics.c8ef1622907b.js"></script>
-  <script defer src="assets/build/assets-js-history-pages.1e348b0c8805.js"></script>
-  <script defer src="assets/build/assets-js-players.e65510aceee7.js"></script>
-  <script defer src="assets/build/assets-js-teams.f0c04c4e102b.js"></script>
-  <script defer src="assets/build/assets-js-draft.bc9fc1973ec9.js"></script>
-  <script defer src="assets/build/assets-js-enhancements.7cecaf7d89df.js"></script>
-  <script defer src="assets/build/assets-js-responsive.27fe20b1f755.js"></script>
+  <script defer src="assets/build/assets-js-seed-scenarios.ff20f066764b.js"></script>
+  <script defer src="assets/build/assets-js-core.88824d2912f0.js"></script>
+  <script defer src="assets/build/assets-js-home.699067a57e78.js"></script>
+  <script defer src="assets/build/assets-js-season.98e492086984.js"></script>
+  <script defer src="assets/build/assets-js-rankings.40b9b2d6892b.js"></script>
+  <script defer src="assets/build/assets-js-playoffs.7804ef03d8de.js"></script>
+  <script defer src="assets/build/assets-js-transactions.8e5510a2dcb6.js"></script>
+  <script defer src="assets/build/assets-js-matchups.fec69efb97de.js"></script>
+  <script defer src="assets/build/assets-js-archive.5db250a1b64f.js"></script>
+  <script defer src="assets/build/assets-js-history-statistics.aa61d660979f.js"></script>
+  <script defer src="assets/build/assets-js-history-pages.028720c343fb.js"></script>
+  <script defer src="assets/build/assets-js-players.0758985b68b2.js"></script>
+  <script defer src="assets/build/assets-js-teams.447bbdec8c93.js"></script>
+  <script defer src="assets/build/assets-js-draft.73e6a8a8905a.js"></script>
+  <script defer src="assets/build/assets-js-enhancements.d8c90c49c26d.js"></script>
+  <script defer src="assets/build/assets-js-responsive.51377e18a4b6.js"></script>
   <script defer src="assets/build/assets-js-app.dd3d3de6ae77.js"></script>
 </body>
 </html>

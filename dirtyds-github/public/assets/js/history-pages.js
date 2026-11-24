@@ -35,11 +35,33 @@ function currentHistoryStatistics(){
   return {week,games,rosters};
  });
  const draft=liveDraftRows().map(p=>({...p,name:p.player,id:String(p.id||'')}));
- return historyStatistics.summarize({year:2026,teamCount:data.rosters.length,weeks,draft});
+ const {league,winnerBracket}=data,playoffStart=Number(league?.settings?.playoff_week_start),finished=league?.status==='complete';
+ const finalRosters={};
+ for(const {week} of weeks.filter(w=>w.week>=playoffStart&&w.games.length)){
+  finalRosters[week]=(data.weeks[week]||[]).map(row=>{
+   const id=Number(row.roster_id),starters=new Set((row.starters||[]).map(String));
+   const rosterIds=[...new Set((row.players||[]).map(String))].filter(p=>p&&p!=='0');
+   const verified=rosterIds.length>0&&[...starters].every(p=>p==='0'||rosterIds.includes(p));
+   const players=verified?rosterIds.map(p=>{
+    const name=data.snapshots?.[week]?.players?.[p]?.full_name||SL.fullName(p);
+    return {id:p,name:name===`Player ${p}`?'':name,status:starters.has(p)?'starter':'rostered'};
+   }):[];
+   return {id,players};
+  });
+ }
+ const teams=data.rosters.map(r=>{
+  const id=Number(r.roster_id),{manager:owner,team}=identityAtWeek(id,playoffStart-1);
+  return {id,owner,team};
+ });
+ const postseason=historyStatistics.sleeperPostseason({
+  teams,weeks,bracket:winnerBracket,start:Number(league?.settings?.start_week||1),playoffStart,spots:Number(league?.settings?.playoff_teams),
+  lastWeek,leagueWeek:window.DIRTY_DS_SEED_GUIDE.leagueWeek(league,data.state)??0,finished,finalRosters
+ });
+ return historyStatistics.summarize({year:2026,teamCount:data.rosters.length,weeks,draft,postseason});
 }
 
 function renderSuperlatives(){
- app.innerHTML=`<div class="page"><section class="section"><div class="wrap">${heading('SUPERLATIVES','The awards wall.')}${historyScopes('record-year','Superlatives season',recordYear)}<div id="recordWall"></div></div></section></div>`;
+ app.innerHTML=`<div class="page">${pageHeading('Superlatives')}<section class="section"><div class="wrap">${historyScopes('record-year','Superlatives season',recordYear)}<div id="recordWall"></div></div></section></div>`;
  document.querySelectorAll('[data-record-year]').forEach(b=>b.onclick=()=>{recordYear=b.dataset.recordYear;syncRoute();drawRecords();});
  drawRecords();ensureLive().then(()=>{if(currentPage==='superlatives')drawRecords();}).catch(()=>{});
 }
@@ -53,6 +75,14 @@ function historyMatchupList(title,rows){
   const [winner,loser]=[g.first,g.second].sort((a,b)=>b.points-a.points);
   return `<li><small>${g.year} · Week ${g.week}</small><div class="history-game-score"><span><strong>${e(winner.owner)}</strong> <b>${historyPoints(winner.points)}</b></span><span>def.</span><span><strong>${e(loser.owner)}</strong> <b>${historyPoints(loser.points)}</b></span></div></li>`;
  }).join('')}</ul>`:'<p class="history-empty">No qualifying matchups for this season.</p>'}</section>`;
+}
+function historyPlayoffList(title,rows,ready){
+ return `<section class="history-stat-card"><h2>${title}</h2>${rows.length?`<ul class="history-game-list history-pf-list">${rows.map(t=>`<li><div><strong>${e(t.team)}</strong><small>${t.year} · ${e(t.owner)} · No. ${t.pfRank} in PF${t.seed?` · Seed ${t.seed}`:''}</small></div><b>${fmt(t.pf/100,2)} <span>PF</span></b></li>`).join('')}</ul>`:`<p class="history-empty">${ready?'No qualifying teams for this selection.':'Available when the playoff field is verified.'}</p>`}</section>`;
+}
+function historyAccolades(rows){
+ const awards=['🏆','🥈','🥉'],places=['first','second','third'];
+ const medals=p=>p.medals.map((count,i)=>count?`<span class="ptrophy" role="img" aria-label="${count} ${places[i]}-place ${count===1?'finish':'finishes'}">${awards[i]}${count>1?` ×${count}`:''}</span>`:'').join('');
+ return `<section class="history-stat-card history-accolades"><h2>Top 5 Players by Accolades</h2>${rows.length?`<ol class="history-stat-list">${rows.map(p=>`<li><strong>${e(p.name)}</strong><div class="player-trophy-case">${medals(p)}</div></li>`).join('')}</ol>`:'<p class="history-empty">Available after the final podium rosters are verified.</p>'}</section>`;
 }
 function historyCoverage(stats){
  const archived=stats.coverage.filter(c=>c.year!==2026),current=stats.coverage.find(c=>c.year===2026);
@@ -83,6 +113,8 @@ function drawDetailedStatistics(){
  const stats=historyStatistics.combine(detailYear==='all'?Object.values(seasons):[seasons[detailYear]].filter(Boolean));
  target.innerHTML=`
    <p class="history-coverage">${e(historyCoverage(stats))}</p>
+   <div class="history-postseason-grid">${historyPlayoffList('Top-6 PF, Missed Playoffs',stats.missedTopPF,stats.coverage.some(c=>c.fieldReady))}${historyPlayoffList('Bottom-6 PF, Made Playoffs',stats.qualifiedBottomPF,stats.coverage.some(c=>c.fieldReady))}${historyAccolades(stats.accolades)}</div>
+   <p class="history-method history-postseason-note">PF uses final regular-season totals. Accolades use the final playoff rosters, including bench and IR.</p>
    <div class="history-player-grid">${historyList('Top 10 Starter Performances',stats.top)}${historyList('Bottom 10 Starter Performances',stats.bottom)}${historyList('Top 10 Bench Performances',stats.bench)}</div>
    <div class="history-matchup-grid">${historyMatchupList('2nd-Highest Scorer Lost to the Highest',stats.secondHigh)}${historyMatchupList('2nd-Lowest Scorer Beat the Lowest',stats.secondLow)}</div>
    <div class="history-matchup-grid">${historyList('Top 10 Points Per Dollar',stats.value,{auction:true})}${historyList('Top 10 Busts',stats.busts,{auction:true})}</div>
@@ -91,8 +123,8 @@ function drawDetailedStatistics(){
  document.querySelectorAll('[data-detail-year]').forEach(b=>{const active=b.dataset.detailYear===detailYear;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
 }
 function renderDetailedStatistics(){
- app.innerHTML=`<div class="page history-details"><section class="page-hero"><div class="wrap"><h1>Detailed Statistics</h1></div></section><section class="section"><div class="wrap">${historyScopes('detail-year','Detailed statistics season',detailYear)}<div id="historyDetails"></div></div></section></div>`;
+ app.innerHTML=`<div class="page history-details">${pageHeading('Detailed Statistics')}<section class="section"><div class="wrap">${historyScopes('detail-year','Detailed statistics season',detailYear)}<div id="historyDetails"></div></div></section></div>`;
  document.querySelectorAll('[data-detail-year]').forEach(b=>b.onclick=()=>{detailYear=b.dataset.detailYear;syncRoute();drawDetailedStatistics();});
  drawDetailedStatistics();
- ensureLive().then(()=>{liveHistoryStatus='ready';if(currentPage==='history-stats')drawDetailedStatistics();}).catch(()=>{liveHistoryStatus='failed';if(currentPage==='history-stats')drawDetailedStatistics();});
+ ensureLive().then(()=>SL.loadWinnerBracket()).then(()=>{liveHistoryStatus='ready';if(currentPage==='history-stats')drawDetailedStatistics();}).catch(()=>{liveHistoryStatus='failed';if(currentPage==='history-stats')drawDetailedStatistics();});
 }

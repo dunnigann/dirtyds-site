@@ -1,0 +1,274 @@
+/* Dirty D’s shared page headings and playoff predictor. Hall of Fame has its own styles. */
+:root {
+ --ui-base:var(--paper);
+ --ui-panel:var(--white);
+ --ui-inset:var(--navy);
+ --ui-line:var(--line);
+ --ui-text:var(--ink);
+ --ui-muted:var(--muted);
+ --ui-accent:var(--red);
+ --ui-accent-panel:#342333;
+ --ui-focus:var(--gold-2);
+}
+.page-heading {background:var(--paper);border-bottom:1px solid var(--line)}
+.page-heading .wrap {padding-block:clamp(1.6rem,4vw,3.3rem)}
+.page-heading h1 {
+ color:var(--ink);margin:0;font-size:clamp(2rem,5vw,3.625rem);
+ font-weight:730;line-height:1.07;letter-spacing:-.045em;text-wrap:balance;
+}
+.page-heading h1::before {content:"";display:block;width:1.6rem;height:2px;margin-bottom:.75rem;background:var(--red)}
+.page-heading .home-hero {min-height:0}
+.page-heading .home-hero>img {flex:none;width:clamp(3rem,6vw,5.5rem);height:auto;aspect-ratio:1}
+.page-week-tools {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.55rem 1rem;padding-block:1rem .8rem}
+.page-week-tools .z-weekbar {margin:0;padding:0}
+.page-week-tools .z-text-link {display:inline-flex;align-items:center;min-height:44px;margin:0;padding:.35rem .65rem;border:1px solid var(--line);border-radius:7px;background:var(--navy-2);color:var(--ink)}
+.site-header .nav-submenu[hidden],#playoffGuide[hidden] {display:none}
+.site-header .nav-submenu:not([hidden]) {display:grid;gap:.2rem}
+.site-header .nav-link {font-weight:650}
+.site-header .nav-link.active:after {height:2px;background:var(--red)}
+.nav-season[aria-expanded="true"] .history-menu-chevron {transform:translateY(1px) rotate(225deg)}
+@media(max-width:1250px) {
+ .site-header .main-nav.open {align-items:start;gap:.25rem;overflow-x:hidden;overscroll-behavior:contain}
+ .site-header .main-nav.open .nav-dropdown {grid-column:1/-1}
+ .site-header .nav-link {min-height:44px;font-size:.875rem;line-height:1.3;white-space:normal;justify-content:flex-start}
+ .site-header .nav-dropdown>button {width:100%;display:flex;align-items:center;justify-content:space-between}
+ .site-header .nav-link.active:after {height:auto;width:2px}
+ .site-header .main-nav.open .nav-submenu {
+  background:var(--navy);border:1px solid var(--line);border-radius:8px;
+  padding:.25rem;margin:.1rem 0 .35rem;box-shadow:none;grid-template-columns:repeat(2,minmax(0,1fr));
+ }
+}
+
+.sp-page {background:var(--ui-base);color:var(--ui-text);min-height:75vh}
+.sp-layout {
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ gap:clamp(1.45rem,4vw,2.5rem);
+ padding-block:clamp(1.15rem,3.5vw,2.65rem) 4rem;
+}
+.sp-block {
+ min-width:0;
+ background:var(--ui-panel);
+ border:1px solid var(--ui-line);
+ border-radius:12px;
+ padding:clamp(.95rem,2.6vw,1.85rem);
+}
+.sp-section-top {
+ display:flex;
+ flex-wrap:wrap;
+ align-items:end;
+ justify-content:space-between;
+ gap:1rem 2rem;
+ margin-bottom:1.15rem;
+}
+.sp-section-top h2 {
+ margin:0;
+ font-size:clamp(1.45rem,3vw,2rem);
+ font-weight:720;
+ letter-spacing:-.035em;
+ line-height:1.18;
+}
+.sp-context,.sp-path .sp-context {color:var(--ui-muted);font-size:.875rem;line-height:1.55}
+.sp-section-top p {margin:.35rem 0 0}
+.sp-select-label {display:grid;gap:.35rem;font-size:.875rem;font-weight:650;color:var(--ui-muted);min-width:0}
+.sp-select {
+ appearance:none;
+ font:inherit;
+ font-size:1rem;
+ color:var(--ui-text);
+ background:var(--ui-base) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%23bac9da' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right .65rem center/1rem no-repeat;
+ border:1px solid #465870;
+ border-radius:7px;
+ min-height:44px;
+ padding:.5rem 2rem .5rem .7rem;
+ min-width:0;
+ width:100%;
+ max-width:100%;
+}
+#sp-team {width:min(22rem,100%)}
+.sp-select:focus-visible,.sp-page button:focus-visible,.sp-page summary:focus-visible {outline:2px solid var(--ui-focus);outline-offset:3px}
+.sp-team-current {
+ display:flex;
+ flex-wrap:wrap;
+ gap:.5rem clamp(.85rem,3vw,2rem);
+ padding:.85rem 0;
+ border-block:1px solid var(--ui-line);
+ color:var(--ui-muted);
+ font-size:.875rem;
+}
+.sp-team-current strong {color:var(--ui-text);margin-left:.25rem;font-variant-numeric:tabular-nums}
+.sp-seed-picker {margin:1.2rem 0}
+.sp-seed-label {display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.35rem .8rem;margin:0 0 .6rem}
+.sp-clinched {color:var(--ui-muted);font-size:.875rem}
+.sp-seed-buttons {display:flex;flex-wrap:wrap;gap:.4rem}
+.sp-seed-buttons button {
+ background:var(--ui-inset);
+ color:var(--ui-muted);
+ border:1px solid var(--ui-line);
+ border-radius:7px;
+ min-width:44px;
+ min-height:44px;
+ font:650 1rem/1 system-ui,sans-serif;
+}
+.sp-seed-buttons .sp-in-bracket {color:var(--ui-text);border-color:var(--line)}
+.sp-seed-buttons button:hover {border-color:var(--gold);color:var(--ui-text)}
+.sp-seed-buttons button[aria-pressed="true"] {
+ background:var(--ui-accent-panel);
+ border-color:var(--ui-accent);
+ color:var(--ui-text);
+}
+.sp-path {
+ border-radius:10px;
+ border:1px solid var(--ui-line);
+ background:var(--ui-inset);
+ padding:clamp(.85rem,2.7vw,1.55rem);
+}
+.sp-path-top {
+ display:flex;
+ flex-wrap:wrap;
+ justify-content:space-between;
+ align-items:end;
+ gap:.8rem 1rem;
+ padding-bottom:1rem;
+ border-bottom:1px solid var(--ui-line);
+}
+.sp-path-top h3 {margin:.28rem 0 0;font-size:clamp(1.5rem,3vw,2.15rem);letter-spacing:-.04em;line-height:1.12}
+.sp-tag {
+ display:inline-block;
+ color:var(--gold-2);
+ font-size:.8125rem;
+ font-weight:680;
+ line-height:1.25;
+ border:1px solid #604650;
+ border-radius:30px;
+ padding:.28rem .58rem;
+ background:var(--ui-accent-panel);
+}
+.sp-plan {
+ display:grid;
+ grid-template-columns:minmax(0,2fr) minmax(0,3fr);
+ gap:clamp(1rem,3vw,2.2rem);
+ padding:1rem 0 .15rem;
+}
+.sp-plan section+section {padding-left:clamp(1rem,3vw,2.2rem);border-left:1px solid var(--ui-line)}
+.sp-plan h4 {margin:0 0 .6rem;color:var(--ui-text);font-size:1rem;font-weight:700}
+.sp-plan p,.sp-example p {margin:.45rem 0;line-height:1.55}
+.sp-outcomes,.sp-rivals {list-style:none;margin:0;padding:0}
+.sp-outcomes li,.sp-rivals li {
+ display:grid;
+ grid-template-columns:minmax(4.2rem,auto) minmax(0,1fr);
+ gap:.25rem .75rem;
+ align-items:baseline;
+ line-height:1.48;
+ padding:.65rem 0;
+ border-bottom:1px solid var(--ui-line);
+}
+.sp-outcomes li span {color:var(--ui-muted);font-size:.875rem;white-space:nowrap}
+.sp-outcomes li strong {font-size:.9375rem;font-weight:640}
+.sp-rivals li {font-size:.875rem;color:#d1dce8}
+.sp-rivals li div,.sp-rivals li strong {min-width:0}
+.sp-rivals li>strong {color:var(--ui-text)}
+.sp-margin {display:block;margin-top:.1rem;color:var(--ui-muted)}
+.sp-margin strong,.sp-example strong {color:var(--ui-text)}
+.sp-finish {color:var(--ui-muted);font-size:.875rem}
+.sp-finish strong {color:var(--ui-text);margin-left:.25rem}
+.sp-example,.sp-method {margin-top:1rem;color:var(--ui-muted);font-size:.875rem;line-height:1.55}
+.sp-example {padding-top:.75rem;border-top:1px solid var(--ui-line)}
+.sp-example summary,.sp-method summary {cursor:pointer;color:var(--ui-text);font-weight:640;width:fit-content;max-width:100%}
+.sp-example[open] summary,.sp-method[open] summary {margin-bottom:.65rem}
+.sp-example-points {padding-top:.4rem}
+.sp-state {padding:1rem 0;margin:.4rem 0;color:var(--ui-muted);font-size:1rem}
+.sp-eliminated {padding:1.15rem 0 .65rem;color:var(--ui-accent);font-size:clamp(1.25rem,3vw,1.65rem)}
+.sp-table-wrap {border:1px solid var(--ui-line);border-radius:8px}
+.sp-table-wrap table {width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.sp-table-wrap th,.sp-table-wrap td {padding:.68rem .7rem;text-align:left;border-bottom:1px solid var(--ui-line)}
+.sp-table-wrap thead {background:var(--ui-base);color:var(--ui-muted)}
+.sp-table-wrap thead th {font-weight:650;font-size:.8125rem}
+.sp-table-wrap thead th:first-child {border-top-left-radius:8px}
+.sp-table-wrap thead th:last-child {border-top-right-radius:8px}
+.sp-table-wrap tbody tr:last-child>* {border-bottom:0}
+.sp-table-wrap tbody th {width:34%}
+.sp-table-wrap tbody th strong {font-size:.9375rem;line-height:1.35;font-weight:700}
+.sp-table-wrap tbody th small {color:var(--ui-muted);font-size:.8125rem;display:block;font-weight:400;line-height:1.3}
+.sp-table-wrap tbody td {font-size:.875rem;white-space:nowrap}
+.sp-probability {display:grid;grid-template-columns:3.5rem minmax(1.4rem,1fr);align-items:center;gap:.45rem}
+.sp-probability-track {display:block;height:4px;background:#2a3749;border-radius:2px;overflow:hidden}
+.sp-probability-track i {display:block;height:100%;background:var(--gold);border-radius:inherit}
+.sp-table-wrap td:nth-child(3) .sp-probability-track i {background:var(--red)}
+
+.sp-cutoff {margin:1rem 0;padding:.75rem .85rem;background:var(--ui-inset);border:1px solid var(--ui-line);border-radius:8px;overflow-wrap:anywhere}
+.sp-cutoff strong {display:block;font-size:1rem}
+.sp-cutoff strong span {color:var(--gold-2);margin-left:.4rem;font-variant-numeric:tabular-nums}
+.sp-cutoff p {margin:.3rem 0 0;font-size:.875rem;color:var(--muted)}
+.sp-method a {color:var(--gold-2);overflow-wrap:anywhere}
+.sp-path-top>div,.sp-plan>section {min-width:0}
+.sp-plan,.sp-example,.sp-table-wrap {overflow-wrap:anywhere}
+@media(max-width:700px){
+ .sp-plan {grid-template-columns:minmax(0,1fr);gap:.85rem}
+ .sp-plan section+section {padding:.85rem 0 0;border:0;border-top:1px solid var(--ui-line)}
+ .sp-section-top>.sp-select-label,#sp-team {width:100%}
+ .sp-method summary,.sp-example summary {min-height:44px;display:list-item;padding-block:.6rem}
+}
+
+/* All table cells get a visible label on narrow screens. Preserve column
+   heading semantics even though the rows are now cards. */
+.responsive-cell-label {display:none}
+.table-subtitle {display:block;color:var(--muted)}
+.record-card .record-detail {color:var(--muted)}
+.dd-preview .dd-year-label {color:var(--gold-2)}
+.dd-preview p {color:var(--ink)}
+.bracket-team.advances strong,.football-jersey {color:var(--ink)}
+.shame-year {color:var(--gold)}
+.bracket-team small,.adp-slot,.season-team-stat span,.dna-stats span,.shame-card span {color:var(--muted)}
+.dna-stats div {background:var(--navy-2)}
+.z-field {min-width:0}
+
+@media(max-width:1050px){
+ #playerTopTen {overflow:visible;padding:0}
+ #playerTopTen .player-top-grid {width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,8rem),1fr))}
+ #playerTopTen .player-top-card {width:100%;min-height:0}
+}
+@media(max-width:780px){
+ .z-page .z-standings-shell,.dd-table-wrap {overflow:visible;contain:none;max-height:none}
+ .z-field-scroll {overflow:visible}
+ .z-field {padding:8px}
+ .z-field .z-backs,.z-field .z-receivers {grid-template-columns:repeat(4,minmax(0,1fr));gap:.5rem .25rem}
+ .z-field .z-qb {grid-template-columns:repeat(2,minmax(0,1fr))}
+ .z-field .z-player,.z-bench-grid .z-player {min-width:0;min-height:44px}
+ .z-field .z-player-photo {width:clamp(32px,11vw,53px);height:clamp(32px,11vw,53px);min-width:0;min-height:0}
+ .z-field .z-player strong,.z-bench-grid .z-player strong {display:block;min-height:0;overflow:visible;white-space:normal;overflow-wrap:anywhere;font-size:.75rem}
+ .z-field .z-player small,.z-field .z-player em,.z-bench-grid .z-player small {overflow-wrap:anywhere;line-height:1.3}
+ .z-field .z-team-header {gap:.5rem;padding-inline:.2rem}
+ .z-field .z-team-header h2 {font-size:1rem;overflow-wrap:anywhere}
+ .z-field .z-team-score strong {font-size:1.3rem}
+ .z-field .z-team-score small {font-size:.6875rem}
+ .z-field-note {font-size:.875rem}
+ .z-bench-grid {grid-template-columns:repeat(3,minmax(0,1fr))}
+ .z-sidebar select {font-size:1rem;min-height:44px;margin:0}
+ .z-sidebar label {font-size:.8125rem;letter-spacing:.02em;text-transform:none}
+ .feed-status {flex-wrap:wrap}
+ .dd-side-name strong,.dd-side-name small {white-space:normal;overflow-wrap:anywhere}
+ .bracket-team small,.adp-slot,.season-team-stat span,.dna-stats span,.shame-card span,.shame-year {font-size:.75rem}
+ .season-team-stat span,.dna-stats span {white-space:normal;overflow-wrap:anywhere}
+ table.responsive-table {display:block;width:100%;max-width:100%;border:0;table-layout:auto;overflow:visible;box-shadow:none;border-radius:0;background:transparent}
+ table.responsive-table thead {display:block;position:absolute;width:1px;height:1px;inset-inline-start:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+ table.responsive-table > tbody {display:grid;width:100%;gap:.7rem}
+ table.responsive-table > tbody > tr {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid var(--line);border-radius:10px;background:var(--white);color:var(--ink);padding:.75rem;gap:.65rem .9rem}
+ table.responsive-table > tbody > tr > :is(th,td) {display:block!important;min-width:0;width:auto!important;position:static;padding:0!important;border:0;background:transparent;color:inherit;text-align:left;white-space:normal!important;overflow:visible!important;text-overflow:clip;overflow-wrap:anywhere!important;font-size:.9375rem!important;line-height:1.45}
+ table.responsive-table > tbody > tr > :is(th,td)::before {content:none!important}
+ table.responsive-table > tbody > tr > :first-child {grid-column:1/-1;font-weight:750}
+ .responsive-cell-label {display:block;margin-bottom:.1rem;color:var(--muted);font-size:.8125rem;font-weight:600;line-height:1.35}
+ table.responsive-table :is(th,td) :is(strong,small) {white-space:normal!important;overflow:visible;text-overflow:clip}
+ table.responsive-table :is(th,td) small {font-size:.8125rem;color:var(--muted)}
+ .sp-table-wrap {border:0}
+ .sp-table-wrap table.responsive-table > tbody > tr {background:var(--ui-inset);color:var(--ui-text);border-color:var(--ui-line)}
+ .sp-table-wrap table.responsive-table > tbody > tr > th[scope="row"] {padding:0 0 .6rem!important;border-bottom:1px solid var(--ui-line)}
+ .sp-table-wrap tbody th strong {display:block;font-size:1rem}
+ .sp-probability {grid-template-columns:minmax(0,1fr);gap:.28rem}
+}
+@media(max-width:420px){
+ .page-heading .home-hero {gap:1rem}
+ .z-field .z-backs,.z-field .z-receivers {grid-template-columns:repeat(3,minmax(0,1fr))}
+ .z-weekbar button {min-height:44px}
+ .ranking-trend-data table.responsive-table > tbody > tr {grid-template-columns:repeat(2,minmax(0,1fr))}
+}

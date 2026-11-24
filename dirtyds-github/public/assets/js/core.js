@@ -54,7 +54,7 @@ function posBadge(value){
 const nflLogo=abbr=>`https://a.espncdn.com/i/teamlogos/nfl/500/${encodeURIComponent(({JAX:'jax',WAS:'wsh',LAR:'lar',LV:'lv',SF:'sf',NO:'no',TB:'tb'}[abbr]||abbr||'').toLowerCase())}.png`;
 const teamName=owner=>D?.owners?.[owner]?.currentTeam||owner;
 const heading=(k,t,desc='')=>`<div class="section-heading"><div><div class="kicker">${e(k)}</div><h2>${e(t)}</h2></div>${desc?`<p>${e(desc)}</p>`:''}</div>`;
-const pageHero=(k,t,desc='')=>`<section class="page-hero"><div class="wrap"><div class="eyebrow">${e(k)}</div><h1>${e(t)}</h1>${desc?`<p>${e(desc)}</p>`:''}</div></section>`;
+const pageHeading=title=>`<header class="page-heading"><div class="wrap"><h1>${e(title)}</h1></div></header>`;
 const stat=(label,value)=>`<div class="stat"><div class="stat-value">${e(value)}</div><div class="stat-label">${e(label)}</div></div>`;
 const note=html=>`<div class="dd-note">${html}</div>`;
 const recordCard=r=>`<article class="record-card"><div class="record-title">${e(r.title).replace(/\b(QB|RB|WR|TE|FLEX|SUPERFLEX|K|DEF)\b/g,posBadge)}</div><div class="record-value">${e(r.value)}</div><div class="record-detail">${e(r.owner||'')}${r.team?` · ${e(r.team)}`:''}${r.year?` · ${e(r.year)}`:''}</div>${r.detail?`<div class="record-subdetail">${e(r.detail)}</div>`:''}</article>`;
@@ -73,15 +73,25 @@ document.getElementById('modalClose').onclick=closeModal;
 backdrop.onclick=ev=>{if(ev.target===backdrop)closeModal();};
 document.addEventListener('keydown',ev=>{if(backdrop.hidden)return;if(ev.key==='Escape')closeModal();if(ev.key==='Tab'){const nodes=[...backdrop.querySelectorAll('button,a[href],input,select,textarea,[tabindex="0"]')].filter(x=>!x.disabled&&x.getClientRects().length);const first=nodes[0],last=nodes.at(-1);if(ev.shiftKey&&document.activeElement===first){ev.preventDefault();last?.focus();}else if(!ev.shiftKey&&document.activeElement===last){ev.preventDefault();first?.focus();}}});
 const mobileMenu=document.getElementById('mobileMenu'),mainNav=document.getElementById('mainNav');
-const seasonMenu=document.getElementById('seasonMenu'),historyMenu=document.getElementById('historyMenu'),historySubmenu=document.getElementById('historySubmenu');
+const seasonMenu=document.getElementById('seasonMenu'),historyMenu=document.getElementById('historyMenu');
 const dropdowns=[seasonMenu,historyMenu];
 function setNavDropdown(button,open){
  button.setAttribute('aria-expanded',String(open));button.parentElement.classList.toggle('expanded',open);
- if(button===historyMenu)historySubmenu.hidden=!open;
+ document.getElementById(button.getAttribute('aria-controls')).hidden=!open;
 }
 function closeNavDropdowns(){dropdowns.forEach(b=>setNavDropdown(b,false));}
-mobileMenu.onclick=()=>{const open=mainNav.classList.toggle('open');mobileMenu.setAttribute('aria-expanded',String(open));if(!open)closeNavDropdowns();};
-nav.filter(b=>b.dataset.page).forEach(b=>b.onclick=ev=>{if(ev.ctrlKey||ev.metaKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();if(b.dataset.page==='seasons')seasonYear=2025;go(b.dataset.page);});
+function setMobileMenu(open){mainNav.classList.toggle('open',open);mobileMenu.setAttribute('aria-expanded',String(open));mobileMenu.setAttribute('aria-label',open?'Close navigation':'Open navigation');if(!open)closeNavDropdowns();}
+mobileMenu.onclick=()=>setMobileMenu(!mainNav.classList.contains('open'));
+nav.filter(b=>b.dataset.page).forEach(b=>b.onclick=ev=>{
+ if(ev.ctrlKey||ev.metaKey||ev.shiftKey||ev.altKey)return;
+ ev.preventDefault();
+ const fromMobile=mainNav.classList.contains('open'),page=b.dataset.page;
+ if(page==='seasons')seasonYear=2025;
+ go(page).then(()=>{
+  const title=app.querySelector('h1');
+  if(fromMobile&&page===currentPage&&title){title.tabIndex=-1;title.focus({preventScroll:true});}
+ });
+});
 dropdowns.forEach(button=>{
  button.onclick=()=>{const open=button.getAttribute('aria-expanded')!=='true';closeNavDropdowns();setNavDropdown(button,open);};
  button.onkeydown=ev=>{if(ev.key!=='ArrowDown')return;ev.preventDefault();closeNavDropdowns();setNavDropdown(button,true);button.parentElement.querySelector('.nav-submenu a')?.focus();};
@@ -95,10 +105,10 @@ mainNav.addEventListener('keydown',ev=>{
 });
 
 function liveLoading(title='Loading live 2026 data…'){
-  return `<div class="page z-page">${pageHero('DIRTY D’S',title)}<div class="wrap skeleton-grid" aria-busy="true" aria-label="Loading ${e(title)}"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div>`;
+  return `<div class="page z-page">${pageHeading(title)}<div class="wrap skeleton-grid" aria-busy="true" aria-label="Loading ${e(title)}"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div></div>`;
 }
 function liveError(err){
-  return `<div class="page z-page">${pageHero('LIVE DATA','Sleeper data unavailable','The historical archive is still available.')}<div class="wrap"><div class="live-error"><strong>Could not load the current Sleeper feed.</strong><br>${e(err?.message||String(err||'Unknown error'))}<br><button class="dd-action" data-retry>Retry</button></div></div></div>`;
+  return `<div class="page z-page">${pageHeading('Sleeper data unavailable')}<div class="wrap"><div class="live-error"><strong>Could not load the current Sleeper feed.</strong><br>${e(err?.message||String(err||'Unknown error'))}<br><button class="dd-action" data-retry>Retry</button></div></div></div>`;
 }
 async function ensureLive(){
   if(!SL) throw new Error('Sleeper live module did not load.');
@@ -271,9 +281,9 @@ function readRoute(){
 async function go(page,{restore=false}={}){
  const routes={home:renderHome,season2026:renderSeason2026,power:renderPowerPage,playoffs:renderPlayoffs,transactions:renderTransactions,matchups:renderMatchups,seasons:renderSeasons,history:renderHistory,superlatives:renderSuperlatives,'history-stats':renderDetailedStatistics,players:renderPlayers,teams:renderTeams,draft:renderDraft};
  if(!routes[page])page='home';const generation=++routeGeneration,requestedPlayer=restore?new URLSearchParams(location.hash.split('?')[1]||'').get('player'):null;currentPage=page;if(!backdrop.hidden)closeModal({clearRoute:!restore});
- updateNavActive();closeNavDropdowns();mainNav.classList.remove('open');mobileMenu.setAttribute('aria-expanded','false');
+ updateNavActive();setMobileMenu(false);
  if(!restore){history.pushState(null,'',routeHash());if(typeof lastHandledHash!=='undefined')lastHandledHash=location.hash;}
- const titles={home:'Dirty D’s',history:'Hall of Fame',superlatives:'Superlatives','history-stats':'Detailed Statistics'};
+ const titles={home:'Dirty D’s',season2026:'Weekly Review',power:'Power Rankings',playoffs:'Playoff Predictor',seasons:'All Seasons',draft:'Draft Central',history:'Hall of Fame',superlatives:'Superlatives','history-stats':'Detailed Statistics'};
  app.innerHTML=liveLoading(titles[page]||page[0].toUpperCase()+page.slice(1));
  try{
   if(['matchups','seasons','history','superlatives','history-stats','players','teams','draft'].includes(page)){
